@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.AliCustomerServiceMapper">
+
+    <resultMap type="AliCustomerService" id="AliCustomerServiceResult">
+        <result property="id"    column="id"    />
+        <result property="basicSalary"    column="basic_salary"    />
+        <result property="upId"    column="up_id"    />
+        <result property="commissionRatio"    column="commission_ratio"    />
+        <result property="totalSalary"    column="total_salary"    />
+        <result property="salesAmount"    column="sales_amount"    />
+    </resultMap>
+
+    <sql id="selectAliCustomerServiceVo">
+        select id, basic_salary, up_id, commission_ratio, total_salary,
+sales_amount from ali_customer_service
+    </sql>
+
+    <select id="selectAliCustomerServiceList" parameterType="AliCustomerService" resultMap="AliCustomerServiceResult">
+        <include refid="selectAliCustomerServiceVo"/>
+        <where>
+            <if test="basicSalary != null "> and basic_salary = #{basicSalary}</if>
+            <if test="upId != null  and upId != ''"> and up_id = #{upId}</if>
+            <if test="commissionRatio != null "> and commission_ratio = #{commissionRatio}</if>
+            <if test="totalSalary != null "> and total_salary = #{totalSalary}</if>
+            <if test="
+salesAmount != null "> and
+sales_amount = #{
+salesAmount}</if>
+        </where>
+    </select>
+
+    <select id="selectAliCustomerServiceById" parameterType="String" resultMap="AliCustomerServiceResult">
+        <include refid="selectAliCustomerServiceVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertAliCustomerService" parameterType="AliCustomerService">
+        insert into ali_customer_service
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="basicSalary != null">basic_salary,</if>
+            <if test="upId != null">up_id,</if>
+            <if test="commissionRatio != null">commission_ratio,</if>
+            <if test="totalSalary != null">total_salary,</if>
+            <if test="
+salesAmount != null">
+sales_amount,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="basicSalary != null">#{basicSalary},</if>
+            <if test="upId != null">#{upId},</if>
+            <if test="commissionRatio != null">#{commissionRatio},</if>
+            <if test="totalSalary != null">#{totalSalary},</if>
+            <if test="
+salesAmount != null">#{
+salesAmount},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAliCustomerService" parameterType="AliCustomerService">
+        update ali_customer_service
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="basicSalary != null">basic_salary = #{basicSalary},</if>
+            <if test="upId != null">up_id = #{upId},</if>
+            <if test="commissionRatio != null">commission_ratio = #{commissionRatio},</if>
+            <if test="totalSalary != null">total_salary = #{totalSalary},</if>
+            <if test="
+salesAmount != null">
+sales_amount = #{
+salesAmount},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAliCustomerServiceById" parameterType="String">
+        delete from ali_customer_service where id = #{id}
+    </delete>
+
+    <delete id="deleteAliCustomerServiceByIds" parameterType="String">
+        delete from ali_customer_service where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
