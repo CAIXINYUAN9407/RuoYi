@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.callback;
 
+import com.ruoyi.common.annotation.Anonymous;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.system.service.ISysUserService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@Anonymous
 @Controller
 @RequestMapping("/callback")
 public class CallbackController extends BaseController {
