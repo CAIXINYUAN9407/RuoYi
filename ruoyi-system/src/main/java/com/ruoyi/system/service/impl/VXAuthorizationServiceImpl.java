@@ -97,6 +97,8 @@ public class VXAuthorizationServiceImpl implements VXAuthorizationService
                     COMPONENT_VETIFY_TICKET_MAP.put("wxdc5787bd0edbfc75", componentVerifyTicket);
                     Long userId = 1L;
                     SysUser sysUser = userMapper.selectUserById(userId);
+                    log.info("sysUser----------------------getLoginName", sysUser.getLoginName());
+
                     sysUser.setComponentVerifyTicket(componentVerifyTicket);
                     userMapper.updateUser(sysUser);
                     //使用StringRedisTemplate将票据值写入Redis缓存中 存不存，怎么存看你自己
