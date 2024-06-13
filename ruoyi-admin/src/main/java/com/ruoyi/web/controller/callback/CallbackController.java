@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,11 +28,12 @@ public class CallbackController extends BaseController {
 
     @RequestMapping("/authorization")
     @Anonymous
+    @ResponseBody
     public String authorization(HttpServletRequest req, HttpServletResponse resp)
     {
         log.info("接收到验证票据请求");
         String result =  vxAuthorizationService.getComponentVerifyTicket(req, resp);
         log.info("验证票据"+result);
-        return result;
+        return "success";
     }
 }

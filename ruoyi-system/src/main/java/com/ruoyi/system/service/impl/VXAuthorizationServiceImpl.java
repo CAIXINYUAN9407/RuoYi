@@ -97,6 +97,8 @@ public class VXAuthorizationServiceImpl implements VXAuthorizationService
 //                    redisTemplate.expire(VXConstants.COMPONENT_VERIFY_TICKET, 2, TimeUnit.HOURS);
                     break;
                 case "unauthorized"://用户取消授权
+                    String componentVerifyTicke = msgMap.get("ComponentVerifyTicket").toString();
+                    log.info("用户授权component_verify_ticket:{}", componentVerifyTicke);
                     log.info("用户取消授权");
                     break;
             }
