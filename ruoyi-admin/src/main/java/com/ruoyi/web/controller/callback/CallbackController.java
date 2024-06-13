@@ -25,7 +25,8 @@ public class CallbackController extends BaseController {
     @Autowired
     private VXAuthorizationService vxAuthorizationService;
 
-    @PostMapping("/authorization")
+    @RequestMapping("/authorization")
+    @Anonymous
     public String authorization(HttpServletRequest req, HttpServletResponse resp)
     {
         log.info("接收到验证票据请求");
