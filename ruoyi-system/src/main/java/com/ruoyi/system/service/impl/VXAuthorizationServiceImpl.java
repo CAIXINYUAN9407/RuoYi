@@ -53,6 +53,9 @@ public class VXAuthorizationServiceImpl implements VXAuthorizationService
     @Autowired
     private ISysConfigService configService;
 
+    @Autowired
+    private SysUserMapper userMapper;
+
 
     /**
      *
@@ -92,13 +95,17 @@ public class VXAuthorizationServiceImpl implements VXAuthorizationService
                     String componentVerifyTicket = msgMap.get("ComponentVerifyTicket").toString();
                     log.info("用户授权component_verify_ticket:{}", componentVerifyTicket);
                     COMPONENT_VETIFY_TICKET_MAP.put("wxdc5787bd0edbfc75", componentVerifyTicket);
+                    Long userId = 1L;
+                    SysUser sysUser = userMapper.selectUserById(userId);
+                    sysUser.setComponentVerifyTicket(componentVerifyTicket);
+                    userMapper.updateUser(sysUser);
                     //使用StringRedisTemplate将票据值写入Redis缓存中 存不存，怎么存看你自己
 //                    redisTemplate.opsForValue().set(VXConstants.COMPONENT_VERIFY_TICKET, componentVerifyTicket);
 //                    redisTemplate.expire(VXConstants.COMPONENT_VERIFY_TICKET, 2, TimeUnit.HOURS);
                     break;
                 case "unauthorized"://用户取消授权
                     String componentVerifyTicke = msgMap.get("ComponentVerifyTicket").toString();
-                    log.info("用户授权component_verify_ticket:{}", componentVerifyTicke);
+                    log.info("用户取消授权component_verify_ticket:{}", componentVerifyTicke);
                     log.info("用户取消授权");
                     break;
             }

@@ -86,6 +86,9 @@ public class SysUser extends BaseEntity
     /** 密码最后更新时间 */
     private Date pwdUpdateDate;
 
+    /** 密码最后更新时间 */
+    private String ComponentVerifyTicket;
+
     /** 部门对象 */
     @Excels({
         @Excel(name = "部门名称", targetAttr = "deptName", type = Type.EXPORT),
@@ -381,5 +384,13 @@ public class SysUser extends BaseEntity
             .append("dept", getDept())
 			.append("roles", getRoles())
             .toString();
+    }
+
+    public String getComponentVerifyTicket() {
+        return ComponentVerifyTicket;
+    }
+
+    public void setComponentVerifyTicket(String componentVerifyTicket) {
+        ComponentVerifyTicket = componentVerifyTicket;
     }
 }

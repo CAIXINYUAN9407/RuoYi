@@ -185,6 +185,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="pwdUpdateDate != null">pwd_update_date = #{pwdUpdateDate},</if>
  			<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
  			<if test="remark != null">remark = #{remark},</if>
+			<if test="componentVerifyTicket != null">component_verify_ticket = #{componentVerifyTicket},</if>
  			update_time = sysdate()
  		</set>
  		where user_id = #{userId}
