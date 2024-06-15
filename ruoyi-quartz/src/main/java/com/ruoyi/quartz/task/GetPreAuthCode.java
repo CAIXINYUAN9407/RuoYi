@@ -7,6 +7,7 @@ import com.ruoyi.system.mapper.SysUserMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -17,26 +18,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.http.client.methods.HttpPost;
 
 /**
- * 1688定时获取商品Task
+ * WeChat定时获取预授权码
  *
  * @author ruoyi
  */
-@Component("GetComponentAccessToken")
-public class GetComponentAccessToken {
+@Component("GetPreAuthCode")
+public class GetPreAuthCode {
 
-    private static final Logger log = LoggerFactory.getLogger(GetComponentAccessToken.class);
+    private static final Logger log = LoggerFactory.getLogger(GetPreAuthCode.class);
     @Autowired
     private SysUserMapper userMapper;
     /*
     * 定时获取刷新ComponentAccessToken*/
     public void ryMultipleParams(String s, Boolean b, Integer j)
     {
-        log.debug("====================开始执行定时任务获取令牌【component_access_token】====================");
+        log.debug("====================开始执行定时任务获取预授权码【pre_auth_code】====================");
         Map<String, String> reMap;
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         String resData= null;
@@ -46,9 +47,8 @@ public class GetComponentAccessToken {
             SysUser sysUser = userMapper.selectUserById(userId);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("component_appid", "wxdc5787bd0edbfc75");
-            jsonObject.put("component_appsecret", "8daa24cec0c59b31f822b14dce8f6642");
-            jsonObject.put("component_verify_ticket", sysUser.getComponentVerifyTicket());
-            HttpPost httpPost = new HttpPost("https://api.weixin.qq.com/cgi-bin/component/api_component_token");
+//            jsonObject.put("component_access_token", sysUser.getComponentAccessToken());
+            HttpPost httpPost = new HttpPost("https://api.weixin.qq.com/cgi-bin/component/api_create_preauthcode?component_access_token="+sysUser.getComponentAccessToken());
             StringEntity stringEntity = new StringEntity(jsonObject.toString());
             stringEntity.setContentType("text/json");
             stringEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
@@ -70,9 +70,9 @@ public class GetComponentAccessToken {
 //                    JSONArray result = obj.getJSONArray("result");
                     System.out.println(obj.toString());
                     HashMap<String, String> hashMap = JSON.parseObject(resData, HashMap.class);
-                    String componentAccessToken = hashMap.get("component_access_token");
-                    log.debug("！！！！！！！！！！！！！！！！！！！！！！"+componentAccessToken);
-                    sysUser.setComponentAccessToken(componentAccessToken);
+                    String preAuthCodeuth = hashMap.get("pre_auth_code");
+                    log.debug("！！！！！！！！！！！！！！！！！！！！！！"+preAuthCodeuth);
+                    sysUser.setPreAuthCode(preAuthCodeuth);
                     userMapper.updateUser(sysUser);
 
                 }
@@ -86,7 +86,7 @@ public class GetComponentAccessToken {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        log.debug("====================结束执行定时任务获取令牌【component_access_token】====================");
+        log.debug("====================结束执行定时任务获取预授权码【pre_auth_code】====================");
 
     }
 

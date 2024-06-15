@@ -86,8 +86,14 @@ public class SysUser extends BaseEntity
     /** 密码最后更新时间 */
     private Date pwdUpdateDate;
 
-    /** 密码最后更新时间 */
+    /** 票据 */
     private String ComponentVerifyTicket;
+
+    /** 令牌 */
+    private String ComponentAccessToken;
+
+    /** 预授权码 */
+    private String preAuthCode;
 
     /** 部门对象 */
     @Excels({
@@ -392,5 +398,21 @@ public class SysUser extends BaseEntity
 
     public void setComponentVerifyTicket(String componentVerifyTicket) {
         ComponentVerifyTicket = componentVerifyTicket;
+    }
+
+    public String getComponentAccessToken() {
+        return ComponentAccessToken;
+    }
+
+    public void setComponentAccessToken(String componentAccessToken) {
+        ComponentAccessToken = componentAccessToken;
+    }
+
+    public String getPreAuthCode() {
+        return preAuthCode;
+    }
+
+    public void setPreAuthCode(String preAuthCode) {
+        this.preAuthCode = preAuthCode;
     }
 }

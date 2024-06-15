@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.VideoShopMapper">
+    
+    <resultMap type="VideoShop" id="VideoShopResult">
+        <result property="id"    column="id"    />
+        <result property="owner"    column="owner"    />
+        <result property="shopId"    column="shop_id"    />
+        <result property="shopName"    column="shop_name"    />
+        <result property="accessToken"    column="access_token"    />
+        <result property="expiresIn"    column="expires_in"    />
+        <result property="expiresAt"    column="expires_at"    />
+        <result property="scope"    column="scope"    />
+        <result property="refreshToken"    column="refresh_token"    />
+        <result property="authorityId"    column="authority_id"    />
+        <result property="authSubjectType"    column="auth_subject_type"    />
+        <result property="createTime"    column="create_time"    />
+<!--        <result property="default"    column="default"    />-->
+        <result property="code"    column="code"    />
+        <result property="platform"    column="platform"    />
+        <result property="pid"    column="pid"    />
+        <result property="logo"    column="logo"    />
+        <result property="orderLastSyncTime"    column="order_last_sync_time"    />
+        <result property="commentLastSyncTime"    column="comment_last_sync_time"    />
+        <result property="afterSaleLastSyncTime"    column="after_sale_last_sync_time"    />
+        <result property="serviceStartTime"    column="service_start_time"    />
+        <result property="serviceEndTime"    column="service_end_time"    />
+        <result property="phone"    column="phone"    />
+        <result property="money"    column="money"    />
+        <result property="spec"    column="spec"    />
+        <result property="duration"    column="duration"    />
+        <result property="unit"    column="unit"    />
+        <result property="payType"    column="pay_type"    />
+        <result property="smsNum"    column="sms_num"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="orderSyncLock"    column="order_sync_lock"    />
+        <result property="afterSaleSyncLock"    column="after_sale_sync_lock"    />
+        <result property="tableIndex"    column="table_index"    />
+        <result property="isOrderStatus1Sync"    column="is_order_status_1_sync"    />
+        <result property="encryptOperator"    column="encrypt_operator"    />
+        <result property="operatorName"    column="operator_name"    />
+        <result property="shopBizType"    column="shop_biz_type"    />
+    </resultMap>
+
+    <sql id="selectVideoShopVo">
+        select id, owner, shop_id, shop_name, access_token, expires_in, expires_at, scope, refresh_token, authority_id, auth_subject_type, create_time, code, platform, pid, logo, order_last_sync_time, comment_last_sync_time, after_sale_last_sync_time, service_start_time, service_end_time, phone, money, spec, duration, unit, pay_type, sms_num, order_id, order_sync_lock, after_sale_sync_lock, table_index, is_order_status_1_sync, encrypt_operator, operator_name, shop_biz_type from video_shop
+    </sql>
+
+    <select id="selectVideoShopList" parameterType="VideoShop" resultMap="VideoShopResult">
+        <include refid="selectVideoShopVo"/>
+        <where>  
+            <if test="owner != null "> and owner = #{owner}</if>
+            <if test="shopId != null "> and shop_id = #{shopId}</if>
+            <if test="shopName != null  and shopName != ''"> and shop_name like concat('%', #{shopName}, '%')</if>
+            <if test="accessToken != null  and accessToken != ''"> and access_token = #{accessToken}</if>
+            <if test="expiresIn != null "> and expires_in = #{expiresIn}</if>
+            <if test="expiresAt != null "> and expires_at = #{expiresAt}</if>
+            <if test="scope != null  and scope != ''"> and scope = #{scope}</if>
+            <if test="refreshToken != null  and refreshToken != ''"> and refresh_token = #{refreshToken}</if>
+            <if test="authorityId != null  and authorityId != ''"> and authority_id = #{authorityId}</if>
+            <if test="authSubjectType != null  and authSubjectType != ''"> and auth_subject_type = #{authSubjectType}</if>
+<!--&#45;&#45;             <if test="default != null "> and default = #{default}</if>-->
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="platform != null "> and platform = #{platform}</if>
+            <if test="pid != null "> and pid = #{pid}</if>
+            <if test="logo != null  and logo != ''"> and logo = #{logo}</if>
+            <if test="orderLastSyncTime != null "> and order_last_sync_time = #{orderLastSyncTime}</if>
+            <if test="commentLastSyncTime != null "> and comment_last_sync_time = #{commentLastSyncTime}</if>
+            <if test="afterSaleLastSyncTime != null "> and after_sale_last_sync_time = #{afterSaleLastSyncTime}</if>
+            <if test="serviceStartTime != null "> and service_start_time = #{serviceStartTime}</if>
+            <if test="serviceEndTime != null "> and service_end_time = #{serviceEndTime}</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="money != null "> and money = #{money}</if>
+            <if test="spec != null  and spec != ''"> and spec = #{spec}</if>
+            <if test="duration != null "> and duration = #{duration}</if>
+            <if test="unit != null "> and unit = #{unit}</if>
+            <if test="payType != null "> and pay_type = #{payType}</if>
+            <if test="smsNum != null "> and sms_num = #{smsNum}</if>
+            <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>
+            <if test="orderSyncLock != null "> and order_sync_lock = #{orderSyncLock}</if>
+            <if test="afterSaleSyncLock != null "> and after_sale_sync_lock = #{afterSaleSyncLock}</if>
+            <if test="tableIndex != null "> and table_index = #{tableIndex}</if>
+            <if test="isOrderStatus1Sync != null "> and is_order_status_1_sync = #{isOrderStatus1Sync}</if>
+            <if test="encryptOperator != null  and encryptOperator != ''"> and encrypt_operator = #{encryptOperator}</if>
+            <if test="operatorName != null  and operatorName != ''"> and operator_name like concat('%', #{operatorName}, '%')</if>
+            <if test="shopBizType != null  and shopBizType != ''"> and shop_biz_type = #{shopBizType}</if>
+        </where>
+    </select>
+    
+    <select id="selectVideoShopById" parameterType="Long" resultMap="VideoShopResult">
+        <include refid="selectVideoShopVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectVideoShopByOwner" parameterType="String" resultMap="VideoShopResult">
+        <include refid="selectVideoShopVo"/>
+        where owner = #{owner}
+    </select>
+        
+    <insert id="insertVideoShop" parameterType="VideoShop" useGeneratedKeys="true" keyProperty="id">
+        insert into video_shop
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="owner != null">owner,</if>
+            <if test="shopId != null">shop_id,</if>
+            <if test="shopName != null">shop_name,</if>
+            <if test="accessToken != null">access_token,</if>
+            <if test="expiresIn != null">expires_in,</if>
+            <if test="expiresAt != null">expires_at,</if>
+            <if test="scope != null">scope,</if>
+            <if test="refreshToken != null">refresh_token,</if>
+            <if test="authorityId != null">authority_id,</if>
+            <if test="authSubjectType != null">auth_subject_type,</if>
+            <if test="createTime != null">create_time,</if>
+<!--            <if test="default != null">default,</if>-->
+            <if test="code != null">code,</if>
+            <if test="platform != null">platform,</if>
+            <if test="pid != null">pid,</if>
+            <if test="logo != null">logo,</if>
+            <if test="orderLastSyncTime != null">order_last_sync_time,</if>
+            <if test="commentLastSyncTime != null">comment_last_sync_time,</if>
+            <if test="afterSaleLastSyncTime != null">after_sale_last_sync_time,</if>
+            <if test="serviceStartTime != null">service_start_time,</if>
+            <if test="serviceEndTime != null">service_end_time,</if>
+            <if test="phone != null">phone,</if>
+            <if test="money != null">money,</if>
+            <if test="spec != null">spec,</if>
+            <if test="duration != null">duration,</if>
+            <if test="unit != null">unit,</if>
+            <if test="payType != null">pay_type,</if>
+            <if test="smsNum != null">sms_num,</if>
+            <if test="orderId != null">order_id,</if>
+            <if test="orderSyncLock != null">order_sync_lock,</if>
+            <if test="afterSaleSyncLock != null">after_sale_sync_lock,</if>
+            <if test="tableIndex != null">table_index,</if>
+            <if test="isOrderStatus1Sync != null">is_order_status_1_sync,</if>
+            <if test="encryptOperator != null">encrypt_operator,</if>
+            <if test="operatorName != null">operator_name,</if>
+            <if test="shopBizType != null">shop_biz_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="owner != null">#{owner},</if>
+            <if test="shopId != null">#{shopId},</if>
+            <if test="shopName != null">#{shopName},</if>
+            <if test="accessToken != null">#{accessToken},</if>
+            <if test="expiresIn != null">#{expiresIn},</if>
+            <if test="expiresAt != null">#{expiresAt},</if>
+            <if test="scope != null">#{scope},</if>
+            <if test="refreshToken != null">#{refreshToken},</if>
+            <if test="authorityId != null">#{authorityId},</if>
+            <if test="authSubjectType != null">#{authSubjectType},</if>
+            <if test="createTime != null">#{createTime},</if>
+<!--            <if test="default != null">#{default},</if>-->
+            <if test="code != null">#{code},</if>
+            <if test="platform != null">#{platform},</if>
+            <if test="pid != null">#{pid},</if>
+            <if test="logo != null">#{logo},</if>
+            <if test="orderLastSyncTime != null">#{orderLastSyncTime},</if>
+            <if test="commentLastSyncTime != null">#{commentLastSyncTime},</if>
+            <if test="afterSaleLastSyncTime != null">#{afterSaleLastSyncTime},</if>
+            <if test="serviceStartTime != null">#{serviceStartTime},</if>
+            <if test="serviceEndTime != null">#{serviceEndTime},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="money != null">#{money},</if>
+            <if test="spec != null">#{spec},</if>
+            <if test="duration != null">#{duration},</if>
+            <if test="unit != null">#{unit},</if>
+            <if test="payType != null">#{payType},</if>
+            <if test="smsNum != null">#{smsNum},</if>
+            <if test="orderId != null">#{orderId},</if>
+            <if test="orderSyncLock != null">#{orderSyncLock},</if>
+            <if test="afterSaleSyncLock != null">#{afterSaleSyncLock},</if>
+            <if test="tableIndex != null">#{tableIndex},</if>
+            <if test="isOrderStatus1Sync != null">#{isOrderStatus1Sync},</if>
+            <if test="encryptOperator != null">#{encryptOperator},</if>
+            <if test="operatorName != null">#{operatorName},</if>
+            <if test="shopBizType != null">#{shopBizType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVideoShop" parameterType="VideoShop">
+        update video_shop
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="owner != null">owner = #{owner},</if>
+            <if test="shopId != null">shop_id = #{shopId},</if>
+            <if test="shopName != null">shop_name = #{shopName},</if>
+            <if test="accessToken != null">access_token = #{accessToken},</if>
+            <if test="expiresIn != null">expires_in = #{expiresIn},</if>
+            <if test="expiresAt != null">expires_at = #{expiresAt},</if>
+            <if test="scope != null">scope = #{scope},</if>
+            <if test="refreshToken != null">refresh_token = #{refreshToken},</if>
+            <if test="authorityId != null">authority_id = #{authorityId},</if>
+            <if test="authSubjectType != null">auth_subject_type = #{authSubjectType},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+<!--            <if test="default != null">default = #{default},</if>-->
+            <if test="code != null">code = #{code},</if>
+            <if test="platform != null">platform = #{platform},</if>
+            <if test="pid != null">pid = #{pid},</if>
+            <if test="logo != null">logo = #{logo},</if>
+            <if test="orderLastSyncTime != null">order_last_sync_time = #{orderLastSyncTime},</if>
+            <if test="commentLastSyncTime != null">comment_last_sync_time = #{commentLastSyncTime},</if>
+            <if test="afterSaleLastSyncTime != null">after_sale_last_sync_time = #{afterSaleLastSyncTime},</if>
+            <if test="serviceStartTime != null">service_start_time = #{serviceStartTime},</if>
+            <if test="serviceEndTime != null">service_end_time = #{serviceEndTime},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="money != null">money = #{money},</if>
+            <if test="spec != null">spec = #{spec},</if>
+            <if test="duration != null">duration = #{duration},</if>
+            <if test="unit != null">unit = #{unit},</if>
+            <if test="payType != null">pay_type = #{payType},</if>
+            <if test="smsNum != null">sms_num = #{smsNum},</if>
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="orderSyncLock != null">order_sync_lock = #{orderSyncLock},</if>
+            <if test="afterSaleSyncLock != null">after_sale_sync_lock = #{afterSaleSyncLock},</if>
+            <if test="tableIndex != null">table_index = #{tableIndex},</if>
+            <if test="isOrderStatus1Sync != null">is_order_status_1_sync = #{isOrderStatus1Sync},</if>
+            <if test="encryptOperator != null">encrypt_operator = #{encryptOperator},</if>
+            <if test="operatorName != null">operator_name = #{operatorName},</if>
+            <if test="shopBizType != null">shop_biz_type = #{shopBizType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteVideoShopById" parameterType="Long">
+        delete from video_shop where id = #{id}
+    </delete>
+
+    <delete id="deleteVideoShopByIds" parameterType="String">
+        delete from video_shop where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,12 +1,16 @@
 package com.ruoyi.quartz.task;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.system.domain.VideoShop;
 import com.ruoyi.system.mapper.SysUserMapper;
+import com.ruoyi.system.mapper.VideoShopMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -17,26 +21,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.http.client.methods.HttpPost;
 
 /**
- * 1688定时获取商品Task
- *
- * @author ruoyi
+ * 获取授权账号授权令牌
  */
-@Component("GetComponentAccessToken")
-public class GetComponentAccessToken {
-
+@Component("GetAuthorizerAccessToken")
+public class GetAuthorizerAccessToken {
     private static final Logger log = LoggerFactory.getLogger(GetComponentAccessToken.class);
     @Autowired
     private SysUserMapper userMapper;
+    @Autowired
+    private VideoShopMapper videoShopMapper;
     /*
-    * 定时获取刷新ComponentAccessToken*/
+     * 定时获取刷新ComponentAccessToken*/
     public void ryMultipleParams(String s, Boolean b, Integer j)
     {
-        log.debug("====================开始执行定时任务获取令牌【component_access_token】====================");
+        log.debug("====================获取授权账号授权令牌【AuthorizerAccessToken】====================");
         Map<String, String> reMap;
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         String resData= null;
@@ -46,9 +49,10 @@ public class GetComponentAccessToken {
             SysUser sysUser = userMapper.selectUserById(userId);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("component_appid", "wxdc5787bd0edbfc75");
-            jsonObject.put("component_appsecret", "8daa24cec0c59b31f822b14dce8f6642");
-            jsonObject.put("component_verify_ticket", sysUser.getComponentVerifyTicket());
-            HttpPost httpPost = new HttpPost("https://api.weixin.qq.com/cgi-bin/component/api_component_token");
+            jsonObject.put("component_access_token", sysUser.getComponentAccessToken());
+            jsonObject.put("authorizer_appid", "wx08fc080a10109484");
+            jsonObject.put("authorizer_refresh_token", "esFa8MHHJyXWd0gw5E1UbKtmWFK53YyG2jZNswsl3uk");
+            HttpPost httpPost = new HttpPost("https://api.weixin.qq.com/cgi-bin/component/api_authorizer_token?component_access_token="+sysUser.getComponentAccessToken());
             StringEntity stringEntity = new StringEntity(jsonObject.toString());
             stringEntity.setContentType("text/json");
             stringEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
@@ -67,14 +71,11 @@ public class GetComponentAccessToken {
                     System.out.println("响应内容长度为:" + responseEntity.getContentLength());
                     resData = EntityUtils.toString(response.getEntity());
                     JSONObject obj = JSONObject.parseObject(resData);
-//                    JSONArray result = obj.getJSONArray("result");
                     System.out.println(obj.toString());
-                    HashMap<String, String> hashMap = JSON.parseObject(resData, HashMap.class);
-                    String componentAccessToken = hashMap.get("component_access_token");
-                    log.debug("！！！！！！！！！！！！！！！！！！！！！！"+componentAccessToken);
-                    sysUser.setComponentAccessToken(componentAccessToken);
-                    userMapper.updateUser(sysUser);
-
+//                    HashMap<String, String> hashMap = JSON.parseObject(resData, HashMap.class);
+                    VideoShop videoShop = videoShopMapper.selectVideoShopByOwner("wx08fc080a10109484");
+                    videoShop.setAccessToken(obj.get("authorizer_access_token").toString().substring(15));
+                    videoShopMapper.updateVideoShop(videoShop);
                 }
             } catch (ClientProtocolException e) {
                 e.printStackTrace();
@@ -86,9 +87,7 @@ public class GetComponentAccessToken {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        log.debug("====================结束执行定时任务获取令牌【component_access_token】====================");
+        log.debug("====================获取授权账号授权令牌【AuthorizerAccessToken】====================");
 
     }
-
-
 }
