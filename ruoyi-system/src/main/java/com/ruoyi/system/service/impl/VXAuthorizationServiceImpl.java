@@ -6,6 +6,7 @@ import com.ruoyi.common.utils.ShiroUtils;
 import com.ruoyi.system.Util.AesException;
 import com.ruoyi.system.Util.MessageUtil;
 import com.ruoyi.system.Util.WXBizMsgCrypt;
+import com.ruoyi.system.domain.SysUserRole;
 import com.ruoyi.system.mapper.*;
 import com.ruoyi.system.service.ISysConfigService;
 import com.ruoyi.system.service.VXAuthorizationService;
@@ -17,7 +18,9 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,6 +38,10 @@ public class VXAuthorizationServiceImpl implements VXAuthorizationService
 
     @Autowired
     private SysUserMapper userMapper;
+//    SysUserRoleMapper
+    @Autowired
+    private SysUserRoleMapper sysUserRoleMapper;
+
 
     /**
      *
@@ -64,19 +71,28 @@ public class VXAuthorizationServiceImpl implements VXAuthorizationService
             String msg = decryptMsg(timestamp, nonce, signature, encrypt);
             //将XML格式字符串转为Map类型 使用的是hutool工具包，记得引入一下
             Map<String, Object> msgMap = XmlUtil.xmlToMap(msg);
-            log.info("msg:{mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm}"+msgMap);
+            log.info("msg"+msgMap);
             String infoType = msgMap.get("InfoType").toString();
-            log.info("类型：ooooooooooooooooooooooo", infoType);
+            log.info("类型", infoType);
             switch (infoType) {
                 //验证票据
                 case "authorized":
                     String AuthorizerAppid = msgMap.get("AuthorizerAppid").toString();
-                    log.info("类型：AuthorizerAppidnnnnnnnnnnnnnnnnnnnnnnnnnnnn"+AuthorizerAppid);
+                    log.info("AuthorizerAppid"+AuthorizerAppid);
                     SysUser sysUserNew = new SysUser();
+                    sysUserNew.setLoginName(AuthorizerAppid);
                     sysUserNew.setSalt(ShiroUtils.randomSalt());
-//                    sysUserNew.setPassword(encryptPassword(sysUserNew.getLoginName(),sysUserNew.getLoginName(),sysUserNew.getSalt()));
-//                    userMapper.insertUser(sysUserNew);
-//                    sysUserNew.getUserId();
+                    sysUserNew.setPassword(encryptPassword(sysUserNew.getLoginName(),sysUserNew.getLoginName(),sysUserNew.getSalt()));
+                    userMapper.insertUser(sysUserNew);
+
+                    // 新增用户与角色管理
+                    List<SysUserRole> list = new ArrayList<SysUserRole>();
+                    SysUserRole ur = new SysUserRole();
+                    ur.setUserId(sysUserNew.getUserId());
+                    ur.setRoleId(100L);
+                    list.add(ur);
+                    sysUserRoleMapper.batchUserRole(list);
+
                     break;
                 case "component_verify_ticket":
                     //查询库中的第三方信息，并且准备存储ticket
