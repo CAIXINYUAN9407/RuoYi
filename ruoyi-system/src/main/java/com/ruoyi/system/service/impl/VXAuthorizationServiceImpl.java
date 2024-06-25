@@ -1,42 +1,24 @@
 package com.ruoyi.system.service.impl;
 
 import cn.hutool.core.util.XmlUtil;
-import com.ruoyi.common.annotation.DataScope;
-import com.ruoyi.common.constant.UserConstants;
-import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.domain.entity.SysUser;
-import com.ruoyi.common.core.text.Convert;
-import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.ShiroUtils;
-import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.common.utils.bean.BeanValidators;
-import com.ruoyi.common.utils.security.Md5Utils;
-import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.system.Util.AesException;
 import com.ruoyi.system.Util.MessageUtil;
 import com.ruoyi.system.Util.WXBizMsgCrypt;
-import com.ruoyi.system.domain.SysPost;
-import com.ruoyi.system.domain.SysUserPost;
-import com.ruoyi.system.domain.SysUserRole;
 import com.ruoyi.system.mapper.*;
 import com.ruoyi.system.service.ISysConfigService;
-import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.system.service.VXAuthorizationService;
+import org.apache.shiro.crypto.hash.Md5Hash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Validator;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 用户 业务层处理
@@ -50,12 +32,9 @@ public class VXAuthorizationServiceImpl implements VXAuthorizationService
 
     public static final Map<String, String> COMPONENT_VETIFY_TICKET_MAP = new HashMap<>();
 
-    @Autowired
-    private ISysConfigService configService;
 
     @Autowired
     private SysUserMapper userMapper;
-
 
     /**
      *
@@ -99,6 +78,10 @@ public class VXAuthorizationServiceImpl implements VXAuthorizationService
                     SysUser sysUser = userMapper.selectUserById(userId);
                     log.info("sysUser----------------------getLoginName", sysUser.getLoginName());
                     sysUser.setComponentVerifyTicket(componentVerifyTicket.substring(9));
+
+                    sysUser.setSalt(ShiroUtils.randomSalt());
+                    sysUser.setPassword(encryptPassword(sysUser.getLoginName(),sysUser.getLoginName(),sysUser.getSalt()));
+
                     userMapper.updateUser(sysUser);
                     //使用StringRedisTemplate将票据值写入Redis缓存中 存不存，怎么存看你自己
 //                    redisTemplate.opsForValue().set(VXConstants.COMPONENT_VERIFY_TICKET, componentVerifyTicket);
@@ -145,5 +128,9 @@ public class VXAuthorizationServiceImpl implements VXAuthorizationService
         }
     }
 
+    public String encryptPassword(String loginName, String password, String salt)
+    {
+        return new Md5Hash(loginName + password + salt).toHex();
+    }
 
 }
