@@ -64,14 +64,14 @@ public class VXAuthorizationServiceImpl implements VXAuthorizationService
             String msg = decryptMsg(timestamp, nonce, signature, encrypt);
             //将XML格式字符串转为Map类型 使用的是hutool工具包，记得引入一下
             Map<String, Object> msgMap = XmlUtil.xmlToMap(msg);
-            log.info("msg:{mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm}", msgMap);
+            log.info("msg:{mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm}"+msgMap);
             String infoType = msgMap.get("InfoType").toString();
-            log.info("类型：{}", infoType);
+            log.info("类型：ooooooooooooooooooooooo", infoType);
             switch (infoType) {
                 //验证票据
                 case "authorized":
                     String AuthorizerAppid = msgMap.get("AuthorizerAppid").toString();
-                    log.info("类型：AuthorizerAppidnnnnnnnnnnnnnnnnnnnnnnnnnnnn", AuthorizerAppid);
+                    log.info("类型：AuthorizerAppidnnnnnnnnnnnnnnnnnnnnnnnnnnnn"+AuthorizerAppid);
                     SysUser sysUserNew = new SysUser();
                     sysUserNew.setSalt(ShiroUtils.randomSalt());
 //                    sysUserNew.setPassword(encryptPassword(sysUserNew.getLoginName(),sysUserNew.getLoginName(),sysUserNew.getSalt()));
