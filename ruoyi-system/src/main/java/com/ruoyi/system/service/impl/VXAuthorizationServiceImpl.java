@@ -62,13 +62,21 @@ public class VXAuthorizationServiceImpl implements VXAuthorizationService
             String encrypt = (String) xmlMap.get("Encrypt");
             log.info("Encrypt:{}", encrypt);
             String msg = decryptMsg(timestamp, nonce, signature, encrypt);
-            log.info("msg:{}", msg);
+            log.info("msg:{mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm}", msg);
             //将XML格式字符串转为Map类型 使用的是hutool工具包，记得引入一下
             Map<String, Object> msgMap = XmlUtil.xmlToMap(msg);
             String infoType = msgMap.get("InfoType").toString();
             log.info("类型：{}", infoType);
             switch (infoType) {
                 //验证票据
+                case "authorized":
+//                    String ssss = msgMap.get("ComponentVerifyTicket").toString();
+                    SysUser sysUserNew = new SysUser();
+                    sysUserNew.setSalt(ShiroUtils.randomSalt());
+//                    sysUserNew.setPassword(encryptPassword(sysUserNew.getLoginName(),sysUserNew.getLoginName(),sysUserNew.getSalt()));
+//                    userMapper.insertUser(sysUserNew);
+//                    sysUserNew.getUserId();
+                    break;
                 case "component_verify_ticket":
                     //查询库中的第三方信息，并且准备存储ticket
                     String componentVerifyTicket = msgMap.get("ComponentVerifyTicket").toString();
@@ -78,10 +86,6 @@ public class VXAuthorizationServiceImpl implements VXAuthorizationService
                     SysUser sysUser = userMapper.selectUserById(userId);
                     log.info("sysUser----------------------getLoginName", sysUser.getLoginName());
                     sysUser.setComponentVerifyTicket(componentVerifyTicket.substring(9));
-
-                    sysUser.setSalt(ShiroUtils.randomSalt());
-                    sysUser.setPassword(encryptPassword(sysUser.getLoginName(),sysUser.getLoginName(),sysUser.getSalt()));
-
                     userMapper.updateUser(sysUser);
                     //使用StringRedisTemplate将票据值写入Redis缓存中 存不存，怎么存看你自己
 //                    redisTemplate.opsForValue().set(VXConstants.COMPONENT_VERIFY_TICKET, componentVerifyTicket);
