@@ -89,19 +89,22 @@ public class VXAuthorizationServiceImpl implements VXAuthorizationService
                     userMapper.insertUser(sysUserNew);
                     Integer table_index = 0;
 
-                    VideoShop videoShopOld = videoShopMapper.selectVideoShopByOwner(AuthorizerAppid);
                     HashMap tableIndexMap = videoShopMapper.selectTableIndex();
                     if (tableIndexMap.get("table_index").toString() != "" || tableIndexMap.get("table_index").toString() != null){
                         table_index = (Integer) tableIndexMap.get("table_index");
+                        log.info("表索引1——————————————————————————————————"+tableIndexMap.get("table_index").toString());
                     }
                     else {
                         table_index = videoShopMapper.selectMaxTableIndex()+1;
+                        log.info("表索引2——————————————————————————————————"+table_index);
                         videoShopMapper.createShopGoods(table_index);
                         videoShopMapper.createShopOrder(table_index);
                         videoShopMapper.createShopAnchor(table_index);
                         videoShopMapper.createShopSalaryTemplate(table_index);
                         videoShopMapper.createShopScheduling(table_index);
                     }
+
+                    VideoShop videoShopOld = videoShopMapper.selectVideoShopByOwner(AuthorizerAppid);
                     if(videoShopOld == null){
                         VideoShop videoShop = new VideoShop();
                         videoShop.setOwner(AuthorizerAppid);
