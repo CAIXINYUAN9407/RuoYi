@@ -76,7 +76,8 @@ public class VXAuthorizationServiceImpl implements VXAuthorizationService
             Map<String, Object> msgMap = XmlUtil.xmlToMap(msg);
             log.info("msg"+msgMap);
             String infoType = msgMap.get("InfoType").toString();
-            log.info("类型", infoType);
+            log.info("类型"+infoType);
+            log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             switch (infoType) {
                 //验证票据
                 case "authorized":
