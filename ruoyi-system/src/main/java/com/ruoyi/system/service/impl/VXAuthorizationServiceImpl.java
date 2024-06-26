@@ -88,7 +88,7 @@ public class VXAuthorizationServiceImpl implements VXAuthorizationService
                     sysUserNew.setPassword(encryptPassword(sysUserNew.getLoginName(),sysUserNew.getLoginName(),sysUserNew.getSalt()));
                     userMapper.insertUser(sysUserNew);
                     Integer table_index = 0;
-
+                    log.info("表索引0——————————————————————————————————"+table_index);
                     HashMap tableIndexMap = videoShopMapper.selectTableIndex();
                     if (tableIndexMap.get("table_index").toString() != "" || tableIndexMap.get("table_index").toString() != null){
                         table_index = (Integer) tableIndexMap.get("table_index");
