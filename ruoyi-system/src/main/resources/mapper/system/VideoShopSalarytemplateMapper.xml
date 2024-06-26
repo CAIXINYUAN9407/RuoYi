@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.VideoShopSalarytemplateMapper">
+    
+    <resultMap type="VideoShopSalarytemplate" id="VideoShopSalarytemplateResult">
+        <result property="id"    column="id"    />
+        <result property="localShopId"    column="local_shop_id"    />
+        <result property="name"    column="name"    />
+        <result property="type"    column="type"    />
+        <result property="anchorBasicSalary"    column="anchor_basic_salary"    />
+        <result property="helperBasicSalary"    column="helper_basic_salary"    />
+        <result property="controlerBasicSalary"    column="controler_basic_salary"    />
+        <result property="ratioAnchorDefault"    column="ratio_anchor_default"    />
+        <result property="ratioHelperDefault"    column="ratio_helper_default"    />
+        <result property="ratioControlerDefault"    column="ratio_controler_default"    />
+        <result property="radioGiven"    column="radio_given"    />
+        <result property="ladder"    column="ladder"    />
+        <result property="basicRadioAnchorBasicSalary"    column="basic_radio_anchor_basic_salary"    />
+        <result property="basicRadioHelperBasicSalary"    column="basic_radio_helper_basic_salary"    />
+        <result property="basicRadioControlerBasicSalary"    column="basic_radio_controler_basic_salary"    />
+        <result property="basicRadioGiven"    column="basic_radio_given"    />
+        <result property="basicLadderAnchorBasicSalary"    column="basic_ladder_anchor_basic_salary"    />
+        <result property="basicLadderHelperBasicSalary"    column="basic_ladder_helper_basic_salary"    />
+        <result property="basicLadderControlerBasicSalary"    column="basic_ladder_controler_basic_salary"    />
+        <result property="basicLadder"    column="basic_ladder"    />
+        <result property="quantityAnchorCommission"    column="quantity_anchor_commission"    />
+        <result property="quantityHelperCommission"    column="quantity_helper_commission"    />
+        <result property="quantityControlerCommission"    column="quantity_controler_commission"    />
+    </resultMap>
+
+    <sql id="selectVideoShopSalarytemplateVo">
+        select id, local_shop_id, name, type, anchor_basic_salary, helper_basic_salary, controler_basic_salary, ratio_anchor_default, ratio_helper_default, ratio_controler_default, radio_given, ladder, basic_radio_anchor_basic_salary, basic_radio_helper_basic_salary, basic_radio_controler_basic_salary, basic_radio_given, basic_ladder_anchor_basic_salary, basic_ladder_helper_basic_salary, basic_ladder_controler_basic_salary, basic_ladder, quantity_anchor_commission, quantity_helper_commission, quantity_controler_commission from video_shop_salarytemplate_1
+    </sql>
+
+    <select id="selectVideoShopSalarytemplateList" parameterType="VideoShopSalarytemplate" resultMap="VideoShopSalarytemplateResult">
+        <include refid="selectVideoShopSalarytemplateVo"/>
+        <where>  
+            <if test="localShopId != null "> and local_shop_id = #{localShopId}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="type != null "> and type = #{type}</if>
+            <if test="anchorBasicSalary != null  and anchorBasicSalary != ''"> and anchor_basic_salary = #{anchorBasicSalary}</if>
+            <if test="helperBasicSalary != null  and helperBasicSalary != ''"> and helper_basic_salary = #{helperBasicSalary}</if>
+            <if test="controlerBasicSalary != null  and controlerBasicSalary != ''"> and controler_basic_salary = #{controlerBasicSalary}</if>
+            <if test="ratioAnchorDefault != null  and ratioAnchorDefault != ''"> and ratio_anchor_default = #{ratioAnchorDefault}</if>
+            <if test="ratioHelperDefault != null  and ratioHelperDefault != ''"> and ratio_helper_default = #{ratioHelperDefault}</if>
+            <if test="ratioControlerDefault != null  and ratioControlerDefault != ''"> and ratio_controler_default = #{ratioControlerDefault}</if>
+            <if test="radioGiven != null  and radioGiven != ''"> and radio_given = #{radioGiven}</if>
+            <if test="ladder != null  and ladder != ''"> and ladder = #{ladder}</if>
+            <if test="basicRadioAnchorBasicSalary != null  and basicRadioAnchorBasicSalary != ''"> and basic_radio_anchor_basic_salary = #{basicRadioAnchorBasicSalary}</if>
+            <if test="basicRadioHelperBasicSalary != null  and basicRadioHelperBasicSalary != ''"> and basic_radio_helper_basic_salary = #{basicRadioHelperBasicSalary}</if>
+            <if test="basicRadioControlerBasicSalary != null  and basicRadioControlerBasicSalary != ''"> and basic_radio_controler_basic_salary = #{basicRadioControlerBasicSalary}</if>
+            <if test="basicRadioGiven != null  and basicRadioGiven != ''"> and basic_radio_given = #{basicRadioGiven}</if>
+            <if test="basicLadderAnchorBasicSalary != null  and basicLadderAnchorBasicSalary != ''"> and basic_ladder_anchor_basic_salary = #{basicLadderAnchorBasicSalary}</if>
+            <if test="basicLadderHelperBasicSalary != null  and basicLadderHelperBasicSalary != ''"> and basic_ladder_helper_basic_salary = #{basicLadderHelperBasicSalary}</if>
+            <if test="basicLadderControlerBasicSalary != null  and basicLadderControlerBasicSalary != ''"> and basic_ladder_controler_basic_salary = #{basicLadderControlerBasicSalary}</if>
+            <if test="basicLadder != null  and basicLadder != ''"> and basic_ladder = #{basicLadder}</if>
+            <if test="quantityAnchorCommission != null "> and quantity_anchor_commission = #{quantityAnchorCommission}</if>
+            <if test="quantityHelperCommission != null "> and quantity_helper_commission = #{quantityHelperCommission}</if>
+            <if test="quantityControlerCommission != null "> and quantity_controler_commission = #{quantityControlerCommission}</if>
+        </where>
+    </select>
+    
+    <select id="selectVideoShopSalarytemplateById" parameterType="Integer" resultMap="VideoShopSalarytemplateResult">
+        <include refid="selectVideoShopSalarytemplateVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertVideoShopSalarytemplate" parameterType="VideoShopSalarytemplate" useGeneratedKeys="true" keyProperty="id">
+        insert into video_shop_salarytemplate_1
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="localShopId != null">local_shop_id,</if>
+            <if test="name != null">name,</if>
+            <if test="type != null">type,</if>
+            <if test="anchorBasicSalary != null">anchor_basic_salary,</if>
+            <if test="helperBasicSalary != null">helper_basic_salary,</if>
+            <if test="controlerBasicSalary != null">controler_basic_salary,</if>
+            <if test="ratioAnchorDefault != null">ratio_anchor_default,</if>
+            <if test="ratioHelperDefault != null">ratio_helper_default,</if>
+            <if test="ratioControlerDefault != null">ratio_controler_default,</if>
+            <if test="radioGiven != null">radio_given,</if>
+            <if test="ladder != null">ladder,</if>
+            <if test="basicRadioAnchorBasicSalary != null">basic_radio_anchor_basic_salary,</if>
+            <if test="basicRadioHelperBasicSalary != null">basic_radio_helper_basic_salary,</if>
+            <if test="basicRadioControlerBasicSalary != null">basic_radio_controler_basic_salary,</if>
+            <if test="basicRadioGiven != null">basic_radio_given,</if>
+            <if test="basicLadderAnchorBasicSalary != null">basic_ladder_anchor_basic_salary,</if>
+            <if test="basicLadderHelperBasicSalary != null">basic_ladder_helper_basic_salary,</if>
+            <if test="basicLadderControlerBasicSalary != null">basic_ladder_controler_basic_salary,</if>
+            <if test="basicLadder != null">basic_ladder,</if>
+            <if test="quantityAnchorCommission != null">quantity_anchor_commission,</if>
+            <if test="quantityHelperCommission != null">quantity_helper_commission,</if>
+            <if test="quantityControlerCommission != null">quantity_controler_commission,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="localShopId != null">#{localShopId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="type != null">#{type},</if>
+            <if test="anchorBasicSalary != null">#{anchorBasicSalary},</if>
+            <if test="helperBasicSalary != null">#{helperBasicSalary},</if>
+            <if test="controlerBasicSalary != null">#{controlerBasicSalary},</if>
+            <if test="ratioAnchorDefault != null">#{ratioAnchorDefault},</if>
+            <if test="ratioHelperDefault != null">#{ratioHelperDefault},</if>
+            <if test="ratioControlerDefault != null">#{ratioControlerDefault},</if>
+            <if test="radioGiven != null">#{radioGiven},</if>
+            <if test="ladder != null">#{ladder},</if>
+            <if test="basicRadioAnchorBasicSalary != null">#{basicRadioAnchorBasicSalary},</if>
+            <if test="basicRadioHelperBasicSalary != null">#{basicRadioHelperBasicSalary},</if>
+            <if test="basicRadioControlerBasicSalary != null">#{basicRadioControlerBasicSalary},</if>
+            <if test="basicRadioGiven != null">#{basicRadioGiven},</if>
+            <if test="basicLadderAnchorBasicSalary != null">#{basicLadderAnchorBasicSalary},</if>
+            <if test="basicLadderHelperBasicSalary != null">#{basicLadderHelperBasicSalary},</if>
+            <if test="basicLadderControlerBasicSalary != null">#{basicLadderControlerBasicSalary},</if>
+            <if test="basicLadder != null">#{basicLadder},</if>
+            <if test="quantityAnchorCommission != null">#{quantityAnchorCommission},</if>
+            <if test="quantityHelperCommission != null">#{quantityHelperCommission},</if>
+            <if test="quantityControlerCommission != null">#{quantityControlerCommission},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVideoShopSalarytemplate" parameterType="VideoShopSalarytemplate">
+        update video_shop_salarytemplate_1
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="localShopId != null">local_shop_id = #{localShopId},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="anchorBasicSalary != null">anchor_basic_salary = #{anchorBasicSalary},</if>
+            <if test="helperBasicSalary != null">helper_basic_salary = #{helperBasicSalary},</if>
+            <if test="controlerBasicSalary != null">controler_basic_salary = #{controlerBasicSalary},</if>
+            <if test="ratioAnchorDefault != null">ratio_anchor_default = #{ratioAnchorDefault},</if>
+            <if test="ratioHelperDefault != null">ratio_helper_default = #{ratioHelperDefault},</if>
+            <if test="ratioControlerDefault != null">ratio_controler_default = #{ratioControlerDefault},</if>
+            <if test="radioGiven != null">radio_given = #{radioGiven},</if>
+            <if test="ladder != null">ladder = #{ladder},</if>
+            <if test="basicRadioAnchorBasicSalary != null">basic_radio_anchor_basic_salary = #{basicRadioAnchorBasicSalary},</if>
+            <if test="basicRadioHelperBasicSalary != null">basic_radio_helper_basic_salary = #{basicRadioHelperBasicSalary},</if>
+            <if test="basicRadioControlerBasicSalary != null">basic_radio_controler_basic_salary = #{basicRadioControlerBasicSalary},</if>
+            <if test="basicRadioGiven != null">basic_radio_given = #{basicRadioGiven},</if>
+            <if test="basicLadderAnchorBasicSalary != null">basic_ladder_anchor_basic_salary = #{basicLadderAnchorBasicSalary},</if>
+            <if test="basicLadderHelperBasicSalary != null">basic_ladder_helper_basic_salary = #{basicLadderHelperBasicSalary},</if>
+            <if test="basicLadderControlerBasicSalary != null">basic_ladder_controler_basic_salary = #{basicLadderControlerBasicSalary},</if>
+            <if test="basicLadder != null">basic_ladder = #{basicLadder},</if>
+            <if test="quantityAnchorCommission != null">quantity_anchor_commission = #{quantityAnchorCommission},</if>
+            <if test="quantityHelperCommission != null">quantity_helper_commission = #{quantityHelperCommission},</if>
+            <if test="quantityControlerCommission != null">quantity_controler_commission = #{quantityControlerCommission},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteVideoShopSalarytemplateById" parameterType="Integer">
+        delete from video_shop_salarytemplate_1 where id = #{id}
+    </delete>
+
+    <delete id="deleteVideoShopSalarytemplateByIds" parameterType="String">
+        delete from video_shop_salarytemplate_1 where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -3,15 +3,14 @@ package com.ruoyi.web.controller.shop;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.page.TableDataInfo;
-import com.ruoyi.framework.shiro.service.SysPasswordService;
-import com.ruoyi.system.service.ISysDeptService;
-import com.ruoyi.system.service.ISysPostService;
-import com.ruoyi.system.service.ISysRoleService;
 import com.ruoyi.system.service.ISysUserService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -21,10 +20,10 @@ import java.util.List;
  * @author ruoyi
  */
 @Controller
-@RequestMapping("/anchor")
-public class CustomerController extends BaseController
+@RequestMapping("/shop/scheduling")
+public class SchedulingController extends BaseController
 {
-    private String prefix = "shop/anchor";
+    private String prefix = "shop/scheduling";
 
     @Autowired
     private ISysUserService userService;

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('用户列表')" />
+	<th:block th:include="include :: layout-latest-css" />
+	<th:block th:include="include :: ztree-css" />
+
+	<style>
+		.datetimepicker-minutes {
+			height:250px;
+			overflow-y:auto
+		}
+	</style>
+
+	<script>
+
+		document.addEventListener('DOMContentLoaded', function() {
+			var calendarEl = document.getElementById('calendar');
+
+			var calendar = new FullCalendar.Calendar(calendarEl, {
+				headerToolbar: {
+					left: 'prevYear,prev,next,nextYear today',
+					center: 'title',
+					right: 'dayGridMonth,dayGridWeek,dayGridDay'
+				},
+				initialDate: '2023-01-12',
+				navLinks: true, // can click day/week names to navigate views
+				editable: true,
+			// 	dayClick : function(date, allDay, jsEvent, view ) {
+			// 	alert(1111);
+			// },
+				dateClick : function(info) {
+
+					var classCourseDate=info.dateStr;//选择的日期
+					var ccDate = classCourseDate.replace(/\-/g,"");
+					var date = new Date();
+					$("#startTimeAdd").val("");
+					$("#endTimeAdd").val("");
+					//ajax获取班级信息，并展示添加框
+					var prefix = ctx + "system/user";
+					$.ajax({
+						url: prefix+"/list",//因为点击日历某个特定日期时，弹出框需要以下拉框的形式显示班级信息
+						dataType: 'json',
+						type : 'post',
+						success: function(result){ // 获取当前月的数据
+							// var len = result.body.wesClassList.length;
+							// var teacherClassInfo=result.body.wesClassList;
+							str="";
+							$("#classListInfoAdd").empty();
+							str +='<select id="classIdAdd" style="width: 60%;height:30px; padding-left:4px; padding-top:0px;padding-bottom:0px; line-height:30px; color: grey" >';
+							str +='<option value="0">请选择</option>';
+							// for(var i=0;i<len;i++){
+							// 	str +='<option value="'+teacherClassInfo[i].classId+'">'+teacherClassInfo[i].name+'</option>';
+							// }
+							str +='</select>';
+							$("#classListInfoAdd").append(str);//班级下拉框赋值
+							$("#addObjcectInputModalAdd").modal("show");//显示弹出框
+						}
+					});
+					alert('Clicked on: ' + info.dateStr);
+					// change the day's background color just for fun
+					info.dayEl.style.backgroundColor = 'red';
+				},
+				select: function(info) {
+					alert('selected ' + info.startStr + ' to ' + info.endStr);
+				},
+				eventClick: function(info) {
+					alert('Event: ' + info.event.title);
+					// change the border color just for fun
+					info.el.style.borderColor = 'red';
+				},
+				//设置是否可被单击或者拖动选择
+				selectable: true,
+				dayMaxEvents: true, // allow "more" link when too many events
+				events: [
+					{
+						title: 'All Day Event',
+						start: '2023-01-01T12:30:00',
+						end: '2023-01-01T14:30:00'
+					},
+					{
+						title: 'All Day Event',
+						start: '2023-01-01T13:30:00',
+						end: '2023-01-01T14:30:00'
+					},
+					{
+						title: 'Long Event',
+						start: '2023-01-07',
+						end: '2023-01-10'
+					},
+					{
+						groupId: 999,
+						title: 'Repeating Event',
+						start: '2023-01-09T16:00:00'
+					},
+					{
+						groupId: 999,
+						title: 'Repeating Event',
+						start: '2023-01-16T16:00:00'
+					},
+					{
+						title: 'Conference',
+						start: '2023-01-11',
+						end: '2023-01-13'
+					},
+					{
+						title: 'Meeting',
+						start: '2023-01-12T10:30:00',
+						end: '2023-01-12T12:30:00'
+					},
+					{
+						title: 'Lunch',
+						start: '2023-01-12T12:00:00'
+					},
+					{
+						title: 'Meeting',
+						start: '2023-01-12T14:30:00'
+					},
+					{
+						title: 'Happy Hour',
+						start: '2023-01-12T17:30:00'
+					},
+					{
+						title: 'Dinner',
+						start: '2023-01-12T20:00:00'
+					},
+					{
+						title: 'Birthday Party',
+						start: '2023-01-13T07:00:00'
+					},
+					{
+						title: 'Click for Google',
+						url: 'http://google.com/',
+						start: '2023-01-28'
+					}
+				]
+			});
+			calendar.render();
+		});
+
+
+	</script>
+
+</head>
+<body class="gray-bg">
+
+<div id='calendar'></div>
+<div id='addObjcectInputModalAdd' aria-labelledby="addObjcectInputModalAdd" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">New message</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div class="form-group">
+						<label for="recipient-name" class="col-form-label">Recipient:</label>
+						<input type="text" class="form-control" id="recipient-name">
+					</div>
+					<div class="form-group">
+						<label  class="col-form-label">请选择主播</label>
+						<div id="classListInfoAdd"></div>
+					</div>
+					<div class="form-group">
+						<label  class="col-form-label">请选择薪酬模版</label>
+						<div id="templateListInfoAdd"></div>
+					</div>
+					<div class="form-group">
+						<label  class="col-form-label">选择直播时间:</label>
+						<div class="col-md-3">
+							<div class="input-group input-group-sm">
+								<span class="input-group-addon" id="startTime">起始时间</span>
+								<input type="text" name="startTime"
+									   readonly class="form-control form_datetime" id="iptStartTime"/>
+							</div>
+						</div>
+						<div class="col-md-3">
+							<div class="input-group input-group-sm">
+								<span class="input-group-addon" id="endTime">结束时间</span>
+								<input type="text" name="endTime" readonly class="form-control form_datetime" id="iptEndTime"/>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+				<button type="button" class="btn btn-primary">保存</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+	
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: datetimepicker-css" />
+	<th:block th:include="include :: datetimepicker-update-js" />
+	<script th:inline="javascript">
+		var editFlag = [[${@permission.hasPermi('system:user:edit')}]];
+		var removeFlag = [[${@permission.hasPermi('system:user:remove')}]];
+		var resetPwdFlag = [[${@permission.hasPermi('system:user:resetPwd')}]];
+		var prefix = ctx + "system/user";
+
+		$(document).ready(function(){
+			var startStatus = false;
+			var endStatus = false;
+			initDatePlugin();
+		});
+
+		//初始化时间插件
+		function initDatePlugin() {
+			$("#iptStartTime").datetimepicker({
+				language: 'zh-CN', // 语言
+				autoclose: true, //  true:选择时间后窗口自动关闭
+				minuteStep:1,
+				showMeridian: 1,
+				format: 'yyyy-mm-dd hh:ii:ss', // 文本框时间格式，设置为0,最后时间格式为2017-03-23 17:00:00
+				todayHighlight: true, //高亮当日
+
+				clearBtn: true,   //清除按钮
+			}).on("changeDate", function () {
+				//清除开始时间时，结束时间取消限制
+				if (!this.value) {
+					$("#iptEndTime").datetimepicker("setStartDate", "1970-01-01");
+					$("#iptEndTime").datetimepicker("setEndDate", "3000-01-01");
+				} else {
+					//可选结束时间从当前选定时间开始的7日内
+					$("#iptEndTime").datetimepicker("setStartDate", this.value);
+					var end = new Date(this.value);
+					end.setDate(end.getDate() + 7);
+					$("#iptEndTime").datetimepicker("setEndDate", end);
+				}
+			});
+
+			$("#iptEndTime").datetimepicker({
+				language: 'zh-CN', // 语言
+				autoclose: true, //  true:选择时间后窗口自动关闭
+				minuteStep:1,
+				showMeridian: 1,
+				format: 'yyyy-mm-dd hh:ii:ss', // 文本框时间格式，设置为0,最后时间格式为2017-03-23 17:00:00
+				todayHighlight: true, //高亮当日
+
+
+			}).on("changeDate", function () {
+
+				//清楚结束时间时，开始时间取消限制
+				if (!this.value) {
+					$("#iptStartTime").datetimepicker("setEndDate", "3000-01-01");
+					$("#iptStartTime").datetimepicker("setStartDate", "1970-01-01");
+				} else {
+					//可选开始时间从当前选定时间向前7日内
+					$("#iptStartTime").datetimepicker("setEndDate", this.value);
+					var start = new Date(this.value);
+					start.setDate(start.getDate() - 7);
+					$("#iptStartTime").datetimepicker("setStartDate", start);
+				}
+			});
+		};
+		$(function() {
+		    var panehHidden = false;
+		    if ($(this).width() < 769) {
+		        panehHidden = true;
+		    }
+		    // queryUserList();
+		    // queryDeptTree();
+		});
+
+		
+		$('#btnExpand').click(function() {
+			$._tree.expandAll(true);
+		    $(this).hide();
+		    $('#btnCollapse').show();
+		});
+
+
+		/* 用户状态显示 */
+		function statusTools(row) {
+		    if (row.status == 1) {
+    			return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="enable(\'' + row.userId + '\')"></i> ';
+    		} else {
+    			return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="disable(\'' + row.userId + '\')"></i> ';
+    		}
+		}
+		
+		/* 用户管理-停用 */
+		function disable(userId) {
+			$.modal.confirm("确认要停用用户吗？", function() {
+				$.operate.post(prefix + "/changeStatus", { "userId": userId, "status": 1 });
+		    })
+		}
+
+		/* 用户管理启用 */
+		function enable(userId) {
+			$.modal.confirm("确认要启用用户吗？", function() {
+				$.operate.post(prefix + "/changeStatus", { "userId": userId, "status": 0 });
+		    })
+		}
+	</script>
+</body>
+</html>

@@ -94,6 +94,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
 
+    <select id="selectTableIndex" resultType="java.util.HashMap">
+        select table_index,count(table_index) AS total from video_shop
+        group by table_index
+        having total &lt; 20
+        order by table_index asc
+        limit 1
+    </select>
+
+    <select id="selectMaxTableIndex" resultType="java.util.HashMap">
+        select MAX(table_index) from video_shop
+    </select>
+
     <select id="selectVideoShopByOwner" parameterType="String" resultMap="VideoShopResult">
         <include refid="selectVideoShopVo"/>
         where owner = #{owner}
@@ -232,5 +244,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <insert id="createShopGoods" parameterType="Integer" >
+        CREATE TABLE `video_shop_goods_`#{table_index}  (
+                                               `id` int NOT NULL AUTO_INCREMENT COMMENT 'ID',
+                                               `shop_id` int NULL DEFAULT NULL COMMENT '所属店铺ID',
+                                               `product_id` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '小店内部商品ID',
+                                               `title` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '标题',
+                                               `desc_info.desc` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '商品详情文字。如果添加时没录入，回包可能不包含该字段',
+                                               `express_info.weight` double NULL DEFAULT NULL COMMENT '商品重量，单位克',
+                                               `min_price` decimal(10, 2) NULL DEFAULT NULL COMMENT '商品 SKU 最小价格（单位：分）',
+                                               PRIMARY KEY (`id`) USING BTREE
+        ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+    </insert >
 
 </mapper>

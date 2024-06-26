@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.VideoShopOrderMapper">
+    
+    <resultMap type="VideoShopOrder" id="VideoShopOrderResult">
+        <result property="id"    column="id"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="productId"    column="product_id"    />
+        <result property="title"    column="title"    />
+        <result property="skuId"    column="sku_id"    />
+        <result property="skuCnt"    column="sku_cnt"    />
+        <result property="productPrice"    column="product_price"    />
+        <result property="orderPrice"    column="order_price"    />
+        <result property="freight"    column="freight"    />
+        <result property="productCnt"    column="product_cnt"    />
+        <result property="status"    column="status"    />
+        <result property="openid"    column="openid"    />
+        <result property="userName"    column="user_name"    />
+        <result property="telNumber"    column="tel_number"    />
+        <result property="provinceName"    column="province_name"    />
+        <result property="cityName"    column="city_name"    />
+        <result property="countyName"    column="county_name"    />
+        <result property="detailInfo"    column="detail_info"    />
+        <result property="orderScene"    column="order_scene"    />
+        <result property="customerNotes"    column="customer_notes"    />
+        <result property="merchantNotes"    column="merchant_notes"    />
+        <result property="finderId"    column="finder_id"    />
+        <result property="liveId"    column="live_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="confirmReceiptTime"    column="confirm_receipt_time"    />
+    </resultMap>
+
+    <sql id="selectVideoShopOrderVo">
+        select id, order_id, product_id, title, sku_id, sku_cnt, product_price, order_price, freight, product_cnt, status, openid, user_name, tel_number, province_name, city_name, county_name, detail_info, order_scene, customer_notes, merchant_notes, finder_id, live_id, create_time, update_time, confirm_receipt_time from video_shop_order_1
+    </sql>
+
+    <select id="selectVideoShopOrderList" parameterType="VideoShopOrder" resultMap="VideoShopOrderResult">
+        <include refid="selectVideoShopOrderVo"/>
+        <where>  
+            <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>
+            <if test="productId != null  and productId != ''"> and product_id = #{productId}</if>
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="skuId != null  and skuId != ''"> and sku_id = #{skuId}</if>
+            <if test="skuCnt != null "> and sku_cnt = #{skuCnt}</if>
+            <if test="productPrice != null "> and product_price = #{productPrice}</if>
+            <if test="orderPrice != null "> and order_price = #{orderPrice}</if>
+            <if test="freight != null "> and freight = #{freight}</if>
+            <if test="productCnt != null "> and product_cnt = #{productCnt}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="openid != null  and openid != ''"> and openid = #{openid}</if>
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="telNumber != null  and telNumber != ''"> and tel_number = #{telNumber}</if>
+            <if test="provinceName != null  and provinceName != ''"> and province_name like concat('%', #{provinceName}, '%')</if>
+            <if test="cityName != null  and cityName != ''"> and city_name like concat('%', #{cityName}, '%')</if>
+            <if test="countyName != null  and countyName != ''"> and county_name like concat('%', #{countyName}, '%')</if>
+            <if test="detailInfo != null  and detailInfo != ''"> and detail_info = #{detailInfo}</if>
+            <if test="orderScene != null  and orderScene != ''"> and order_scene = #{orderScene}</if>
+            <if test="customerNotes != null  and customerNotes != ''"> and customer_notes = #{customerNotes}</if>
+            <if test="merchantNotes != null  and merchantNotes != ''"> and merchant_notes = #{merchantNotes}</if>
+            <if test="finderId != null  and finderId != ''"> and finder_id = #{finderId}</if>
+            <if test="liveId != null  and liveId != ''"> and live_id = #{liveId}</if>
+            <if test="confirmReceiptTime != null "> and confirm_receipt_time = #{confirmReceiptTime}</if>
+            <if test="createTime != null "> and DATE_FORMAT(create_time, '%Y-%m-%d') =  #{createTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectVideoShopOrderById" parameterType="Long" resultMap="VideoShopOrderResult">
+        <include refid="selectVideoShopOrderVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertVideoShopOrder" parameterType="VideoShopOrder" useGeneratedKeys="true" keyProperty="id">
+        insert into video_shop_order_1
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">order_id,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="title != null">title,</if>
+            <if test="skuId != null">sku_id,</if>
+            <if test="skuCnt != null">sku_cnt,</if>
+            <if test="productPrice != null">product_price,</if>
+            <if test="orderPrice != null">order_price,</if>
+            <if test="freight != null">freight,</if>
+            <if test="productCnt != null">product_cnt,</if>
+            <if test="status != null">status,</if>
+            <if test="openid != null">openid,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="telNumber != null">tel_number,</if>
+            <if test="provinceName != null">province_name,</if>
+            <if test="cityName != null">city_name,</if>
+            <if test="countyName != null">county_name,</if>
+            <if test="detailInfo != null">detail_info,</if>
+            <if test="orderScene != null">order_scene,</if>
+            <if test="customerNotes != null">customer_notes,</if>
+            <if test="merchantNotes != null">merchant_notes,</if>
+            <if test="finderId != null">finder_id,</if>
+            <if test="liveId != null">live_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="confirmReceiptTime != null">confirm_receipt_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">#{orderId},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="title != null">#{title},</if>
+            <if test="skuId != null">#{skuId},</if>
+            <if test="skuCnt != null">#{skuCnt},</if>
+            <if test="productPrice != null">#{productPrice},</if>
+            <if test="orderPrice != null">#{orderPrice},</if>
+            <if test="freight != null">#{freight},</if>
+            <if test="productCnt != null">#{productCnt},</if>
+            <if test="status != null">#{status},</if>
+            <if test="openid != null">#{openid},</if>
+            <if test="userName != null">#{userName},</if>
+            <if test="telNumber != null">#{telNumber},</if>
+            <if test="provinceName != null">#{provinceName},</if>
+            <if test="cityName != null">#{cityName},</if>
+            <if test="countyName != null">#{countyName},</if>
+            <if test="detailInfo != null">#{detailInfo},</if>
+            <if test="orderScene != null">#{orderScene},</if>
+            <if test="customerNotes != null">#{customerNotes},</if>
+            <if test="merchantNotes != null">#{merchantNotes},</if>
+            <if test="finderId != null">#{finderId},</if>
+            <if test="liveId != null">#{liveId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="confirmReceiptTime != null">#{confirmReceiptTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVideoShopOrder" parameterType="VideoShopOrder">
+        update video_shop_order_1
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="skuId != null">sku_id = #{skuId},</if>
+            <if test="skuCnt != null">sku_cnt = #{skuCnt},</if>
+            <if test="productPrice != null">product_price = #{productPrice},</if>
+            <if test="orderPrice != null">order_price = #{orderPrice},</if>
+            <if test="freight != null">freight = #{freight},</if>
+            <if test="productCnt != null">product_cnt = #{productCnt},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="openid != null">openid = #{openid},</if>
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="telNumber != null">tel_number = #{telNumber},</if>
+            <if test="provinceName != null">province_name = #{provinceName},</if>
+            <if test="cityName != null">city_name = #{cityName},</if>
+            <if test="countyName != null">county_name = #{countyName},</if>
+            <if test="detailInfo != null">detail_info = #{detailInfo},</if>
+            <if test="orderScene != null">order_scene = #{orderScene},</if>
+            <if test="customerNotes != null">customer_notes = #{customerNotes},</if>
+            <if test="merchantNotes != null">merchant_notes = #{merchantNotes},</if>
+            <if test="finderId != null">finder_id = #{finderId},</if>
+            <if test="liveId != null">live_id = #{liveId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="confirmReceiptTime != null">confirm_receipt_time = #{confirmReceiptTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteVideoShopOrderById" parameterType="Long">
+        delete from video_shop_order_1 where id = #{id}
+    </delete>
+
+    <delete id="deleteVideoShopOrderByIds" parameterType="String">
+        delete from video_shop_order_1 where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

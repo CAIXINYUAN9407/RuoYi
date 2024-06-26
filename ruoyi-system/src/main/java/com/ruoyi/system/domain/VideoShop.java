@@ -29,6 +29,10 @@ public class VideoShop extends BaseEntity
     @Excel(name = "店铺id")
     private Long shopId;
 
+    /** 店铺id */
+    @Excel(name = "本地店铺id")
+    private Integer localShopId;
+
     /** $column.columnComment */
     @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
     private String shopName;
@@ -193,6 +197,14 @@ public class VideoShop extends BaseEntity
     public void setShopName(String shopName) 
     {
         this.shopName = shopName;
+    }
+
+    public Integer getLocalShopId() {
+        return localShopId;
+    }
+
+    public void setLocalShopId(Integer localShopId) {
+        this.localShopId = localShopId;
     }
 
     public String getShopName() 
@@ -530,4 +542,5 @@ public class VideoShop extends BaseEntity
             .append("shopBizType", getShopBizType())
             .toString();
     }
+
 }

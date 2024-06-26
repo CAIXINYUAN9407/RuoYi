@@ -77,11 +77,19 @@ public class GetAuthorizerList {
                         System.out.println(objM.get("authorizer_appid").toString());
                         System.out.println(objM.get("refresh_token").toString());
                         System.out.println(objM.get("auth_time").toString());
+                        VideoShop videoShopOld = videoShopMapper.selectVideoShopByOwner(objM.get("authorizer_appid").toString());
                         VideoShop videoShop = new VideoShop();
-                        videoShop.setOwner((objM.get("authorizer_appid").toString()));
-                        //刷新令牌
-                        videoShop.setRefreshToken(objM.get("refresh_token").toString().substring(15));
-                        videoShopMapper.insertVideoShop(videoShop);
+                        if(videoShopOld != null){
+                            videoShopOld.setRefreshToken(objM.get("refresh_token").toString().substring(15));
+                            videoShopMapper.updateVideoShop(videoShopOld);
+                        }
+                        else {
+                            videoShop.setOwner((objM.get("authorizer_appid").toString()));
+                            //刷新令牌
+                            videoShop.setRefreshToken(objM.get("refresh_token").toString().substring(15));
+                            videoShopMapper.insertVideoShop(videoShop);
+                        }
+
                     }
 //                    String componentAccessToken = hashMap.get("list");
 //                    log.debug("！！！！！！！！！！！！！！！！！！！！！！"+componentAccessToken);

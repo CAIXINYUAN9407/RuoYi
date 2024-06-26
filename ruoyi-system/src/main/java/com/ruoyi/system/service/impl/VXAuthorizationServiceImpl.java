@@ -7,6 +7,7 @@ import com.ruoyi.system.Util.AesException;
 import com.ruoyi.system.Util.MessageUtil;
 import com.ruoyi.system.Util.WXBizMsgCrypt;
 import com.ruoyi.system.domain.SysUserRole;
+import com.ruoyi.system.domain.VideoShop;
 import com.ruoyi.system.mapper.*;
 import com.ruoyi.system.service.ISysConfigService;
 import com.ruoyi.system.service.VXAuthorizationService;
@@ -41,6 +42,8 @@ public class VXAuthorizationServiceImpl implements VXAuthorizationService
 //    SysUserRoleMapper
     @Autowired
     private SysUserRoleMapper sysUserRoleMapper;
+    @Autowired
+    private VideoShopMapper videoShopMapper;
 
 
     /**
@@ -84,6 +87,32 @@ public class VXAuthorizationServiceImpl implements VXAuthorizationService
                     sysUserNew.setSalt(ShiroUtils.randomSalt());
                     sysUserNew.setPassword(encryptPassword(sysUserNew.getLoginName(),sysUserNew.getLoginName(),sysUserNew.getSalt()));
                     userMapper.insertUser(sysUserNew);
+                    Integer table_index = 0;
+
+                    VideoShop videoShopOld = videoShopMapper.selectVideoShopByOwner(AuthorizerAppid);
+                    HashMap tableIndexMap = videoShopMapper.selectTableIndex();
+                    if (tableIndexMap.get("table_index").toString() != "" || tableIndexMap.get("table_index").toString() != null){
+                        table_index = (Integer) tableIndexMap.get("table_index");
+                    }
+                    else {
+                        table_index = videoShopMapper.selectMaxTableIndex()+1;
+                        videoShopMapper.createShopGoods(table_index);
+                        videoShopMapper.createShopOrder(table_index);
+                        videoShopMapper.createShopAnchor(table_index);
+                        videoShopMapper.createShopSalaryTemplate(table_index);
+                        videoShopMapper.createShopScheduling(table_index);
+                    }
+                    if(videoShopOld == null){
+                        VideoShop videoShop = new VideoShop();
+                        videoShop.setOwner(AuthorizerAppid);
+                        videoShop.setLocalShopId(2);
+                        videoShop.setTableIndex(Long.valueOf(table_index));
+                        videoShopMapper.insertVideoShop(videoShop);
+                    }else {
+
+                    }
+
+
 
                     // 新增用户与角色管理
                     List<SysUserRole> list = new ArrayList<SysUserRole>();

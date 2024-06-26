@@ -855,7 +855,16 @@
           html.push('<span class="' + classes.join(' ') + '">' + hours + ':' + (i < 10 ? '0' + i : i) + '</span>');
         }
       }
-      this.picker.find('.datetimepicker-minutes td').html(html.join(''));
+      // this.picker.find('.datetimepicker-minutes td').html(html.join(''));
+      //添加datetimepicker下拉框，如果配置要选择秒，否则不添加
+      var addSec = /,s{1,2},/.test( ',' +  this.format.parts.join( ',') +  ','), sSec = addSec ?  '<select style="width:100%">' :  '';
+      this.addSec = addSec;
+      if (addSec) {
+        var orgSec =  this.viewDate.getSeconds();
+        for ( var _i = 0; _i < 60; _i++) sSec +=  '<option value="' + _i +  '"' + (_i == orgSec ?  ' selected' :  '') +  '>' + (_i < 10 ?  '0' :  '') + _i +  '</option>';
+        sSec +=  '</select>';
+      }
+      this.picker.find( '.datetimepicker-minutes td').html(html.join( '') + sSec);
 
       var currentYear = this.date.getUTCFullYear();
       var months = this.setTitle('.datetimepicker-months', year)
@@ -1001,6 +1010,8 @@
     click: function (e) {
       e.stopPropagation();
       e.preventDefault();
+      //秒
+      if (e.target.tagName ==  'SELECT' || e.target.tagName ==  'OPTION')  return;
       var target = $(e.target).closest('span, td, th, legend');
       if (target.is('.' + this.icontype)) {
         target = $(target).parent().closest('span, td, th, legend');
@@ -1078,7 +1089,9 @@
                 day = this.viewDate.getUTCDate(),
                 hours = this.viewDate.getUTCHours(),
                 minutes = this.viewDate.getUTCMinutes(),
-                seconds = this.viewDate.getUTCSeconds();
+                // seconds = this.viewDate.getUTCSeconds();
+                //   秒
+                seconds =  this.addSec ?  this.picker.find( 'select').val() :  this.viewDate.getUTCSeconds();
 
               if (target.is('.month')) {
                 this.viewDate.setUTCDate(1);

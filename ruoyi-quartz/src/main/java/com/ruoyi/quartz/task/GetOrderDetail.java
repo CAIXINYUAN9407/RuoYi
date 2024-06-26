@@ -1,12 +1,15 @@
 package com.ruoyi.quartz.task;
 
+import cn.hutool.core.date.DateTime;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.system.domain.VideoShop;
+import com.ruoyi.system.domain.VideoShopOrder;
 import com.ruoyi.system.mapper.SysUserMapper;
 import com.ruoyi.system.mapper.VideoShopMapper;
+import com.ruoyi.system.mapper.VideoShopOrderMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -20,44 +23,42 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
- * 获取授权账号授权令牌
+ * 获取订单详情
  */
-@Component("GetAuthorizerAccessToken")
-public class GetAuthorizerAccessToken {
-    private static final Logger log = LoggerFactory.getLogger(GetComponentAccessToken.class);
+@Configuration
+@Component("GetOrderDetail")
+public class GetOrderDetail {
+    private static final Logger log = LoggerFactory.getLogger(GetOrderDetail.class);
     @Autowired
-    private SysUserMapper userMapper;
-    @Autowired
-    private VideoShopMapper videoShopMapper;
+    private VideoShopOrderMapper videoShopOrderMapper;
+    public void ryMultipleParams(){
+        System.out.println(1111111111);
+    }
     /*
      * 定时获取刷新ComponentAccessToken*/
-    public void ryMultipleParams(String s, Boolean b, Integer j)
+    public void ryMultipleParams(VideoShop videoShop,String orderId)
     {
-        log.debug("====================获取授权账号授权令牌【AuthorizerAccessToken】====================");
-        Map<String, String> reMap;
+        log.debug("====================获取订单详情【GetOrderDetail】====================");
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         String resData= null;
         try {
             // 核心定时器，每一个小时执行一次
             Long userId = 1L;
-            SysUser sysUser = userMapper.selectUserById(userId);
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("component_appid", "wxdc5787bd0edbfc75");
-            jsonObject.put("component_access_token", sysUser.getComponentAccessToken());
-            jsonObject.put("authorizer_appid", "wx08fc080a10109484");
-            jsonObject.put("authorizer_refresh_token", "esFa8MHHJyXWd0gw5E1UbKtmWFK53YyG2jZNswsl3uk");
-            HttpPost httpPost = new HttpPost("https://api.weixin.qq.com/cgi-bin/component/api_authorizer_token?component_access_token="+sysUser.getComponentAccessToken());
+            jsonObject.put("order_id", orderId);
+
+            HttpPost httpPost = new HttpPost("https://api.weixin.qq.com/channels/ec/order/get?access_token="+videoShop.getAccessToken());
             StringEntity stringEntity = new StringEntity(jsonObject.toString());
             stringEntity.setContentType("text/json");
             stringEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             httpPost.setEntity(stringEntity);
-
 
             CloseableHttpResponse response = null;
             try {
@@ -65,17 +66,33 @@ public class GetAuthorizerAccessToken {
                 response = httpClient.execute(httpPost);
                 // 从响应模型中获取响应实体
                 HttpEntity responseEntity = response.getEntity();
-
                 System.out.println("响应状态为:" + response.getStatusLine());
                 if (responseEntity != null) {
                     System.out.println("响应内容长度为:" + responseEntity.getContentLength());
                     resData = EntityUtils.toString(response.getEntity());
                     JSONObject obj = JSONObject.parseObject(resData);
+                    JSONObject orderDetail = (JSONObject) obj.get("order");
                     System.out.println(obj.toString());
+
+                    VideoShopOrder videoShopOrder = new VideoShopOrder();
+                    videoShopOrder.setOrderId((String) orderDetail.get("order_id"));
+                    videoShopOrder.setOpenid((String) orderDetail.get("openid"));
+                    videoShopOrder.setStatus((Integer) orderDetail.get("status"));
+
+                    videoShopOrder.setCreateTime(formatDate((Integer) orderDetail.get("create_time")));
+                    videoShopOrder.setUpdateTime(formatDate((Integer) orderDetail.get("update_time")));
+                    JSONObject orderDetailObject = (JSONObject) orderDetail.get("order_detail");
+                    videoShopOrderMapper.selectVideoShopOrderById(1l);
+                    videoShopOrderMapper.insertVideoShopOrder(videoShopOrder);
+                    //处理加密信息
+                    GetSensitiveInfo getSensitiveInfo = new GetSensitiveInfo();
+                    getSensitiveInfo.ryMultipleParams(videoShop,orderId);
+
+
 //                    HashMap<String, String> hashMap = JSON.parseObject(resData, HashMap.class);
-                    VideoShop videoShop = videoShopMapper.selectVideoShopByOwner("wx08fc080a10109484");
-                    videoShop.setAccessToken(obj.get("authorizer_access_token").toString());
-                    videoShopMapper.updateVideoShop(videoShop);
+//                     videoShop = videoShopMapper.selectVideoShopByOwner("wx08fc080a10109484");
+//                    videoShop.setAccessToken(obj.get("authorizer_access_token").toString().substring(15));
+//                    videoShopMapper.updateVideoShop(videoShop);
                 }
             } catch (ClientProtocolException e) {
                 e.printStackTrace();
@@ -87,7 +104,16 @@ public class GetAuthorizerAccessToken {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        log.debug("====================获取授权账号授权令牌【AuthorizerAccessToken】====================");
+        log.debug("====================获取订单详情【GetOrderDetail】====================");
 
+    }
+
+    public Date formatDate(Integer timestamp){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date(timestamp * 1000L); // 将秒转换为毫秒
+        String formattedDate = sdf.format(date);
+        System.out.println("Date: " + formattedDate);
+//        DateTime dateTime = DateTime.of(DateTime.parse(formattedDate));
+        return date;
     }
 }

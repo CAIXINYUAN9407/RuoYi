@@ -1,5 +1,6 @@
 package com.ruoyi.system.mapper;
 
+import java.util.HashMap;
 import java.util.List;
 import com.ruoyi.system.domain.VideoShop;
 
@@ -28,13 +29,25 @@ public interface VideoShopMapper
     public List<VideoShop> selectVideoShopList(VideoShop videoShop);
 
     /**
-     * 新增店铺
+     * 查询表索引
      * 
+     * @return 结果
+     */
+    public HashMap<String,Object> selectTableIndex();
+
+    /**
+     * 查询表索引最大值
+     *
+     * @return 结果
+     */
+    public int selectMaxTableIndex();
+    /**
+     * 新增店铺
+     *
      * @param videoShop 店铺
      * @return 结果
      */
     public int insertVideoShop(VideoShop videoShop);
-
     /**
      * 修改店铺
      * 
@@ -60,4 +73,14 @@ public interface VideoShopMapper
     public int deleteVideoShopByIds(String[] ids);
 
     VideoShop selectVideoShopByOwner(String Owner);
+
+    void createShopGoods(Integer table_index);
+
+    void createShopOrder(Integer table_index);
+
+    void createShopAnchor(Integer table_index);
+
+    void createShopSalaryTemplate(Integer table_index);
+
+    void createShopScheduling(Integer table_index);
 }
