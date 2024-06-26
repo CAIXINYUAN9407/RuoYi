@@ -80,6 +80,7 @@ public class VXAuthorizationServiceImpl implements VXAuthorizationService
             switch (infoType) {
                 //验证票据
                 case "authorized":
+                    log.info("_______________验证——————————————————————————————");
                     String AuthorizerAppid = msgMap.get("AuthorizerAppid").toString();
                     log.info("AuthorizerAppid"+AuthorizerAppid);
                     SysUser sysUserNew = new SysUser();
