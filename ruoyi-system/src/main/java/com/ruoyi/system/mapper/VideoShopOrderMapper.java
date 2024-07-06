@@ -2,6 +2,7 @@ package com.ruoyi.system.mapper;
 
 import java.util.List;
 import com.ruoyi.system.domain.VideoShopOrder;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 订单表Mapper接口
@@ -58,4 +59,14 @@ public interface VideoShopOrderMapper
      * @return 结果
      */
     public int deleteVideoShopOrderByIds(String[] ids);
+
+    /**
+     * 查询订单表列表(主播佣金结算界面根据订单来源统计来源)
+     *
+     * @param videoShopOrder 订单表
+     * @return 订单表集合
+     */
+    public List<VideoShopOrder> selectVideoShopOrderListAndScene(VideoShopOrder videoShopOrder);
+
+    public Integer selectUnPayCount(@Param("timeBegin")String timeBegin, @Param("timeEnd")String timeEnd);
 }

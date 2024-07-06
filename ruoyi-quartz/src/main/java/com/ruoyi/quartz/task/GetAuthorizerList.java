@@ -38,7 +38,6 @@ public class GetAuthorizerList {
     public void ryMultipleParams(String s, Boolean b, Integer j)
     {
         log.debug("====================拉取已授权的帐号信息【GetAuthorizerList】====================");
-        Map<String, String> reMap;
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         String resData= null;
         try {
@@ -75,16 +74,29 @@ public class GetAuthorizerList {
                     for(Object objN : result){
                         JSONObject objM = (JSONObject) objN;
                         System.out.println(objM.get("authorizer_appid").toString());
-                        System.out.println(objM.get("refresh_token").toString());
-                        System.out.println(objM.get("auth_time").toString());
+//                        System.out.println(objM.get("refresh_token").toString());
+//                        System.out.println(objM.get("auth_time").toString());
+
+                        HashMap tableIndexMap = videoShopMapper.selectTableIndex();
+                        Integer table_index = 0;
+                        if (tableIndexMap != null){
+                            table_index = (Integer) tableIndexMap.get("table_index");
+                            log.info("表索引1——————————————————————————————————"+tableIndexMap.get("table_index").toString());
+                        }
+                        else{
+                            table_index = videoShopMapper.selectMaxTableIndex()+1;
+                            videoShopMapper.createShopGoods("video_shop_goods_"+table_index);
+                        }
                         VideoShop videoShopOld = videoShopMapper.selectVideoShopByOwner(objM.get("authorizer_appid").toString());
                         VideoShop videoShop = new VideoShop();
                         if(videoShopOld != null){
                             videoShopOld.setRefreshToken(objM.get("refresh_token").toString().substring(15));
+                            videoShopOld.setTableIndex((table_index));
                             videoShopMapper.updateVideoShop(videoShopOld);
                         }
                         else {
                             videoShop.setOwner((objM.get("authorizer_appid").toString()));
+                            videoShop.setTableIndex(table_index);
                             //刷新令牌
                             videoShop.setRefreshToken(objM.get("refresh_token").toString().substring(15));
                             videoShopMapper.insertVideoShop(videoShop);

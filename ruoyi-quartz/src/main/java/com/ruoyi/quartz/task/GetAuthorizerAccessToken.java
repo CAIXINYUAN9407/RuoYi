@@ -49,9 +49,9 @@ public class GetAuthorizerAccessToken {
             SysUser sysUser = userMapper.selectUserById(userId);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("component_appid", "wxdc5787bd0edbfc75");
-            jsonObject.put("component_access_token", sysUser.getComponentAccessToken());
-            jsonObject.put("authorizer_appid", "wx08fc080a10109484");
-            jsonObject.put("authorizer_refresh_token", "esFa8MHHJyXWd0gw5E1UbKtmWFK53YyG2jZNswsl3uk");
+            jsonObject.put("authorizer_appid", "wxb8e549fe8d045ac2");
+            VideoShop videoShop = videoShopMapper.selectVideoShopByOwner("wxb8e549fe8d045ac2");
+            jsonObject.put("authorizer_refresh_token", videoShop.getRefreshToken());
             HttpPost httpPost = new HttpPost("https://api.weixin.qq.com/cgi-bin/component/api_authorizer_token?component_access_token="+sysUser.getComponentAccessToken());
             StringEntity stringEntity = new StringEntity(jsonObject.toString());
             stringEntity.setContentType("text/json");
@@ -73,7 +73,6 @@ public class GetAuthorizerAccessToken {
                     JSONObject obj = JSONObject.parseObject(resData);
                     System.out.println(obj.toString());
 //                    HashMap<String, String> hashMap = JSON.parseObject(resData, HashMap.class);
-                    VideoShop videoShop = videoShopMapper.selectVideoShopByOwner("wx08fc080a10109484");
                     videoShop.setAccessToken(obj.get("authorizer_access_token").toString());
                     videoShopMapper.updateVideoShop(videoShop);
                 }

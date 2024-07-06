@@ -92,6 +92,9 @@ public class SysUser extends BaseEntity
     /** 令牌 */
     private String ComponentAccessToken;
 
+    /** 服务市场令牌 */
+    private String MarketAccessToken;
+
     /** 预授权码 */
     private String preAuthCode;
 
@@ -414,5 +417,13 @@ public class SysUser extends BaseEntity
 
     public void setPreAuthCode(String preAuthCode) {
         this.preAuthCode = preAuthCode;
+    }
+
+    public String getMarketAccessToken() {
+        return MarketAccessToken;
+    }
+
+    public void setMarketAccessToken(String marketAccessToken) {
+        MarketAccessToken = marketAccessToken;
     }
 }

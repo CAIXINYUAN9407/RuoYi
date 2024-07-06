@@ -1,14 +1,8 @@
 package com.ruoyi.quartz.task;
 
-import cn.hutool.core.date.DateTime;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.system.domain.VideoShop;
 import com.ruoyi.system.domain.VideoShopOrder;
-import com.ruoyi.system.mapper.SysUserMapper;
-import com.ruoyi.system.mapper.VideoShopMapper;
 import com.ruoyi.system.mapper.VideoShopOrderMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;

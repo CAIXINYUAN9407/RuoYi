@@ -1,6 +1,9 @@
 package com.ruoyi.system.service;
 
+import java.util.HashMap;
 import java.util.List;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ruoyi.system.domain.VideoShopAnchor;
 
 /**
@@ -58,4 +61,13 @@ public interface IVideoShopAnchorService
      * @return 结果
      */
     public int deleteVideoShopAnchorById(Long id);
+
+    List<HashMap<String, Object>> selectJournalingByAnchor(VideoShopAnchor videoShopAnchor);
+
+    List<HashMap<String, Object>> selectSettlementByAnchor(VideoShopAnchor videoShopAnchor) throws JsonProcessingException;
+
+    List<HashMap<String, Object>> getVideoShopAnchorList();
+
+    List<HashMap<String, Object>> getVideoShopTemplateList();
+
 }

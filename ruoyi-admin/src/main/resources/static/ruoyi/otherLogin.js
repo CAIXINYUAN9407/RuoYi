@@ -1,11 +1,14 @@
 
-$(function() {
+function aaa() {
+
+    var code =  $('#code').text();
+    alert (code);
     $.ajax({
         type: "post",
         url: ctx + "OtherLoginAjax",
 
         data: {
-            "code": "111"
+            "code": code
         },
         beforeSend: function () {
             $.modal.loading($("#btnSubmit").data("loading"));
@@ -21,6 +24,6 @@ $(function() {
             $.modal.closeLoading();
         }
     });
-});
+};
 
 

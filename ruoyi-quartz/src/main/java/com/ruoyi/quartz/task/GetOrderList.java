@@ -23,10 +23,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,33 +52,38 @@ public class GetOrderList {
         Map<String, String> reMap;
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         String resData= null;
-        try {
             // 核心定时器，每一个小时执行一次
             Long userId = 1L;
             SysUser sysUser = userMapper.selectUserById(userId);
-            VideoShop videoShop = videoShopMapper.selectVideoShopByOwner("wx08fc080a10109484");
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("page_size", 10);
+            List<VideoShop> videoShopList = videoShopMapper.selectVideoShopListNoExpire();
+            for(int i=0;i<videoShopList.size();i++){
+                try {
+                    VideoShop videoShop = videoShopList.get(i);
 
-            JSONObject jsonObject2 = new JSONObject();
-            jsonObject2.put("start_time",1716267753);
-            jsonObject2.put("end_time",1716858953);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("page_size", 10);
 
-            jsonObject.put("create_time_range", jsonObject2);
-            HttpPost httpPost = new HttpPost("https://api.weixin.qq.com/channels/ec/order/list/get?access_token="+videoShop.getAccessToken());
-            StringEntity stringEntity = new StringEntity(jsonObject.toString());
-            stringEntity.setContentType("text/json");
-            stringEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-            httpPost.setEntity(stringEntity);
+                JSONObject jsonObject2 = new JSONObject();
+                jsonObject2.put("start_time",1716267753);
+                jsonObject2.put("end_time",1716858953);
 
-            CloseableHttpResponse response = null;
-            try {
-                // 由客户端执行(发送)Post请求
+                jsonObject.put("create_time_range", jsonObject2);
+                HttpPost httpPost = new HttpPost("https://api.weixin.qq.com/channels/ec/order/list/get?access_token="+videoShop.getAccessToken());
+                StringEntity stringEntity = null;
+//                try {
+                    stringEntity = new StringEntity(jsonObject.toString());
+//                } catch (UnsupportedEncodingException e) {
+//                    throw new RuntimeException(e);
+//                }
+                stringEntity.setContentType("text/json");
+                stringEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+                httpPost.setEntity(stringEntity);
+                CloseableHttpResponse response = null;
+
                 response = httpClient.execute(httpPost);
-                // 从响应模型中获取响应实体
                 HttpEntity responseEntity = response.getEntity();
-
                 System.out.println("响应状态为:" + response.getStatusLine());
+
                 if (responseEntity != null) {
                     System.out.println("响应内容长度为:" + responseEntity.getContentLength());
                     resData = EntityUtils.toString(response.getEntity());
@@ -87,21 +95,21 @@ public class GetOrderList {
                         getOrderDetail(videoShop,(String) iterator.next());
                     }
                     System.out.println(obj.toString());
-//                    HashMap<String, String> hashMap = JSON.parseObject(resData, HashMap.class);
-//                     videoShop = videoShopMapper.selectVideoShopByOwner("wx08fc080a10109484");
-//                    videoShop.setAccessToken(obj.get("authorizer_access_token").toString().substring(15));
-//                    videoShopMapper.updateVideoShop(videoShop);
+                    httpClient.close();
+                    response.close();
                 }
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-            }  finally {
-                // 释放资源
-                httpClient.close();
-                response.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+
         }
+                catch (ClientProtocolException e){
+                    e.printStackTrace();
+                }
+                catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException(e);
+                }catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
         log.debug("====================获取订单列表【GetOrderList】====================");
 
     }
@@ -137,6 +145,7 @@ public class GetOrderList {
                     System.out.println(obj.toString());
 
                     VideoShopOrder videoShopOrder = new VideoShopOrder();
+                    videoShopOrder.setShopId(videoShop.getId());
                     videoShopOrder.setOrderId((String) orderDetail.get("order_id"));
                     videoShopOrder.setOpenid((String) orderDetail.get("openid"));
                     videoShopOrder.setStatus((Integer) orderDetail.get("status"));

@@ -28,6 +28,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="remark"        column="remark"          />
 		<result property="componentVerifyTicket"    column="component_verify_ticket"     />
 		<result property="componentAccessToken"        column="component_access_token"          />
+		<result property="marketAccessToken"        column="market_access_token"          />
+
 		<association property="dept"     javaType="SysDept"         resultMap="deptResult" />
 		<collection  property="roles"    javaType="java.util.List"  resultMap="RoleResult" />
 	</resultMap>
@@ -52,7 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 	
 	<sql id="selectUserVo">
-        select  u.user_id, u.dept_id, u.login_name, u.user_name, u.user_type, u.email, u.avatar, u.phonenumber, u.sex, u.password, u.salt, u.status, u.del_flag, u.login_ip, u.login_date, u.pwd_update_date, u.create_by, u.create_time, u.update_by, u.update_time, u.remark,u.component_verify_ticket,u.component_access_token,
+        select  u.user_id, u.dept_id, u.login_name, u.user_name, u.user_type, u.email, u.avatar, u.phonenumber, u.sex, u.password, u.salt, u.status, u.del_flag, u.login_ip, u.login_date, u.pwd_update_date, u.create_by, u.create_time, u.update_by, u.update_time, u.remark,u.component_verify_ticket,u.component_access_token,u.market_access_token,
        		    d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.status as dept_status,
        		    r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status as role_status
 		from sys_user u
@@ -190,6 +192,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="componentVerifyTicket != null">component_verify_ticket = #{componentVerifyTicket},</if>
 			<if test="componentAccessToken != null">component_access_token = #{componentAccessToken},</if>
 			<if test="preAuthCode != null">pre_auth_code = #{preAuthCode},</if>
+			<if test="marketAccessToken != null">market_access_token = #{marketAccessToken},</if>
 
 			update_time = sysdate()
  		</set>

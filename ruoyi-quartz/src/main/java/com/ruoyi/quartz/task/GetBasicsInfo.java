@@ -44,14 +44,14 @@ public class GetBasicsInfo {
         try {
             // 核心定时器，每一个小时执行一次
             Long userId = 1L;
+            VideoShop videoShop = videoShopMapper.selectVideoShopByOwner("wxb8e549fe8d045ac2");
+
             SysUser sysUser = userMapper.selectUserById(userId);
             JSONObject jsonObject = new JSONObject();
-            HttpGet httpGet = new HttpGet("https://api.weixin.qq.com/channels/ec/basics/info/get?access_token=81_NwacrJbGtKsQ_Ws46hrPGig-pCkvnbu9Z1u09k4_hng_G6vv5AhNcgP7WUkeWKwBmqYGgzGzYZJ0iccFl4pVplKAE5r1vZJzl9WCrwKDGFbIj7lZAXlBXEFy8tZ_e4CR1Nt3qncvCrYw54LsIPHbAKDOVN");
-            HttpPost httpPost = new HttpPost("https://api.weixin.qq.com/channels/ec/basics/info/get?access_token="+sysUser.getComponentAccessToken());
+            HttpGet httpGet = new HttpGet("https://api.weixin.qq.com/channels/ec/basics/info/get?access_token="+videoShop.getAccessToken());
             StringEntity stringEntity = new StringEntity(jsonObject.toString());
             stringEntity.setContentType("text/json");
             stringEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-            httpPost.setEntity(stringEntity);
 
 
             CloseableHttpResponse response = null;
@@ -67,9 +67,14 @@ public class GetBasicsInfo {
                     resData = EntityUtils.toString(response.getEntity());
                     JSONObject obj = JSONObject.parseObject(resData);
                     System.out.println(obj.toString());
+                    JSONObject orderDetail = (JSONObject) obj.get("info");
+                    videoShop.setShopName((String) orderDetail.get("nickname"));
 //                    HashMap<String, String> hashMap = JSON.parseObject(resData, HashMap.class);
-                    VideoShop videoShop = videoShopMapper.selectVideoShopByOwner("wx08fc080a10109484");
-                    videoShop.setAccessToken(obj.get("authorizer_access_token").toString());
+//                    videoShop.setAccessToken(obj.get("authorizer_access_token").toString());
+                    JSONObject objN = (JSONObject) obj.get("info");
+                    SysUser shopUser = userMapper.selectUserByLoginName("wxb8e549fe8d045ac2");
+                    shopUser.setUserName((String) orderDetail.get("nickname"));
+                    userMapper.updateUser(shopUser);
                     videoShopMapper.updateVideoShop(videoShop);
                 }
             } catch (ClientProtocolException e) {

@@ -63,6 +63,8 @@ public class ShiroUtils
         return getSysUser().getLoginName();
     }
 
+
+
     public static String getIp()
     {
         return StringUtils.substring(getSubject().getSession().getHost(), 0, 128);
