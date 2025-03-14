@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ruoyi.system.domain.VideoShopAnchor;
+import com.ruoyi.system.domain.VideoShopSchedulingVO;
 
 /**
  * 主播信息Service接口
@@ -64,10 +65,13 @@ public interface IVideoShopAnchorService
 
     List<HashMap<String, Object>> selectJournalingByAnchor(VideoShopAnchor videoShopAnchor);
 
+    List<VideoShopSchedulingVO> selectJournalingByAnchorEX(VideoShopAnchor videoShopAnchor);
+
     List<HashMap<String, Object>> selectSettlementByAnchor(VideoShopAnchor videoShopAnchor) throws JsonProcessingException;
 
     List<HashMap<String, Object>> getVideoShopAnchorList();
 
     List<HashMap<String, Object>> getVideoShopTemplateList();
 
+    List<HashMap<String, Object>> getCommissionList();
 }

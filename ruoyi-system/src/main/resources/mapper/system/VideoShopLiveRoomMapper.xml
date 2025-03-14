@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.VideoShopLiveRoomMapper">
+
+    <resultMap type="VideoShopLiveRoom" id="VideoShopLiveRoomResult">
+        <result property="id" column="id"/>
+        <result property="shopId" column="shop_id"/>
+
+        <result property="roomName" column="room_name"/>
+        <result property="isMain" column="is_main"/>
+
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectVideoShopLiveRoomVo">
+        select id,
+               shop_id,
+               is_main,
+               room_name,
+
+               create_time,
+               update_time
+    </sql>
+
+    <select id="selectVideoShopLiveRoomList" parameterType="VideoShopLiveRoom" resultMap="VideoShopLiveRoomResult">
+        <include refid="selectVideoShopLiveRoomVo"/>
+        from video_shop_live_room_${params.tableIndex}
+        <where>
+            <if test="shopId != null  and shopId != ''">and shop_id = #{shopId}</if>
+
+            <if test="isMain != null ">and is_main = #{isMain}</if>
+            <if test="roomName != null ">and room_name = #{roomName}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(create_time,'%Y-%m-%d %H:%i:%s') &gt;= date_format(#{params.beginTime},'%Y-%m-%d %H:%i:%s')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(create_time,'%Y-%m-%d %H:%i:%s') &lt;= date_format(#{params.endTime},'%Y-%m-%d %H:%i:%s')
+            </if>
+        </where>
+        order By is_main DESC,create_time ASC
+    </select>
+
+    <select id="selectLiveRoomByRoomId" resultMap="VideoShopLiveRoomResult">
+        <include refid="selectVideoShopLiveRoomVo"/>
+        from video_shop_live_room_${tableIndex}
+        where id = #{roomId}
+    </select>
+
+    <select id="selectVideoShopLiveRoomByName" resultMap="VideoShopLiveRoomResult">
+        <include refid="selectVideoShopLiveRoomVo"/>
+        from video_shop_live_room_${tableIndex}
+        where shop_id = #{shopId}
+        and room_name = #{roomName}
+    </select>
+
+    <select id="selectVideoShopMainLiveRoomId" resultMap="VideoShopLiveRoomResult">
+        select id
+        from video_shop_live_room_${tableIndex}
+        where shop_id = #{shopId}
+        and is_main = #{isMain}
+    </select>
+
+    <insert id="insertVideoShopLiveRoom" parameterType="VideoShopLiveRoom" useGeneratedKeys="true" keyProperty="id">
+        insert into video_shop_live_room_${params.tableIndex}
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="shopId != null">shop_id,</if>
+
+            <if test="isMain != null">is_main,</if>
+            <if test="roomName != null">room_name,</if>
+
+            <if test="updateTime != null">update_time,</if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="shopId != null">#{shopId},</if>
+
+            <if test="isMain != null">#{isMain},</if>
+            <if test="roomName != null">#{roomName},</if>
+
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            sysdate()
+        </trim>
+    </insert>
+
+    <update id="updateVideoShopLiveRoom" parameterType="VideoShopLiveRoom">
+        update video_shop_live_room_${params.tableIndex}
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="shopId != null">shop_id = #{shopId},</if>
+
+            <if test="isMain != null">is_main = #{isMain},</if>
+            <if test="roomName != null">room_name = #{roomName},</if>
+
+        </trim>
+        update_time = sysdate()
+    </update>
+
+    <delete id="deleteVideoShopLiveRoomById" >
+        delete
+        from video_shop_live_room_${tableIndex}
+        where id = #{id}
+    </delete>
+
+
+</mapper>

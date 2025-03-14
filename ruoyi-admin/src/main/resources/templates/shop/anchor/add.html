@@ -12,16 +12,12 @@
                     <input name="name" class="form-control" type="text">
                 </div>
             </div>
-            <div class="form-group">    
+            <div class="form-group">
                 <label class="col-sm-3 control-label">直播账号：</label>
                 <div class="col-sm-8">
-                    <input name="liveAccount" class="form-control" type="text">
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">底薪：</label>
-                <div class="col-sm-8">
-                    <input name="baseSalary" class="form-control" type="text">
+                    <select name="liveAccount" class="form-control m-b" id="liveAccountSelect">
+
+                    </select>
                 </div>
             </div>
         </form>
@@ -29,6 +25,21 @@
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
         var prefix = ctx + "shop/anchor"
+
+        $.ajax({
+            url: ctx + "shop/anchor/getCommissionList",//因为点击日历某个特定日期时，弹出框需要以下拉框的形式显示信息
+            dataType: 'json',
+            type: 'post',
+            success: function (result) {
+                var typeListHtml = '';
+                $.each(result, function (idx, item) {
+                    typeListHtml += '<option value = ' + item.name + '>' + item.name + '</option>'
+                });
+                $('#liveAccountSelect').html(typeListHtml);
+
+            }
+        });
+
         $("#form-anchor-add").validate({
             focusCleanup: true
         });

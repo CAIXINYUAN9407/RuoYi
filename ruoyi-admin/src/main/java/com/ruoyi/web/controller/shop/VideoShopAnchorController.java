@@ -1,6 +1,13 @@
 package com.ruoyi.web.controller.shop;
 
+import java.util.HashMap;
 import java.util.List;
+
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.utils.ShiroUtils;
+import com.ruoyi.common.utils.security.PermissionUtils;
+import com.ruoyi.system.domain.VideoShop;
+import com.ruoyi.system.service.IVideoShopService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -33,6 +40,9 @@ public class VideoShopAnchorController extends BaseController
 
     @Autowired
     private IVideoShopAnchorService videoShopAnchorService;
+
+    @Autowired
+    private IVideoShopService videoShopService;
 
     @RequiresPermissions("shop:anchor:view")
     @GetMapping()
@@ -69,11 +79,31 @@ public class VideoShopAnchorController extends BaseController
     }
 
     /**
+     * 获取直播账号
+     * @param videoShopAnchor
+     * @return
+     */
+    @PostMapping("/getCommissionList")
+    @ResponseBody
+    public List<HashMap<String, Object>> getCommissionList(VideoShopAnchor videoShopAnchor)
+    {
+        List<HashMap<String, Object>> ruseltList = videoShopAnchorService.getCommissionList();
+        return ruseltList;
+    }
+
+    /**
      * 新增主播信息
      */
+    @RequiresPermissions("shop:anchor:add")
     @GetMapping("/add")
-    public String add()
+    public String add(ModelMap mmap)
     {
+        // 获取当前的用户信息
+        SysUser currentUser = ShiroUtils.getSysUser();
+        // 获取当前的用户名称
+        String loginName = currentUser.getLoginName();
+        VideoShop videoShop = videoShopService.selectVideoShopByOwner(loginName);
+        mmap.put("shopName",videoShop.getShopName()+"直播号");
         return prefix + "/add";
     }
 
@@ -96,6 +126,13 @@ public class VideoShopAnchorController extends BaseController
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Long id, ModelMap mmap)
     {
+
+        SysUser currentUser = ShiroUtils.getSysUser();
+        // 获取当前的用户名称
+        String loginName = currentUser.getLoginName();
+        VideoShop videoShop = videoShopService.selectVideoShopByOwner(loginName);
+        mmap.put("shopName",videoShop.getShopName()+"直播号");
+
         VideoShopAnchor videoShopAnchor = videoShopAnchorService.selectVideoShopAnchorById(id);
         mmap.put("videoShopAnchor", videoShopAnchor);
         return prefix + "/edit";
@@ -122,6 +159,10 @@ public class VideoShopAnchorController extends BaseController
     @ResponseBody
     public AjaxResult remove(String ids)
     {
-        return toAjax(videoShopAnchorService.deleteVideoShopAnchorByIds(ids));
+        int result=videoShopAnchorService.deleteVideoShopAnchorByIds(ids);
+        if(result==-1){
+            return error("该主播存在直播排班，不允许删除");
+        }
+        return toAjax(result);
     }
 }

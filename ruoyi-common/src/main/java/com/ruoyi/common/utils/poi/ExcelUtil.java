@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,6 +25,11 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.utils.ShiroUtils;
+import com.ruoyi.common.utils.security.PermissionUtils;
+import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -202,6 +208,10 @@ public class ExcelUtil<T>
     public ExcelUtil(Class<T> clazz)
     {
         this.clazz = clazz;
+    }
+
+    public ExcelUtil() {
+
     }
 
     /**
@@ -1382,7 +1392,17 @@ public class ExcelUtil<T>
      */
     public String encodingFilename(String filename)
     {
-        filename = UUID.randomUUID() + "_" + filename + ".xlsx";
+//        // 获取当前的用户信息
+//        SysUser currentUser = ShiroUtils.getSysUser();
+//        // 获取当前的用户名称
+//        String loginName = currentUser.getLoginName();
+//        VideoShop videoShop = videoShopService.selectVideoShopByOwner(loginName);
+        String userName = (String) PermissionUtils.getPrincipalProperty("userName");
+
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-mm-ss_HH-mm-ss");
+        String time = dateTimeFormatter.format(LocalDateTime.now());
+        filename = userName+"_"+filename + time+".xlsx";
         return filename;
     }
 

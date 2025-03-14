@@ -75,6 +75,18 @@ public class VideoShopSalarytemplate extends BaseEntity
     @Excel(name = "底薪+比例--中控底薪")
     private String basicRadioControlerBasicSalary;
 
+    /** 底薪+比例--主播底薪 */
+    @Excel(name = "底薪+比例--默认主播商品佣金")
+    private String basicRadioAnchorDefault;
+
+    /** 底薪+比例--助播底薪 */
+    @Excel(name = "底薪+比例--默认助播商品佣金")
+    private String basicRadioHelperDefault;
+
+    /** 底薪+比例--中控底薪 */
+    @Excel(name = "底薪+比例--默认中控商品佣金")
+    private String basicRadioControlerDefault;
+
     /** 底薪+比例--特定佣金 */
     @Excel(name = "底薪+比例--特定佣金")
     private String basicRadioGiven;
@@ -342,5 +354,29 @@ public class VideoShopSalarytemplate extends BaseEntity
             .append("quantityHelperCommission", getQuantityHelperCommission())
             .append("quantityControlerCommission", getQuantityControlerCommission())
             .toString();
+    }
+
+    public String getBasicRadioHelperDefault() {
+        return basicRadioHelperDefault;
+    }
+
+    public void setBasicRadioHelperDefault(String basicRadioHelperDefault) {
+        this.basicRadioHelperDefault = basicRadioHelperDefault;
+    }
+
+    public String getBasicRadioAnchorDefault() {
+        return basicRadioAnchorDefault;
+    }
+
+    public void setBasicRadioAnchorDefault(String basicRadioAnchorDefault) {
+        this.basicRadioAnchorDefault = basicRadioAnchorDefault;
+    }
+
+    public String getBasicRadioControlerDefault() {
+        return basicRadioControlerDefault;
+    }
+
+    public void setBasicRadioControlerDefault(String basicRadioControlerDefault) {
+        this.basicRadioControlerDefault = basicRadioControlerDefault;
     }
 }

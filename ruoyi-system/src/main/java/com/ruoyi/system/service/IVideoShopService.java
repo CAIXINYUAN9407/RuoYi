@@ -1,5 +1,6 @@
 package com.ruoyi.system.service;
 
+import java.util.HashMap;
 import java.util.List;
 import com.ruoyi.system.domain.VideoShop;
 
@@ -58,4 +59,14 @@ public interface IVideoShopService
      * @return 结果
      */
     public int deleteVideoShopById(Long id);
+
+    public VideoShop selectVideoShopByOwner(String owner);
+
+    public HashMap<String, Object> selectVideoShopByOwner1(String owner);
+
+    public void syncjournal();
+
+    public void syncOrder();
+
+    public void syncAfterSaleOrder();
 }

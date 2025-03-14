@@ -45,6 +45,14 @@ public interface VideoShopOrderMapper
     public int updateVideoShopOrder(VideoShopOrder videoShopOrder);
 
     /**
+     * 修改订单表
+     *
+     * @param videoShopOrder 订单表
+     * @return 结果
+     */
+    public int updateVideoShopOrder_UP(VideoShopOrder videoShopOrder);
+
+    /**
      * 删除订单表
      * 
      * @param id 订单表主键
@@ -68,5 +76,15 @@ public interface VideoShopOrderMapper
      */
     public List<VideoShopOrder> selectVideoShopOrderListAndScene(VideoShopOrder videoShopOrder);
 
-    public Integer selectUnPayCount(@Param("timeBegin")String timeBegin, @Param("timeEnd")String timeEnd);
+    public List<VideoShopOrder> selectVideoShopOrderListAndScene_UP(VideoShopOrder videoShopOrder);
+
+    public Integer selectUnPayCount(@Param("shopId")Long id, @Param("timeBegin")String timeBegin, @Param("timeEnd")String timeEnd);
+
+    VideoShopOrder selectVideoShopOrderByOrderId(String orderId);
+
+    VideoShopOrder selectVideoShopOrderByOrderId_UP(@Param("tableIndex")String tableIndex,@Param("orderId")String orderId);
+
+    List<VideoShopOrder> selectVideoShopOrderListByFinderId(String finderId);
+
+    public int insertVideoShopOrder_UP(VideoShopOrder videoShopOrder);
 }

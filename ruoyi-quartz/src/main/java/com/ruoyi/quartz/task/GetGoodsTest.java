@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,62 +44,67 @@ public class GetGoodsTest {
         Map<String, String> reMap;
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         String resData= null;
-        try {
-            // 核心定时器，每一个小时执行一次
-            Long userId = 1L;
-            SysUser sysUser = userMapper.selectUserById(userId);
-            VideoShop videoShop = videoShopMapper.selectVideoShopByOwner("wx08fc080a10109484");
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("page_size", 10);
 
-            JSONObject jsonObject2 = new JSONObject();
-            jsonObject2.put("start_time",1658505600);
-            jsonObject2.put("end_time",1658509200);
-
-            jsonObject.put("create_time_range", jsonObject2);
-            HttpPost httpPost = new HttpPost("https://api.weixin.qq.com/channels/ec/product/list/get?access_token="+videoShop.getAccessToken());
-            StringEntity stringEntity = new StringEntity(jsonObject.toString());
-            stringEntity.setContentType("text/json");
-            stringEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-            httpPost.setEntity(stringEntity);
-
-
-            CloseableHttpResponse response = null;
+        List<VideoShop> videoShopList = videoShopMapper.selectVideoShopListNoExpire();
+        for (int i=0;i<videoShopList.size();i++){
             try {
-                // 由客户端执行(发送)Post请求
-                response = httpClient.execute(httpPost);
-                // 从响应模型中获取响应实体
-                HttpEntity responseEntity = response.getEntity();
+                // 核心定时器，每一个小时执行一次
+                Long userId = 1L;
+                SysUser sysUser = userMapper.selectUserById(userId);
+                VideoShop videoShop = videoShopList.get(i);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("page_size", 10);
 
-                System.out.println("响应状态为:" + response.getStatusLine());
-                if (responseEntity != null) {
-                    System.out.println("响应内容长度为:" + responseEntity.getContentLength());
-                    resData = EntityUtils.toString(response.getEntity());
-                    JSONObject obj = JSONObject.parseObject(resData);
-                    JSONArray productArray = (JSONArray) obj.get("product_ids");
-                    Iterator<Object> iterator = productArray.iterator();
-                    while(iterator.hasNext()){
-                        //商品列表处理
-                        System.out.println(iterator.next());
+                JSONObject jsonObject2 = new JSONObject();
+                jsonObject2.put("start_time",1658505600);
+                jsonObject2.put("end_time",1658509200);
+
+                jsonObject.put("create_time_range", jsonObject2);
+                HttpPost httpPost = new HttpPost("https://api.weixin.qq.com/channels/ec/product/list/get?access_token="+videoShop.getAccessToken());
+                StringEntity stringEntity = new StringEntity(jsonObject.toString());
+                stringEntity.setContentType("text/json");
+                stringEntity.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+                httpPost.setEntity(stringEntity);
+
+
+                CloseableHttpResponse response = null;
+                try {
+                    // 由客户端执行(发送)Post请求
+                    response = httpClient.execute(httpPost);
+                    // 从响应模型中获取响应实体
+                    HttpEntity responseEntity = response.getEntity();
+
+                    System.out.println("响应状态为:" + response.getStatusLine());
+                    if (responseEntity != null) {
+                        System.out.println("响应内容长度为:" + responseEntity.getContentLength());
+                        resData = EntityUtils.toString(response.getEntity());
+                        JSONObject obj = JSONObject.parseObject(resData);
+                        JSONArray productArray = (JSONArray) obj.get("product_ids");
+                        Iterator<Object> iterator = productArray.iterator();
+                        while(iterator.hasNext()){
+                            //商品列表处理
+                            System.out.println(iterator.next());
 //                        JSONObject jsonObject = (JSONObject) iterator.next();
-                        //处理jsonObject
-                    }
-                    System.out.println(obj.toString());
+                            //处理jsonObject
+                        }
+                        System.out.println(obj.toString());
 //                    HashMap<String, String> hashMap = JSON.parseObject(resData, HashMap.class);
 //                     videoShop = videoShopMapper.selectVideoShopByOwner("wx08fc080a10109484");
 //                    videoShop.setAccessToken(obj.get("authorizer_access_token").toString().substring(15));
 //                    videoShopMapper.updateVideoShop(videoShop);
+                    }
+                } catch (ClientProtocolException e) {
+                    e.printStackTrace();
+                }  finally {
+                    // 释放资源
+                    httpClient.close();
+                    response.close();
                 }
-            } catch (ClientProtocolException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
-            }  finally {
-                // 释放资源
-                httpClient.close();
-                response.close();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+
         log.debug("====================获取商品列表【GetGoodsTest】====================");
 
     }

@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('用户列表')"/>
+    <th:block th:include="include :: layout-latest-css"/>
+    <th:block th:include="include :: ztree-css"/>
+
+    <th:block th:include="include :: footer"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+    <th:block th:include="include :: datetimepicker-update-js"/>
+    <style>
+        .datetimepicker-minutes {
+            height: 250px;
+            overflow-y: auto
+        }
+    </style>
+
+
+
+
+</head>
+<body class="gray-bg">
+
+<div>
+    <input id="roomId" type="text" th:value="${roomId}" disabled style="display: none">
+    <label>选择月份:</label>
+    <input type="text" class="time-input" id="selectDate" placeholder="请选择" name="selectDate" autocomplete="off"/>
+    <a class="btn btn-info" onclick="importExcel()">
+        <i class="fa fa-upload"></i> 导入
+    </a>
+    <a class="btn btn-warning" onclick="exportExcel()">
+        <i class="fa fa-download"></i> 导出
+    </a>
+    <a class="btn btn-warning" onclick="batchDelete()">
+        <i class="fa fa-download"></i> 批量删除
+    </a>
+</div>
+<div id='calendar'></div>
+<div id='addObjcectInputModalAdd' aria-labelledby="addObjcectInputModalAdd" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">排班信息</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <input type="text" id="id" style="display: none"></input>
+                        <input type="text" id="beginDate" style="display: none">
+                        <input type="text" id="endDate" style="display: none">
+                        <input id="roomIdAddModel" type="text" th:value="${roomId}" disabled style="display: none">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">请选择主播</label>
+                        <select id="anchorSelect" style="width: 200px;"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">请选择薪酬模版</label>
+                        <select id="templateSelect" style="width: 200px;"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">选择直播时间:</label>
+                        <input type="text" id="date" style="display: none">
+                        <div class="tab-pane left" id="forum">
+                            <input type="text" class="time-input" id="timeBegin" placeholder="请选择开始时间"
+                                   name="params[beginTime3]" autocomplete="off"/>
+                            <input type="text" class="time-input" id="timeEnd" placeholder="请选择结束时间"
+                                   name="params[endTime3]" autocomplete="off"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" ONCLICK="saveTemplate()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script th:inline="javascript">
+
+    var editFlag = [[${@permission.hasPermi('system:user:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('system:user:remove')}]];
+    var resetPwdFlag = [[${@permission.hasPermi('system:user:resetPwd')}]];
+    var prefix = ctx + "shop/scheduling";
+    var importUrl = prefix + "/importData";
+
+
+    //保存排班信息
+    function saveTemplate() {
+        var Id = $("#id").val();
+
+        var roomId = $("#roomIdAddModel").val();
+
+        var anchorId = $("#anchorSelect").val();
+        var anchorName = $("#anchorSelect").find("option:selected").text();
+        var templateId = $("#templateSelect").val();
+        var templateName = $("#templateSelect").find("option:selected").text();
+
+        var beginDate = $("#beginDate").val();
+        var endDate = $("#endDate").val();
+
+
+        var timeBegin = beginDate + " " + $("#timeBegin").val();
+        var timeEnd = "";
+
+
+        if ($("#timeEnd").val() > $("#timeBegin").val()) {
+            timeEnd = endDate + " " + $("#timeEnd").val();
+        } else {
+            // var dateString = '2023-04-01';
+            var date = new Date(endDate);
+            date.setDate(date.getDate() + 1);
+            var newDateString = date.toISOString().split('T')[0];
+            timeEnd = newDateString + " " + $("#timeEnd").val();
+        }
+
+        // var timeEnd =  newDateString + " "+$("#timeEnd").val();
+        var aa = " " + $("#timeEnd").val();
+        if (!(Id.length === 0)) {
+            $.ajax({
+                url: ctx + "shop/scheduling/updateScheduling",//因为点击日历某个特定日期时，弹出框需要以下拉框的形式显示班级信息
+                contentType: 'application/json',
+                type: 'post',
+                data: JSON.stringify({
+                    Id: Id,
+                    roomId: roomId,
+                    anchorId: anchorId,
+                    anchorName: anchorName,
+                    templateId: templateId,
+                    templateName: templateName,
+                    timeBegin: timeBegin,
+                    timeEnd: timeEnd
+                }),
+                success: function (result) { // 获取当前月的数据
+                    if (result.code == 500) {
+                        alert(result.msg);
+                    } else {
+                        alert("保存成功");
+                        location.reload();
+                    }
+                }
+            });
+        } else {
+            $.ajax({
+                url: ctx + "shop/scheduling/addScheduling",//因为点击日历某个特定日期时
+                contentType: 'application/json',
+                type: 'post',
+                data: JSON.stringify({
+                    roomId: roomId,
+                    anchorId: anchorId,
+                    anchorName: anchorName,
+                    templateId: templateId,
+                    templateName: templateName,
+                    beginDate: beginDate,
+                    endDate: endDate,
+                    timeBegin: timeBegin,
+                    timeEnd: timeEnd,
+                    beginDateEndTime: beginDate + aa
+                }),
+                success: function (result) { // 获取当前月的数据
+                    if (result.code == 500) {
+                        alert(result.msg);
+                    } else {
+                        alert("保存成功");
+                        location.reload();
+                    }
+                },
+                error: function (result) {
+                }
+            });
+        }
+
+
+    }
+
+    $('#btnExpand').click(function () {
+        $._tree.expandAll(true);
+        $(this).hide();
+        $('#btnCollapse').show();
+    });
+
+
+    //补零方法
+    function padWithZero(number) {
+        return number < 10 ? '0' + number : number.toString();
+    }
+
+    //批量删除
+    function batchDelete() {
+        var rows = [];
+        var selectedCheckboxes = $('.custom-checkbox:checked');
+        selectedCheckboxes.each(function () {
+            var id = $(this).attr("id").substring(11);
+            rows.push(id);
+        });
+        $.modal.confirm("确认要删除选中的" + rows.length + "条数据吗?", function () {
+            if (rows.length < 1) {
+                return false;
+            }
+            var data = {"ids": rows.join()};
+            $.ajax({
+                url: ctx + "shop/scheduling/remove",
+                data: data,
+                dataType: 'json',
+                type: 'post',
+                success: function (result) {
+                    location.reload();
+                }
+            });
+        });
+    }
+</script>
+<!-- 导入区域 -->
+<script id="importTpl" type="text/template">
+    <form enctype="multipart/form-data" class="mt20 mb10">
+        <div class="col-xs-offset-1">
+            <input type="file" id="file" name="file"/>
+            <div class="mt10 pt5">
+                <input type="checkbox" id="updateSupport" name="updateSupport"
+                       title="如果登录账户已经存在，更新这条数据。"> 是否更新已经存在的用户数据
+                <!--				&nbsp;	<a onclick="$.table.importTemplate()" class="btn btn-default btn-xs"><i class="fa fa-file-excel-o"></i> 下载模板</a>-->
+            </div>
+            <font color="red" class="pull-left mt10">
+                提示：仅允许导入“xls”或“xlsx”格式文件！
+            </font>
+        </div>
+    </form>
+</script>
+</body>
+
+<script>
+    var today = new Date();
+    var year = today.getFullYear();
+    var month = ('0' + (today.getMonth() + 1)).slice(-2);
+    var day = ('0' + today.getDate()).slice(-2);
+    var formattedDate = year + '-' + month + '-' + day;
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            buttonText: {
+                prevYear: '上一年', prev: '上一月', next: '下一月', nextYear: '下一年',
+                today: '今天',
+                month: '月视图',
+                week: '周视图',
+                day: '日视图'
+            },
+            // titleFormat: {
+            // 	month: 'YYYY年MM月' ,                             // September 2009
+            // 	week: "MMM d[ yyyy]{ '—'[ MMM] d yyyy}",  // Sep 7 - 13 2009
+            // 	day: 'dddd, MMM d, yyyy'
+            // },
+            locale: 'zh-cn',
+            headerToolbar: {
+                left: 'prevYear,prev,next,nextYear today',
+                center: 'title',
+                right: ''
+            },
+            initialDate: formattedDate,
+            navLinks: true, // can click day/week names to navigate views
+            editable: true,
+            select: function (info) {
+                // alert('selected ' + info.startStr + ' to ' + info.endStr);
+                $("#addObjcectInputModalAdd").modal("show");//显示弹出框
+                ooooo();
+                $.ajax({
+                    url: ctx + "anchor/getAnchorList",//因为点击日历某个特定日期时，弹出框需要以下拉框的形式显示信息
+                    dataType: 'json',
+                    type: 'post',
+                    success: function (result) { // 获取当前月的数据
+                        var typeListHtml = '';
+                        $.each(result, function (idx, item) {
+                            typeListHtml += '<option value = ' + item.id + '>' + item.name + '</option>'
+                        });
+                        $('#anchorSelect').html(typeListHtml);
+
+                    }
+                });
+                $.ajax({
+                    url: ctx + "anchor/getTemplateList",//因为点击日历某个特定日期时，弹出框需要以下拉框的形式显示信息
+                    dataType: 'json',
+                    type: 'post',
+                    success: function (result) { // 获取当前月的数据
+                        var typeListHtml = '';
+                        $.each(result, function (idx, item) {
+                            typeListHtml += '<option value = ' + item.id + '>' + item.name + '</option>'
+                        });
+                        $('#templateSelect').html(typeListHtml);
+                    }
+                });
+                $("#date").val(info.startStr);
+                $("#beginDate").val(info.startStr);
+
+                var date = new Date(info.endStr);
+                date.setDate(date.getDate() - 1);
+// 将更新后的日期格式化为字符串
+                var newDateString = date.toISOString().split('T')[0];
+                $("#endDate").val(newDateString);
+
+            },
+            eventClick: function (info) {
+
+                var target = info.jsEvent.target;
+                if (target.tagName.toLowerCase() === 'input' && target.getAttribute('type') === 'checkbox') {
+                    // 点击的是checkbox
+                    return false;
+                    // 在这里可以写你的逻辑代码
+                } else {
+
+                    $("#addObjcectInputModalAdd").modal("show");//显示弹出框
+                    ooooo();
+                    var classCourseDate = info.event.startStr;//选择的日期
+                    $("#date").val(info.event.startStr.substring(0, 10));
+
+                    $("#beginDate").val(info.event.startStr.substring(0, 10));
+                    $("#endDate").val(info.event.startStr.substring(0, 10));
+                    $.ajax({
+                        url: ctx + "anchor/getAnchorList",//因为点击日历某个特定日期时，弹出框需要以下拉框的形式显示班级信息
+                        dataType: 'json',
+                        type: 'post',
+                        success: function (result) { // 获取当前月的数据
+                            var typeListHtml = '';
+                            $.each(result, function (idx, item) {
+                                typeListHtml += '<option value = ' + item.id + '>' + item.name + '</option>'
+                            });
+                            $('#anchorSelect').html(typeListHtml);
+                            $("#anchorSelect").val(info.event.extendedProps.iddd);
+                        }
+                    });
+
+                    $("#anchorSelect").val(info.event.extendedProps.iddd);
+
+                    $.ajax({
+                        url: ctx + "anchor/getTemplateList",//因为点击日历某个特定日期时，弹出框需要以下拉框的形式显示班级信息
+                        dataType: 'json',
+                        type: 'post',
+                        success: function (result) { // 获取当前月的数据
+                            var typeListHtml = '';
+                            $.each(result, function (idx, item) {
+                                typeListHtml += '<option value = ' + item.id + '>' + item.name + '</option>'
+                            });
+                            $('#templateSelect').html(typeListHtml);
+                            var id = info.event.extendedProps.schId;
+                            $("#id").val(id);
+                            $("#templateSelect").val(info.event.extendedProps.template_id);
+                            var timeBegin = info.event.startStr.replace('T', ' ');
+                            var timeEnd = info.event.endStr.replace('T', ' ');
+                            $("#timeBegin").val(timeBegin.substring(timeBegin.length - 14, timeBegin.length - 6));
+                            $("#timeEnd").val(timeEnd.substring(timeBegin.length - 14, timeEnd.length - 6));
+                        }
+                    });
+                    info.el.style.borderColor = 'red';
+                }
+                // event.preventDefault();
+                // return false;
+
+                // 可以在这里添加代码处理checkbox的点击事件
+            },
+            //设置是否可被单击或者拖动选择
+            selectable: true,
+            dayMaxEvents: true, // allow "more" link when too many events
+            //所有视图显示结束时间
+            displayEventEnd: true,
+            events: function (info, successCallback, errorCallback) {
+                var roomId = $('#roomId').val();
+
+                var params = {};
+                //params.XX必须与Spring Mvc controller中的参数名称一致
+                //否则在controller中使用@RequestParam绑定
+                params.roomId = roomId;
+                // 使用Ajax从服务器获取数据
+                $.ajax({
+                    url: ctx + "shop/scheduling/GetCalendarList", // 替换为您的事件数据接口
+                    data: params,
+                    dataType: 'json',
+                    type: 'post',
+                    success: function (data) {
+                        successCallback(data); // 成功时将数据传递给日历
+                    },
+                    error: function () {
+                        errorCallback(); // 请求失败时调用
+                    }
+                });
+            },
+            eventContent: function (arg, createElement) {
+                var checkbox = document.createElement('checkbox');
+                var italicEl = document.createElement('span');
+                italicEl.innerHTML = '<input type="checkbox" id="myCheckbox_' + arg.event._def.extendedProps.schId + '" class="custom-checkbox"/> <span>' + arg.event._def.title + " " + arg.event.startStr.substring(11, 19) + "-" + arg.event.endStr.substring(11, 19) + '</span>';
+                var arrayOfDomNodes = [italicEl]
+                return {
+                    domNodes: arrayOfDomNodes
+                }
+
+            }
+        });
+        calendar.render();
+        // 获取所有的li元素
+        const listItems = document.querySelectorAll('.custom-checkbox');
+        // 为每个li元素添加点击事件
+        listItems.forEach(function (listItem) {
+            listItem.addEventListener('click', function (event) {
+                // 这里处理点击事件
+                alert('你点击了: ');
+
+            });
+        });
+
+// 为每个li元素添加点击事件
+        listItems.forEach(function (listItem) {
+            listItem.addEventListener('click', function (event) {
+                // 这里处理点击事件
+                alert('你点击了: ' + event.target.textContent);
+            });
+        });
+// 确保日历渲染完成后再添加事件监听器
+//             $('#calendar').on('click', '.custom-checkbox', function(event) {
+//                 // 事件处理代码
+//                 return false;
+//             });
+
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+            var selectDate = laydate.render({
+                elem: '#selectDate',
+                type: 'month', // 设置类型为年月
+                format: 'yyyy-MM',
+                done: function (value, date) {
+                    var dateZero = padWithZero(date.month);
+                    calendar.gotoDate(date.year + "-" + dateZero + "-01T12:30:00Z");
+                }
+            });
+        });
+        // calendar.gotoDate("2018-06-01T12:30:00Z");
+
+    });
+
+    //初始化时间插件
+    function ooooo() {
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+            var laydateEnd = laydate.render({
+                elem: '#timeEnd',
+                type: 'time'
+            });
+            var laydateBegin = laydate.render({
+                elem: '#timeBegin',
+                type: 'time',
+                done: function (value, date) {
+                    laydateEnd.config.min = {
+                        hour: 15
+
+                    }
+                }
+            });
+        });
+    }
+
+    // 导出数据
+    function exportExcel() {
+        var roomId = $("#roomIdAddModel").val();
+        var prefix = ctx + "../shop/scheduling";
+        var exportUrl = prefix + "/export/"+roomId;
+        table.set();
+        $.modal.confirm("确定导出数据吗？", function () {
+            // var currentId = $.common.isEmpty(formId) ? $('form').attr('id') : formId;
+            // var params = $("#" + table.options.id).bootstrapTable('getOptions');
+            // var dataParam = $("#" + currentId).serializeArray();
+            // dataParam.push({ "name": "orderByColumn", "value": params.sortName });
+            // dataParam.push({ "name": "isAsc", "value": params.sortOrder });
+            $.modal.loading("正在导出数据，请稍候...");
+            $.post(exportUrl, function (result) {
+                if (result.code == web_status.SUCCESS) {
+                    window.location.href = ctx + "common/download?fileName=" + encodeURI(result.msg) + "&delete=" + true;
+                } else if (result.code == web_status.WARNING) {
+                    $.modal.alertWarning(result.msg)
+                } else {
+                    $.modal.alertError(result.msg);
+                }
+                $.modal.closeLoading();
+            });
+        });
+    };
+
+    // 导入数据
+    function importExcel(formId, width, height) {
+        table.set();
+        var currentId = $.common.isEmpty(formId) ? 'importTpl' : formId;
+        var _width = $.common.isEmpty(width) ? "400" : width;
+        var _height = $.common.isEmpty(height) ? "230" : height;
+        top.layer.open({
+            type: 1,
+            area: [_width + 'px', _height + 'px'],
+            fix: false,
+            //不固定
+            maxmin: true,
+            shade: 0.3,
+            title: '导入排班数据',
+            content: $('#' + currentId).html(),
+            btn: ['<i class="fa fa-check"></i> 导入', '<i class="fa fa-remove"></i> 取消'],
+            // 弹层外区域关闭
+            shadeClose: true,
+            btn1: function (index, layero) {
+                var file = layero.find('#file').val();
+                if (file == '' || (!$.common.endWith(file, '.xls') && !$.common.endWith(file, '.xlsx'))) {
+                    $.modal.msgWarning("请选择后缀为 “xls”或“xlsx”的文件。");
+                    return false;
+                }
+                var index = top.layer.load(2, {shade: false});
+                $.modal.disable();
+                var formData = new FormData(layero.find('form')[0]);
+                // var prefix = ctx + "shop/scheduling/importData";
+                $.ajax({
+                    url: ctx + "../videoShop/schedulingTest/importData",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    type: 'POST',
+                    success: function (result) {
+                        if (result.code == web_status.SUCCESS) {
+                            $.modal.close(index);
+                            $.modal.closeAll();
+                            $.modal.alertSuccess(result.msg);
+                            $.table.refresh();
+                        } else if (result.code == web_status.WARNING) {
+                            $.modal.close(index);
+                            $.modal.enable();
+                            $.modal.alertWarning(result.msg)
+                        } else {
+                            $.modal.close(index);
+                            $.modal.enable();
+                            $.modal.alertError(result.msg);
+                        }
+                    },
+                    complete: function () {
+                        layero.find('#file').val('');
+                    }
+                });
+            }
+        });
+    };
+
+
+</script>
+</html>

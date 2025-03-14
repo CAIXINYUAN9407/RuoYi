@@ -1,15 +1,12 @@
 package com.ruoyi.web.controller.shop;
 
+import java.util.HashMap;
 import java.util.List;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.system.domain.VideoShopOrder;
@@ -18,6 +15,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * 订单表Controller
@@ -36,9 +34,17 @@ public class VideoShopOrderController extends BaseController
 
     @RequiresPermissions("system:order:view")
     @GetMapping()
-    public String order()
+    @ResponseBody
+    public Object order()
     {
-        return prefix + "/order";
+        VideoShopOrder videoShopOrder = new VideoShopOrder();
+        List<VideoShopOrder> list = videoShopOrderService.selectVideoShopOrderList(videoShopOrder);
+        HashMap<String,Object> hashMap = new HashMap<String,Object>();
+        hashMap.put("qqq","normal");
+        hashMap.put("beginDateTime","beginDateTime");
+        hashMap.put("endDateTime","endDateTime");
+        hashMap.put("type","type");
+        return new ModelAndView(prefix + "/order","q",hashMap);
     }
 
     /**
@@ -49,22 +55,51 @@ public class VideoShopOrderController extends BaseController
     @ResponseBody
     public TableDataInfo list(VideoShopOrder videoShopOrder)
     {
-        startPage();
+//        startPage();
         List<VideoShopOrder> list = videoShopOrderService.selectVideoShopOrderList(videoShopOrder);
         return getDataTable(list);
     }
 
     /**
+     * 查询订单表列表
+     */
+    @RequiresPermissions("system:order:list")
+    @GetMapping("/goToUrl")
+    @ResponseBody
+    public Object goToUrl(@RequestParam("date") String date, @RequestParam("etc") String etc, @RequestParam("type") String type)
+    {
+//        startPage();
+        VideoShopOrder videoShopOrder = new VideoShopOrder();
+        String beginDateTime = date +" "+ etc.substring(0,8);
+        String endDateTime = date +  " " +etc.substring(9);
+        HashMap<String,Object> hashMap = new HashMap<String,Object>();
+        hashMap.put("qqq","goToUrl");
+        hashMap.put("beginDateTime",beginDateTime);
+        hashMap.put("endDateTime",endDateTime);
+        if(type.equals("10")){
+            hashMap.put("type","(10,20,21,30,100,200,250)");
+        }
+        else if(type.equals("11")){
+            hashMap.put("type","(20,21,30,100)");
+        } else if (type.equals("22")) {
+            hashMap.put("type","(250)");
+        }
+        return new ModelAndView(prefix + "/order","q",hashMap);
+    }
+    /**
      * 导出订单表列表
      */
-    @RequiresPermissions("system:order:export")
     @Log(title = "订单表", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     @ResponseBody
     public AjaxResult export(VideoShopOrder videoShopOrder)
     {
-        List<VideoShopOrder> list = videoShopOrderService.selectVideoShopOrderList(videoShopOrder);
+//        ExcelUtil<HashMap<String,Object>> util = new ExcelUtil<HashMap<String,Object>>();
+
+        List<VideoShopOrder> list = videoShopOrderService.selectVideoShopOrderListExport(videoShopOrder);
         ExcelUtil<VideoShopOrder> util = new ExcelUtil<VideoShopOrder>(VideoShopOrder.class);
+        util.hideColumn("id", "shopId","thumbImg","skuId","productCnt","openid","userName","telNumber","virtualTelNumber","virtualTelExpireTime","getVirtualTelCnt","provinceName","cityName","countyName","detailInfo");
+//        util.addR("1",1,1,1,1);
         return util.exportExcel(list, "订单表数据");
     }
 
@@ -123,5 +158,15 @@ public class VideoShopOrderController extends BaseController
     public AjaxResult remove(String ids)
     {
         return toAjax(videoShopOrderService.deleteVideoShopOrderByIds(ids));
+    }
+
+    /**
+     * 解密订单手机号
+     */
+    @PostMapping( "/decryptTel")
+    @ResponseBody
+    public AjaxResult decryptTel(String orderId,String localShopId)
+    {
+        return success(videoShopOrderService.decryptTel(orderId,localShopId));
     }
 }

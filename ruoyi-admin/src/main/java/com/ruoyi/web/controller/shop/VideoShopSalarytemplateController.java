@@ -1,6 +1,8 @@
 package com.ruoyi.web.controller.shop;
 
 import java.util.List;
+
+import com.ruoyi.system.service.IVideoShopSchedulingService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -33,6 +35,9 @@ public class VideoShopSalarytemplateController extends BaseController
 
     @Autowired
     private IVideoShopSalarytemplateService videoShopSalarytemplateService;
+
+    @Autowired
+    private IVideoShopSchedulingService videoShopSchedulingService;
 
     @RequiresPermissions("system:salarytemplate:view")
     @GetMapping()
@@ -122,6 +127,12 @@ public class VideoShopSalarytemplateController extends BaseController
     @ResponseBody
     public AjaxResult remove(String ids)
     {
+        //存在相应排班信息则不允许删除
+        int count = videoShopSchedulingService.selectCountByTemplateId(ids);
+
+        if(count>0){
+            return AjaxResult.error("该模版已被应用，拒绝删除");
+        }
         return toAjax(videoShopSalarytemplateService.deleteVideoShopSalarytemplateByIds(ids));
     }
 }

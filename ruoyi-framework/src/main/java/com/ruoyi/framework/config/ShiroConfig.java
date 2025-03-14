@@ -300,6 +300,7 @@ public class ShiroConfig
         // 不需要拦截的访问
         filterChainDefinitionMap.put("/login", "anon,captchaValidate");
         filterChainDefinitionMap.put("/callback/**", "anon");
+        filterChainDefinitionMap.put("/wxdc5787bd0edbfc75/callback/**", "anon");
         filterChainDefinitionMap.put("/OtherLogin", "anon");
         filterChainDefinitionMap.put("/OtherLoginAjax", "anon");
         // filterChainDefinitionMap.putAll(SpringUtils.getBean(IMenuService.class).selectPermsAll());

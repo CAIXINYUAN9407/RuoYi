@@ -38,6 +38,10 @@ public class VideoShop extends BaseEntity
     private String shopName;
 
     /** $column.columnComment */
+    @Excel(name = "主视频号")
+    private String mainFinderId;
+
+    /** $column.columnComment */
     @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
     private String accessToken;
 
@@ -100,6 +104,10 @@ public class VideoShop extends BaseEntity
     private Date afterSaleLastSyncTime;
 
     /** 购买服务之后服务的开始生效时间，时间戳，单位：秒 */
+    @Excel(name = "购买服务套餐id")
+    private Integer serviceSpecId;
+
+    /** 购买服务之后服务的开始生效时间，时间戳，单位：秒 */
     @Excel(name = "购买服务之后服务的开始生效时间，时间戳，单位：秒")
     private Long serviceStartTime;
 
@@ -149,7 +157,7 @@ public class VideoShop extends BaseEntity
 
     /** 表索引 */
     @Excel(name = "表索引")
-    private Long tableIndex;
+    private Integer tableIndex;
 
     /** 1状态是否同步 */
     @Excel(name = "1状态是否同步")
@@ -454,12 +462,12 @@ public class VideoShop extends BaseEntity
     {
         return afterSaleSyncLock;
     }
-    public void setTableIndex(Long tableIndex) 
+    public void setTableIndex(Integer tableIndex)
     {
         this.tableIndex = tableIndex;
     }
 
-    public Long getTableIndex() 
+    public Integer getTableIndex()
     {
         return tableIndex;
     }
@@ -543,4 +551,19 @@ public class VideoShop extends BaseEntity
             .toString();
     }
 
+    public String getMainFinderId() {
+        return mainFinderId;
+    }
+
+    public void setMainFinderId(String mainFinderId) {
+        this.mainFinderId = mainFinderId;
+    }
+
+    public Integer getServiceSpecId() {
+        return serviceSpecId;
+    }
+
+    public void setServiceSpecId(Integer serviceSpecId) {
+        this.serviceSpecId = serviceSpecId;
+    }
 }

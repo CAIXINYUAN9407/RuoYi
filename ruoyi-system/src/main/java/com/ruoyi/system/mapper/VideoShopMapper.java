@@ -3,6 +3,7 @@ package com.ruoyi.system.mapper;
 import java.util.HashMap;
 import java.util.List;
 import com.ruoyi.system.domain.VideoShop;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 店铺Mapper接口
@@ -74,13 +75,21 @@ public interface VideoShopMapper
 
     VideoShop selectVideoShopByOwner(String Owner);
 
-    void createShopGoods(Integer table_index);
+    void createShopGoods(@Param("tableIndex")String tableIndex);
 
-    void createShopOrder(Integer table_index);
+    void createShopOrder(@Param("tableIndex")String tableIndex);
 
-    void createShopAnchor(Integer table_index);
+    void createShopAfterSaleOrder(@Param("tableIndex")String tableIndex);
 
-    void createShopSalaryTemplate(Integer table_index);
+    void createShopAnchor(@Param("tableIndex")String tableIndex);
 
-    void createShopScheduling(Integer table_index);
+    void createShopSalaryTemplate(@Param("tableIndex")String tableIndex);
+
+    void createShopScheduling(@Param("tableIndex")String tableIndex);
+
+    void createShopLiveRoom(@Param("tableIndex")String tableIndex);
+
+    List<VideoShop> selectVideoShopListNoExpire();
+
+    HashMap<String, Object> selectVideoShopByOwner1(String owner);
 }

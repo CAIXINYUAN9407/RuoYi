@@ -2,7 +2,6 @@
 function aaa() {
 
     var code =  $('#code').text();
-    alert (code);
     $.ajax({
         type: "post",
         url: ctx + "OtherLoginAjax",
@@ -11,7 +10,8 @@ function aaa() {
             "code": code
         },
         beforeSend: function () {
-            $.modal.loading($("#btnSubmit").data("loading"));
+            // $.modal.loading($("#btnSubmit").data("loading"));
+            $.modal.loading("请稍后");
         },
         success: function(r) {
             if (r.code == web_status.SUCCESS) {

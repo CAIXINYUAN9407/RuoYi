@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.List;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.system.domain.VideoShop;
+import com.ruoyi.system.service.IVideoShopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -43,6 +46,9 @@ public class SysIndexController extends BaseController
     @Autowired
     private SysPasswordService passwordService;
 
+    @Autowired
+    private IVideoShopService videoShopService;
+
     // 系统首页
     @GetMapping("/index")
     public String index(ModelMap mmap)
@@ -51,6 +57,8 @@ public class SysIndexController extends BaseController
         SysUser user = getSysUser();
         // 根据用户id取出菜单
         List<SysMenu> menus = menuService.selectMenusByUser(user);
+        VideoShop videoShop =  videoShopService.selectVideoShopByOwner(user.getLoginName());
+        mmap.put("shopName",videoShop.getShopName());
         mmap.put("menus", menus);
         mmap.put("user", user);
         mmap.put("sideTheme", configService.selectConfigByKey("sys.index.sideTheme"));

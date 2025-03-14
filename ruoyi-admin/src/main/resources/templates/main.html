@@ -16,12 +16,86 @@
     </div>
     <div class="wrapper wrapper-content">
         <div class="row">
+<!--            <div id="spec" class="text-center" style="margin-bottom: 2%;">-->
+<!--                <span>服务规格</span><div class="display-1" id="specification_id">版本</div><div class="display-1" id="spec_period">天数</div>-->
+<!--            </div>-->
+            <div id="countdown" class="text-center" style="margin-bottom: 2%;">
+
+                <span>过期时间</span><div class="display-1" id="timeCountDown">201天00时00分10秒</div>
+            </div>
+            <div class="content">
+            <div class="row" style="display: flex">
+                <div class="col-md-3" style="width: 25%">
+                    <p class=" center-block" style="text-align: center;font-weight:bold">主播排行<p>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                主播排行
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            面板内容
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3" style="width: 25%">
+                    <p style="text-align: center;font-weight:bold">直播间排行</p>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                直播间排行
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            面板内容
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3" style="width: 25%">
+                    <p style="text-align: center;font-weight:bold">短视频排行</p>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                短视频排行
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            面板内容
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3" style="width: 25%">
+                    <p style="text-align: center;font-weight:bold">其他排行</p>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                其他排行
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            面板内容
+                        </div>
+                    </div>
+                </div>
+            </div></div>
 
         </div>
+    </div>
+    <div class="" style="justify-content: center;display: flex;align-items: center;position: relative">
+        <div style="position: fixed;bottom: 0;right: -200px;text-align: center;">
+            <div id="spec" class="text-center" style="margin-bottom: 2%;">
+                <span>服务规格</span><div class="display-1" id="specification_id">版本</div><div class="display-1" id="spec_period">天数</div>
+            </div>
+            <p style="text-align: center">联系客服</p>
+            <img th:src="@{/customer.png}" width="20%">
+        </div>
+
     </div>
     <script th:src="@{/js/jquery.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+    <script src="../static/ruoyi/js/ry-ui.js" th:src="@{/ruoyi/js/ry-ui.js?v=4.7.9}"></script>
+
     <script type="text/javascript">
 	    $('#pay-qrcode').click(function(){
 	        var html=$(this).html();
@@ -34,6 +108,132 @@
 	            content: html
 	        });
 	    });
+    </script>
+    <script th:inline="javascript">
+        // var ctx = [[@{/}]] ;
+
+            $(window).on('load', function() {
+                $.modal.alert("版本更新，由于多商家反应存在达人带货逻辑，2025/01/04后请使用新版排班功能");
+
+                var userName = [[${@permission.getPrincipalProperty('loginName')}]];
+            // 所有资源都加载完毕后执行的代码
+            $.ajax({
+                type: "post",
+                url: "./shop/getShopDetail",
+                data: {
+                    owner:userName,
+                },
+                success: function(data) {
+                    var ii = timeUntil(data.service_end_time);
+                    // alert(ii.days +':'+ ii.hours +''+ ii.minutes +':'+ ii.seconds);
+                    $('#specification_id').text(data.specification_id);
+                    $('#spec_period').text(data.spec_period+"天");
+                    $('#timeCountDown').text(ii.days +'天'+ ii.hours +'时'+ ii.minutes +'分'+ ii.seconds +'秒');
+                }
+            });
+
+        var countdown = setInterval(function() {
+            var timer = $('#timeCountDown').text();
+            var days = timer.split('天')[0];
+            var time = timer.split('天')[1];
+            var hours = getStringBetween(time,"天","时");
+            var minutes = getStringBetween(time,"时","分");
+            var seconds = getStringBetween(time,"分","秒");
+
+            seconds -= 1;
+
+            if (seconds < 0) {
+                minutes -= 1;
+                seconds = 59;
+            }
+
+            if (minutes < 0) {
+                hours -= 1;
+                minutes = 59;
+                seconds = 59;
+            }
+
+            if (hours < 0) {
+                days -= 1;
+                hours = 23;
+                minutes = 59;
+                seconds = 59;
+                // clearInterval(countdown);
+            }
+
+            // hours = (hours < 10) ? '0' + hours : hours;
+            // minutes = (minutes < 10) ? '0' + minutes : minutes;
+            // seconds = (seconds < 10) ? '0' + seconds : seconds;
+
+            $('#timeCountDown').text( days+'天'+hours + '时' + minutes + '分' + seconds + '秒');
+        }, 1000);
+
+                $.ajax({
+                    type: "post",
+                    url: "./shop/syncjournal",
+                    data: {
+                        owner:userName,
+                    },
+                    success: function(data) {
+
+                    }
+                });
+
+                $.ajax({
+                    type: "post",
+                    url: "./shop/syncOrder",
+                    data: {
+                        owner:userName,
+                    },
+                    success: function(data) {
+
+                    }
+                });
+
+                $.ajax({
+                    type: "post",
+                    url: "./shop/syncAfterSaleOrder",
+                    data: {
+                        owner:userName,
+                    },
+                    success: function(data) {
+
+                    }
+                });
+        });
+
+        function timeUntil(timestamp) {
+            var now = new Date();
+            var endDate = new Date(timestamp*1000);
+            var difference = endDate - now;
+
+            if (difference <= 0) {
+                return {
+                    days: 0,
+                    hours: 0,
+                    minutes: 0,
+                    seconds: 0
+                };
+            }
+
+            var seconds = Math.floor(difference / 1000);
+            var minutes = Math.floor(seconds / 60);
+            var hours = Math.floor(minutes / 60);
+            var days = Math.floor(hours / 24);
+
+            return {
+                days: days,
+                hours: hours % 24,
+                minutes: minutes % 60,
+                seconds: seconds % 60
+            };
+        }
+
+        function getStringBetween(source, start, end) {
+            var startIndex = source.indexOf(start) + start.length;
+            var endIndex = source.indexOf(end, startIndex);
+            return source.substring(startIndex, endIndex);
+        }
     </script>
 </body>
 </html>

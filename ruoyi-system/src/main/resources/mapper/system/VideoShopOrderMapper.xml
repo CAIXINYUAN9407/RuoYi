@@ -7,8 +7,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="VideoShopOrder" id="VideoShopOrderResult">
         <result property="id"    column="id"    />
         <result property="orderId"    column="order_id"    />
+        <result property="shopId"    column="shop_id"    />
         <result property="productId"    column="product_id"    />
+        <result property="thumbImg"    column="thumb_img"    />
         <result property="title"    column="title"    />
+        <result property="skuAttrs"    column="sku_attrs"    />
         <result property="skuId"    column="sku_id"    />
         <result property="skuCnt"    column="sku_cnt"    />
         <result property="productPrice"    column="product_price"    />
@@ -31,18 +34,32 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
         <result property="confirmReceiptTime"    column="confirm_receipt_time"    />
+        <result property="commissionNickname"    column="commission_nickname"    />
     </resultMap>
 
     <sql id="selectVideoShopOrderVo">
-        select id, order_id, product_id, title, sku_id, sku_cnt, product_price, order_price, freight, product_cnt, status, openid, user_name, tel_number, province_name, city_name, county_name, detail_info, order_scene, customer_notes, merchant_notes, finder_id, live_id, create_time, update_time, confirm_receipt_time from video_shop_order_1
+        select id, order_id,shop_id, product_id, title,thumb_img, sku_id,sku_attrs, sku_cnt, product_price, order_price, freight, product_cnt, status, openid, user_name, tel_number, province_name, city_name, county_name, detail_info, order_scene, customer_notes, merchant_notes, finder_id, live_id, create_time, update_time, confirm_receipt_time from video_shop_order_1
+    </sql>
+
+    <sql id="selectVideoShopOrderVo_v2">
+        select id, order_id,shop_id, product_id, title,thumb_img, sku_id,sku_attrs, sku_cnt, product_price, order_price, freight, product_cnt, status, openid, user_name, tel_number, province_name, city_name, county_name, detail_info, order_scene, customer_notes, merchant_notes, finder_id, live_id, create_time, update_time, confirm_receipt_time
+    </sql>
+
+    <sql id="selectVideoShopOrderVo_UP">
+        select id, order_id,shop_id, product_id, title,thumb_img, sku_id,sku_attrs, sku_cnt, product_price, order_price, freight, product_cnt, status, openid, user_name, tel_number, province_name, city_name, county_name, detail_info, order_scene, customer_notes, merchant_notes, finder_id, live_id, create_time, update_time, confirm_receipt_time,commission_nickname
     </sql>
 
     <select id="selectVideoShopOrderList" parameterType="VideoShopOrder" resultMap="VideoShopOrderResult">
-        <include refid="selectVideoShopOrderVo"/>
+        <include refid="selectVideoShopOrderVo_v2"/>
+        from video_shop_order_${params.tableIndex}
         <where>  
             <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>
+            <if test="shopId != null  and shopId != ''"> and shop_id = #{shopId}</if>
+
             <if test="productId != null  and productId != ''"> and product_id = #{productId}</if>
             <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="thumbImg != null  and thumbImg != ''"> and thumb_img = #{thumbImg}</if>
+            <if test="skuAttrs != null  and skuAttrs != ''"> and sku_attrs = #{skuAttrs}</if>
             <if test="skuId != null  and skuId != ''"> and sku_id = #{skuId}</if>
             <if test="skuCnt != null "> and sku_cnt = #{skuCnt}</if>
             <if test="productPrice != null "> and product_price = #{productPrice}</if>
@@ -63,22 +80,47 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="finderId != null  and finderId != ''"> and finder_id = #{finderId}</if>
             <if test="liveId != null  and liveId != ''"> and live_id = #{liveId}</if>
             <if test="confirmReceiptTime != null "> and confirm_receipt_time = #{confirmReceiptTime}</if>
-            <if test="createTime != null "> and DATE_FORMAT(create_time, '%Y-%m-%d') =  #{createTime}</if>
+            <if test="createTime != null "> and DATE_FORMAT(create_time, '%Y-%m-%d') =  date_format(#{createTime},'%Y-%m-%d')</if>
+                <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                    AND date_format(create_time,'%Y-%m-%d %H:%i:%s') &gt;= date_format(#{params.beginTime},'%Y-%m-%d %H:%i:%s')
+                </if>
+                <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                    AND date_format(create_time,'%Y-%m-%d %H:%i:%s') &lt;= date_format(#{params.endTime},'%Y-%m-%d %H:%i:%s')
+                </if>
+            <if test="params.goToUrlType != null and params.goToUrlType != ''" ><!-- 跳转页面检索 -->
+                AND status in
+                    ${params.goToUrlType}
+            </if>
         </where>
+        order By create_time DESC
     </select>
     
     <select id="selectVideoShopOrderById" parameterType="Long" resultMap="VideoShopOrderResult">
         <include refid="selectVideoShopOrderVo"/>
         where id = #{id}
     </select>
+
+    <select id="selectVideoShopOrderByOrderId" parameterType="String" resultMap="VideoShopOrderResult">
+        <include refid="selectVideoShopOrderVo"/>
+        where order_id = #{orderId}
+    </select>
+
+    <select id="selectVideoShopOrderByOrderId_UP" parameterType="String" resultMap="VideoShopOrderResult">
+        <include refid="selectVideoShopOrderVo_v2"/>
+        from video_shop_order_${tableIndex}
+        where order_id = #{orderId}
+    </select>
         
     <insert id="insertVideoShopOrder" parameterType="VideoShopOrder" useGeneratedKeys="true" keyProperty="id">
         insert into video_shop_order_1
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="orderId != null">order_id,</if>
+            <if test="shopId != null">shop_id,</if>
             <if test="productId != null">product_id,</if>
             <if test="title != null">title,</if>
+            <if test="thumbImg != null">thumb_img,</if>
             <if test="skuId != null">sku_id,</if>
+            <if test="skuAttrs != null">sku_attrs,</if>
             <if test="skuCnt != null">sku_cnt,</if>
             <if test="productPrice != null">product_price,</if>
             <if test="orderPrice != null">order_price,</if>
@@ -103,9 +145,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="orderId != null">#{orderId},</if>
+            <if test="shopId != null">#{shopId},</if>
             <if test="productId != null">#{productId},</if>
             <if test="title != null">#{title},</if>
+            <if test="thumbImg != null">#{thumbImg},</if>
             <if test="skuId != null">#{skuId},</if>
+            <if test="skuAttrs != null">#{skuAttrs},</if>
             <if test="skuCnt != null">#{skuCnt},</if>
             <if test="productPrice != null">#{productPrice},</if>
             <if test="orderPrice != null">#{orderPrice},</if>
@@ -130,13 +175,88 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
+    <insert id="insertVideoShopOrder_UP" parameterType="VideoShopOrder" useGeneratedKeys="true" keyProperty="id">
+        insert into video_shop_order_${params.tableIndex}
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">order_id,</if>
+            <if test="shopId != null">shop_id,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="title != null">title,</if>
+            <if test="thumbImg != null">thumb_img,</if>
+            <if test="skuId != null">sku_id,</if>
+            <if test="skuAttrs != null">sku_attrs,</if>
+            <if test="skuCnt != null">sku_cnt,</if>
+            <if test="productPrice != null">product_price,</if>
+            <if test="orderPrice != null">order_price,</if>
+            <if test="freight != null">freight,</if>
+            <if test="productCnt != null">product_cnt,</if>
+            <if test="status != null">status,</if>
+            <if test="openid != null">openid,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="telNumber != null">tel_number,</if>
+            <if test="provinceName != null">province_name,</if>
+            <if test="cityName != null">city_name,</if>
+            <if test="countyName != null">county_name,</if>
+            <if test="detailInfo != null">detail_info,</if>
+            <if test="orderScene != null">order_scene,</if>
+            <if test="customerNotes != null">customer_notes,</if>
+            <if test="merchantNotes != null">merchant_notes,</if>
+            <if test="finderId != null">finder_id,</if>
+            <if test="liveId != null">live_id,</if>
+            <!--分佣-->
+            <if test="commissionFinderId != null">commission_finder_id,</if>
+            <if test="commissionNickname != null">commission_nickname,</if>
+            <if test="commissionType != null">commission_type,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="confirmReceiptTime != null">confirm_receipt_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">#{orderId},</if>
+            <if test="shopId != null">#{shopId},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="title != null">#{title},</if>
+            <if test="thumbImg != null">#{thumbImg},</if>
+            <if test="skuId != null">#{skuId},</if>
+            <if test="skuAttrs != null">#{skuAttrs},</if>
+            <if test="skuCnt != null">#{skuCnt},</if>
+            <if test="productPrice != null">#{productPrice},</if>
+            <if test="orderPrice != null">#{orderPrice},</if>
+            <if test="freight != null">#{freight},</if>
+            <if test="productCnt != null">#{productCnt},</if>
+            <if test="status != null">#{status},</if>
+            <if test="openid != null">#{openid},</if>
+            <if test="userName != null">#{userName},</if>
+            <if test="telNumber != null">#{telNumber},</if>
+            <if test="provinceName != null">#{provinceName},</if>
+            <if test="cityName != null">#{cityName},</if>
+            <if test="countyName != null">#{countyName},</if>
+            <if test="detailInfo != null">#{detailInfo},</if>
+            <if test="orderScene != null">#{orderScene},</if>
+            <if test="customerNotes != null">#{customerNotes},</if>
+            <if test="merchantNotes != null">#{merchantNotes},</if>
+            <if test="finderId != null">#{finderId},</if>
+            <if test="liveId != null">#{liveId},</if>
+            <!--分佣-->
+            <if test="commissionFinderId != null">#{commissionFinderId},</if>
+            <if test="commissionNickname != null">#{commissionNickname},</if>
+            <if test="commissionType != null">#{commissionType},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="confirmReceiptTime != null">#{confirmReceiptTime},</if>
+        </trim>
+    </insert>
+
     <update id="updateVideoShopOrder" parameterType="VideoShopOrder">
         update video_shop_order_1
         <trim prefix="SET" suffixOverrides=",">
             <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="shopId != null">shop_id = #{shopId},</if>
             <if test="productId != null">product_id = #{productId},</if>
             <if test="title != null">title = #{title},</if>
+            <if test="thumbImg != null">thumb_img = #{thumbImg},</if>
             <if test="skuId != null">sku_id = #{skuId},</if>
+            <if test="skuAttrs != null">sku_attrs = #{skuAttrs},</if>
             <if test="skuCnt != null">sku_cnt = #{skuCnt},</if>
             <if test="productPrice != null">product_price = #{productPrice},</if>
             <if test="orderPrice != null">order_price = #{orderPrice},</if>
@@ -159,7 +279,47 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="confirmReceiptTime != null">confirm_receipt_time = #{confirmReceiptTime},</if>
         </trim>
-        where id = #{id}
+        where order_id = #{orderId}
+    </update>
+
+    <update id="updateVideoShopOrder_UP" parameterType="VideoShopOrder">
+        update video_shop_order_${params.tableIndex}
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="shopId != null">shop_id = #{shopId},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="thumbImg != null">thumb_img = #{thumbImg},</if>
+            <if test="skuId != null">sku_id = #{skuId},</if>
+            <if test="skuAttrs != null">sku_attrs = #{skuAttrs},</if>
+            <if test="skuCnt != null">sku_cnt = #{skuCnt},</if>
+            <if test="productPrice != null">product_price = #{productPrice},</if>
+            <if test="orderPrice != null">order_price = #{orderPrice},</if>
+            <if test="freight != null">freight = #{freight},</if>
+            <if test="productCnt != null">product_cnt = #{productCnt},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="openid != null">openid = #{openid},</if>
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="telNumber != null">tel_number = #{telNumber},</if>
+            <if test="provinceName != null">province_name = #{provinceName},</if>
+            <if test="cityName != null">city_name = #{cityName},</if>
+            <if test="countyName != null">county_name = #{countyName},</if>
+            <if test="detailInfo != null">detail_info = #{detailInfo},</if>
+            <if test="orderScene != null">order_scene = #{orderScene},</if>
+            <if test="customerNotes != null">customer_notes = #{customerNotes},</if>
+            <if test="merchantNotes != null">merchant_notes = #{merchantNotes},</if>
+            <if test="finderId != null">finder_id = #{finderId},</if>
+            <if test="liveId != null">live_id = #{liveId},</if>
+            <!--分佣-->
+            <if test="commissionFinderId != null">commission_finder_id = #{commissionFinderId},</if>
+            <if test="commissionNickname != null">commission_nickname = #{commissionNickname},</if>
+            <if test="commissionType != null">commission_type = #{commissionType},</if>
+
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="confirmReceiptTime != null">confirm_receipt_time = #{confirmReceiptTime},</if>
+        </trim>
+        where order_id = #{orderId}
     </update>
 
     <delete id="deleteVideoShopOrderById" parameterType="Long">
@@ -172,5 +332,97 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+
+    <select id="selectVideoShopOrderListAndScene" parameterType="VideoShopOrder" resultMap="VideoShopOrderResult">
+        <include refid="selectVideoShopOrderVo"/>
+        <where>
+            <if test="shopId != null  and shopId != ''"> and shop_id = #{shopId}</if>
+            <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>
+            <if test="productId != null  and productId != ''"> and product_id = #{productId}</if>
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="skuId != null  and skuId != ''"> and sku_id = #{skuId}</if>
+            <if test="skuCnt != null "> and sku_cnt = #{skuCnt}</if>
+            <if test="productPrice != null "> and product_price = #{productPrice}</if>
+            <if test="orderPrice != null "> and order_price = #{orderPrice}</if>
+            <if test="freight != null "> and freight = #{freight}</if>
+            <if test="productCnt != null "> and product_cnt = #{productCnt}</if>
+            and status IN (20,30,21,100,200)
+            <if test="openid != null  and openid != ''"> and openid = #{openid}</if>
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="telNumber != null  and telNumber != ''"> and tel_number = #{telNumber}</if>
+            <if test="provinceName != null  and provinceName != ''"> and province_name like concat('%', #{provinceName}, '%')</if>
+            <if test="cityName != null  and cityName != ''"> and city_name like concat('%', #{cityName}, '%')</if>
+            <if test="countyName != null  and countyName != ''"> and county_name like concat('%', #{countyName}, '%')</if>
+            <if test="detailInfo != null  and detailInfo != ''"> and detail_info = #{detailInfo}</if>
+            <if test="orderScene != null  and orderScene != ''"> and order_scene = #{orderScene}</if>
+            <if test="customerNotes != null  and customerNotes != ''"> and customer_notes = #{customerNotes}</if>
+            <if test="merchantNotes != null  and merchantNotes != ''"> and merchant_notes = #{merchantNotes}</if>
+            <if test="finderId != null  and finderId != ''"> and finder_id = #{finderId}</if>
+            <if test="liveId != null  and liveId != ''"> and live_id = #{liveId}</if>
+            <if test="confirmReceiptTime != null "> and confirm_receipt_time = #{confirmReceiptTime}</if>
+            <if test="createTime != null "> and DATE_FORMAT(create_time, '%Y-%m-%d') =  #{createTime}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(create_time,'%y%m%d  %H:%i:%s') &gt;= date_format(#{params.beginTime},'%y%m%d  %H:%i:%s')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(create_time,'%y%m%d  %H:%i:%s') &lt;= date_format(#{params.endTime},'%y%m%d  %H:%i:%s')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectVideoShopOrderListAndScene_UP" parameterType="VideoShopOrder" resultMap="VideoShopOrderResult">
+        <include refid="selectVideoShopOrderVo_UP"/>
+        from video_shop_order_${params.tableIndex}
+        <where>
+            <if test="shopId != null  and shopId != ''"> and shop_id = #{shopId}</if>
+            <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>
+            <if test="productId != null  and productId != ''"> and product_id = #{productId}</if>
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="skuId != null  and skuId != ''"> and sku_id = #{skuId}</if>
+            <if test="skuCnt != null "> and sku_cnt = #{skuCnt}</if>
+            <if test="productPrice != null "> and product_price = #{productPrice}</if>
+            <if test="orderPrice != null "> and order_price = #{orderPrice}</if>
+            <if test="freight != null "> and freight = #{freight}</if>
+            <if test="productCnt != null "> and product_cnt = #{productCnt}</if>
+            and status IN (20,30,21,100,200)
+            <if test="openid != null  and openid != ''"> and openid = #{openid}</if>
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="telNumber != null  and telNumber != ''"> and tel_number = #{telNumber}</if>
+            <if test="provinceName != null  and provinceName != ''"> and province_name like concat('%', #{provinceName}, '%')</if>
+            <if test="cityName != null  and cityName != ''"> and city_name like concat('%', #{cityName}, '%')</if>
+            <if test="countyName != null  and countyName != ''"> and county_name like concat('%', #{countyName}, '%')</if>
+            <if test="detailInfo != null  and detailInfo != ''"> and detail_info = #{detailInfo}</if>
+            <if test="orderScene != null  and orderScene != ''"> and order_scene = #{orderScene}</if>
+            <if test="customerNotes != null  and customerNotes != ''"> and customer_notes = #{customerNotes}</if>
+            <if test="merchantNotes != null  and merchantNotes != ''"> and merchant_notes = #{merchantNotes}</if>
+            <if test="finderId != null  and finderId != ''"> and finder_id = #{finderId}</if>
+            <if test="liveId != null  and liveId != ''"> and live_id = #{liveId}</if>
+            <if test="confirmReceiptTime != null "> and confirm_receipt_time = #{confirmReceiptTime}</if>
+            <if test="createTime != null "> and DATE_FORMAT(create_time, '%Y-%m-%d') =  #{createTime}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(create_time,'%y%m%d  %H:%i:%s') &gt;= date_format(#{params.beginTime},'%y%m%d  %H:%i:%s')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(create_time,'%y%m%d  %H:%i:%s') &lt;= date_format(#{params.endTime},'%y%m%d  %H:%i:%s')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectUnPayCount" resultType="java.lang.Integer">
+        select count(*) from video_shop_order_1 vso where
+            vso.shop_id = #{shopId} and
+            vso.status IN (10,250) and
+            vso.create_time
+                BETWEEN  date_format(#{timeBegin},'%Y-%m-%d %H:%i:%s')
+                AND date_format(#{timeEnd},'%Y-%m-%d %H:%i:%s')
+    </select>
+
+    <select id="selectVideoShopOrderListByFinderId" parameterType="String" resultMap="VideoShopOrderResult">
+        <include refid="selectVideoShopOrderVo"/>
+        <where>
+            finder_id = #{finderId}
+        </where>
+    </select>
 
 </mapper>

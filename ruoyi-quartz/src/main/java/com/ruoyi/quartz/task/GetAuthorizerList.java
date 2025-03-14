@@ -85,20 +85,29 @@ public class GetAuthorizerList {
                         }
                         else{
                             table_index = videoShopMapper.selectMaxTableIndex()+1;
-                            videoShopMapper.createShopGoods("video_shop_goods_"+table_index);
+//                            videoShopMapper.createShopGoods("video_shop_goods_"+table_index);
                         }
                         VideoShop videoShopOld = videoShopMapper.selectVideoShopByOwner(objM.get("authorizer_appid").toString());
                         VideoShop videoShop = new VideoShop();
                         if(videoShopOld != null){
-                            videoShopOld.setRefreshToken(objM.get("refresh_token").toString().substring(15));
-                            videoShopOld.setTableIndex((table_index));
-                            videoShopMapper.updateVideoShop(videoShopOld);
+                            if(objM.get("refresh_token")!=null){
+                                videoShopOld.setRefreshToken(objM.get("refresh_token").toString().substring(15));
+//                                videoShopOld.setTableIndex((table_index));
+                                videoShopMapper.updateVideoShop(videoShopOld);
+                            }
+                            else {
+                                continue;
+                            }
                         }
                         else {
                             videoShop.setOwner((objM.get("authorizer_appid").toString()));
                             videoShop.setTableIndex(table_index);
                             //刷新令牌
+                            if(objM.get("refresh_token")==null){
+                                continue;
+                            }
                             videoShop.setRefreshToken(objM.get("refresh_token").toString().substring(15));
+
                             videoShopMapper.insertVideoShop(videoShop);
                         }
 
@@ -110,7 +119,9 @@ public class GetAuthorizerList {
                 }
             } catch (ClientProtocolException e) {
                 e.printStackTrace();
-            }  finally {
+            }  catch (Exception e) {
+                e.printStackTrace();
+            } finally {
                 // 释放资源
                 httpClient.close();
                 response.close();

@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.VideoShopAnchorMapper">
-    
+
     <resultMap type="VideoShopAnchor" id="VideoShopAnchorResult">
         <result property="id"    column="id"    />
         <result property="shopId"    column="shop_id"    />
@@ -16,27 +16,42 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
+
     <sql id="selectVideoShopAnchorVo">
         select id, shop_id, name, live_account, base_salary, create_by, create_time, update_by, update_time from video_shop_anchor_1
     </sql>
 
+    <sql id="selectVideoShopAnchorVo_UP">
+        select id, shop_id, name, live_account, base_salary, create_by, create_time, update_by, update_time
+    </sql>
+
     <select id="selectVideoShopAnchorList" parameterType="VideoShopAnchor" resultMap="VideoShopAnchorResult">
-        <include refid="selectVideoShopAnchorVo"/>
-        <where>  
+        <include refid="selectVideoShopAnchorVo_UP"/>
+        from video_shop_anchor_${params.tableIndex}
+        <where>
             <if test="shopId != null "> and shop_id = #{shopId}</if>
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
             <if test="liveAccount != null  and liveAccount != ''"> and live_account = #{liveAccount}</if>
             <if test="baseSalary != null "> and base_salary = #{baseSalary}</if>
         </where>
     </select>
-    
+
     <select id="selectVideoShopAnchorById" parameterType="Long" resultMap="VideoShopAnchorResult">
         <include refid="selectVideoShopAnchorVo"/>
         where id = #{id}
     </select>
-        
+
+    <select id="selectVideoShopAnchorByName" parameterType="VideoShopAnchor" resultMap="VideoShopAnchorResult">
+        select id, shop_id, name, live_account, base_salary, create_by, create_time, update_by, update_time
+        from video_shop_anchor_${tableIndex}
+        <where>
+            <if test="shopId != null "> and shop_id = #{shopId}</if>
+            <if test="name != null  and name != ''"> and name = #{name}</if>
+        </where>
+    </select>
+
     <insert id="insertVideoShopAnchor" parameterType="VideoShopAnchor" useGeneratedKeys="true" keyProperty="id">
-        insert into video_shop_anchor_1
+        insert into video_shop_anchor_${params.tableIndex}
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="shopId != null">shop_id,</if>
             <if test="name != null">name,</if>
@@ -60,7 +75,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </insert>
 
     <update id="updateVideoShopAnchor" parameterType="VideoShopAnchor">
-        update video_shop_anchor_1
+        update video_shop_anchor_${params.tableIndex}
         <trim prefix="SET" suffixOverrides=",">
             <if test="shopId != null">shop_id = #{shopId},</if>
             <if test="name != null">name = #{name},</if>
@@ -74,15 +89,219 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
-    <delete id="deleteVideoShopAnchorById" parameterType="Long">
-        delete from video_shop_anchor_1 where id = #{id}
+    <delete id="deleteVideoShopAnchorById">
+        delete from video_shop_anchor_${tableIndex} where id = #{id}
     </delete>
 
-    <delete id="deleteVideoShopAnchorByIds" parameterType="String">
-        delete from video_shop_anchor_1 where id in 
+    <delete id="deleteVideoShopAnchorByIds" >
+        delete from video_shop_anchor_${tableIndex} where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
 
+    <select id="selectJournalingByAnchor" parameterType="VideoShopAnchor" resultType="hashMap">
+        SELECT any_value(vss.id) as id,
+        DATE_FORMAT(vss.starttime, '%Y-%m-%d') AS formatted_date,vss.starttime,vss.endtime,any_value(vsa.name) as
+        name,TIMESTAMPDIFF(SECOND,vss.starttime, vss.endtime) as minutes,
+        CONCAT(DATE_FORMAT(vss.starttime,'%H:%i:%s'),'-',DATE_FORMAT(vss.endtime,'%H:%i:%s')) as etc,
+        any_value(valid_products) as valid_products,any_value(completed_orders) as
+        completed_orders,any_value(valid_orders) as valid_orders,any_value(unpaid_orders) as unpaid_orders,
+        any_value(sales_volume) as sales_volume,any_value(aftersales_orders) as
+        aftersales_orders,any_value(refund_amount) as refund_amount
+        from video_shop_scheduling_${params.tableIndex} vss
+
+        LEFT JOIN video_shop_anchor_${params.tableIndex} vsa on vss.anchor_id = vsa.id
+        <where>
+            vss.shop_id = #{shopId}
+            <if test="name != null  and name != ''">and vsa.name like concat('%', #{name}, '%')</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                and vss.starttime BETWEEN date_format(#{params.beginTime},'%y-%m-%d %H:%i:%s') AND
+                date_format(#{params.endTime},'%y-%m-%d %H:%i:%s')
+            </if>
+        </where>
+
+        GROUP BY vss.starttime,vss.endtime,vsa.name
+        ORDER BY vss.starttime DESC
+
+    </select>
+
+    <select id="selectAnchorEX" parameterType="VideoShopAnchor" resultType="hashMap">
+        SELECT any_value(vsa.name) as anchorName,
+        DATE_FORMAT(vss.starttime, '%Y-%m-%d') AS formattedDate,
+        TIMESTAMPDIFF(SECOND,vss.starttime, vss.endtime) as minutes,
+        CONCAT(DATE_FORMAT(vss.starttime,'%H:%i:%s'),'-',DATE_FORMAT(vss.endtime,'%H:%i:%s')) as etc,
+        any_value(valid_products) as validProducts,
+        any_value(completed_orders) as completedOrders,
+        any_value(valid_orders) as validOrders,
+        any_value(unpaid_orders) as unpaidOrders,
+        any_value(sales_volume) as salesVolume,
+        any_value(aftersales_orders) as aftersalesOrders,
+        any_value(refund_amount) as refundAmount
+        from video_shop_scheduling_1 vss
+
+        LEFT JOIN video_shop_anchor_1 vsa on vss.anchor_id = vsa.id
+        <where>
+            vss.shop_id = #{shopId}
+            <if test="name != null  and name != ''">and vsa.name like concat('%', #{name}, '%')</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                and vss.starttime BETWEEN date_format(#{params.beginTime},'%y-%m-%d %H:%i:%s') AND
+                date_format(#{params.endTime},'%y-%m-%d %H:%i:%s')
+            </if>
+        </where>
+
+        GROUP BY vss.starttime,vss.endtime
+        ORDER BY vss.starttime DESC
+    </select>
+
+        <select id="selectJournalingByAnchorCount" parameterType="VideoShopAnchor" resultType="hashMap">
+            SELECT any_value(vss.id) as id,any_value(vsa.live_account) as live_account,
+            DATE_FORMAT(vss.starttime, '%Y-%m-%d') AS formatted_date,vss.starttime,vss.endtime,any_value(vsa.name) as
+            name,TIMESTAMPDIFF(SECOND,vss.starttime, vss.endtime) as minutes,
+            CONCAT(DATE_FORMAT(vss.starttime,'%H:%i:%s'),'-',DATE_FORMAT(vss.endtime,'%H:%i:%s')) as etc,
+            COALESCE((SELECT SUM(vso.sku_cnt) from video_shop_order_${params.tableIndex} vso WHERE vso.create_time
+            BETWEEN vss.starttime
+            AND vss.endtime And vso.shop_id = #{shopId} AND vso.order_scene=2 AND vso.`status`in(20,21,30,100)
+            and CASE
+            WHEN vsa.live_account != CONCAT(vs.shop_name,'直播号')
+            THEN
+            vso.commission_nickname=vsa.live_account
+            ELSE TRUE
+            END),0) as 'valid_products',
+            (SELECT COUNT(*) from video_shop_order_${params.tableIndex} vso WHERE vso.create_time BETWEEN vss.starttime
+            AND vss.endtime And
+            vso.shop_id = #{shopId} AND vso.order_scene=2
+            and CASE
+            WHEN vsa.live_account != CONCAT(vs.shop_name,'直播号')
+            THEN
+            vso.commission_nickname=vsa.live_account
+            ELSE TRUE
+            END) as 'completed_orders',
+            (SELECT COUNT(*) from video_shop_order_${params.tableIndex} vso WHERE vso.create_time BETWEEN vss.starttime
+            AND vss.endtime And
+            vso.shop_id = #{shopId} AND vso.`status`in(100,30,20,21) AND vso.order_scene=2 and CASE
+            WHEN vsa.live_account != CONCAT(vs.shop_name,'直播号')
+            THEN
+            vso.commission_nickname=vsa.live_account
+            ELSE TRUE
+            END) as 'valid_orders',
+            (SELECT COUNT(*) from video_shop_order_${params.tableIndex} vso WHERE vso.create_time BETWEEN vss.starttime
+            AND vss.endtime And
+            vso.shop_id = #{shopId} AND vso.`status`in(10,250) AND vso.order_scene=2 and CASE
+            WHEN vsa.live_account != CONCAT(vs.shop_name,'直播号')
+            THEN
+            vso.commission_nickname=vsa.live_account
+            ELSE TRUE
+            END) as 'unpaid_orders',
+            COALESCE((SELECT SUM(vso.order_price) from video_shop_order_${params.tableIndex} vso WHERE vso.create_time
+            BETWEEN
+            vss.starttime AND vss.endtime And vso.shop_id = #{shopId} AND vso.`status`in(20,21,100,30,200) AND
+            vso.order_scene=2 and CASE
+            WHEN vsa.live_account != CONCAT(vs.shop_name,'直播号')
+            THEN
+            vso.commission_nickname=vsa.live_account
+            ELSE TRUE
+            END),0) as 'sales_volume',
+            (SELECT COUNT(*) from video_shop_after_sale_order_${params.tableIndex} vsa WHERE vsa.order_id IN(
+            SELECT vso.order_id FROM video_shop_order_${params.tableIndex} vso
+            WHERE vso.create_time BETWEEN vss.starttime AND vss.endtime
+            And vso.shop_id = #{shopId}
+            and vso.`status`IN ('30','100','200')
+            AND vso.order_scene=2
+            and CASE
+            WHEN vsa.live_account != CONCAT(vs.shop_name,'直播号')
+            THEN
+            vso.commission_nickname=vsa.live_account
+            ELSE TRUE
+            END
+            ) AND vsa.`status` IN('MERCHANT_REFUND_SUCCESS','MERCHANT_RETURN_SUCCESS'))as 'aftersales_orders',
+            (SELECT IFNULL(SUM(vsa.amount), 0) from video_shop_after_sale_order_${params.tableIndex} vsa WHERE
+            vsa.order_id IN(
+            SELECT vso.order_id FROM video_shop_order_${params.tableIndex} vso
+            WHERE vso.create_time BETWEEN vss.starttime AND vss.endtime
+            And vso.shop_id = #{shopId}
+            AND vso.order_scene=2
+            and vso.`status`IN ('30','100','200')
+            and CASE
+            WHEN vsa.live_account != CONCAT(vs.shop_name,'直播号')
+            THEN
+            vso.commission_nickname=vsa.live_account
+            ELSE TRUE
+            END)
+            AND vsa.`status` IN('MERCHANT_REFUND_SUCCESS','MERCHANT_RETURN_SUCCESS')) as 'refund_amount'
+            from video_shop_scheduling_${params.tableIndex} vss
+
+            LEFT JOIN video_shop_anchor_${params.tableIndex} vsa on vss.anchor_id = vsa.id
+            LEFT JOIN video_shop vs on vss.shop_id = vs.id
+            <where>
+                vss.shop_id = #{shopId}
+                and vss.create_time >= CURDATE() - INTERVAL 30 DAY
+                <if test="name != null  and name != ''">and vsa.name like concat('%', #{name}, '%')</if>
+                <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                    and vss.starttime BETWEEN date_format(#{params.beginTime},'%y-%m-%d %H:%i:%s') AND
+                    date_format(#{params.endTime},'%y-%m-%d %H:%i:%s')
+                </if>
+            </where>
+
+            GROUP BY vss.starttime,vss.endtime,vsa.live_account
+            ORDER BY vss.starttime DESC
+
+        </select>
+
+    <select id="selectSettlementByAnchor" parameterType="VideoShopAnchor" resultType="hashMap">
+        SELECT vsa.id,vsa.`name` as anchor_name ,vss.starttime,vss.endtime,vss.template_id,vst.name as template_name,
+        IFNULL(vst.type,-1) as type,
+        vst.anchor_basic_salary,helper_basic_salary,controler_basic_salary,
+        ratio_anchor_default,ratio_helper_default,ratio_controler_default,radio_given,
+        ladder,
+        basic_radio_anchor_basic_salary,basic_radio_helper_basic_salary,basic_radio_controler_basic_salary,
+        basic_radio_anchor_default,basic_radio_helper_default,basic_radio_controler_default,
+        basic_radio_given,
+        basic_ladder_anchor_basic_salary,basic_ladder_helper_basic_salary,basic_ladder_controler_basic_salary,basic_ladder,
+        quantity_anchor_commission,quantity_helper_commission,quantity_controler_commission,
+        vss.valid_products as valid_products,
+        vss.completed_orders as completed_orders,
+        vss.valid_orders as valid_orders,
+        vss.unpaid_orders as unpaid_orders,
+        vss.sales_volume as sales_volume,
+        vss.aftersales_orders as aftersales_orders,
+        vss.refund_amount as refund_amount,
+        vss.anchor_commission as anchor_commission,
+        vss.scene_livecount as scene_livecount,
+        vss.scene_videocount as scene_videocount,
+        vss.scene_shopcount as scene_shopcount,
+        vss.scene_livesum as scene_livesum,
+        vss.scene_videosum as scene_videosum,
+        vss.scene_shopsum as scene_shopsum,
+        TIMESTAMPDIFF(SECOND, vss.starttime, vss.endtime) AS time_interval
+
+        FROM video_shop_anchor_${params.tableIndex} vsa
+        LEFT JOIN video_shop_scheduling_${params.tableIndex} vss on vss.anchor_id = vsa.id
+        LEFT JOIN video_shop_salarytemplate_${params.tableIndex} vst on vss.template_id = vst.id
+        <where>
+            vsa.shop_id = #{shopId}
+            <if test="name != null and name != ''"><!-- 开始时间检索 -->
+                AND vsa.name like concat('%', #{name}, '%')
+            </if>
+
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND vss.starttime BETWEEN date_format(#{params.beginTime},'%y-%m-%d %H:%i:%s') AND
+                date_format(#{params.endTime},'%y-%m-%d %H:%i:%s')
+            </if>
+        </where>
+        ORDER BY vss.anchor_name DESC, vss.starttime DESC
+    </select>
+
+    <select id="getVideoShopAnchorList" parameterType="VideoShopAnchor" resultType="hashMap">
+        SELECT vsa.id,vsa.name from video_shop_anchor_${params.tableIndex} vsa
+        <where>
+            vsa.shop_id = #{shopId}
+        </where>
+    </select>
+
+    <select id="getCommissionList"  resultType="hashMap">
+        SELECT DISTINCT(commission_nickname) as name,commission_finder_id as id
+        from video_shop_order_${tableIndex}
+        where shop_id=#{shopId} AND commission_nickname is not null and commission_nickname!=''
+    </select>
 </mapper>

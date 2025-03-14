@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.shop;
 
+import java.util.HashMap;
 import java.util.List;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class VideoShopController extends BaseController
     @GetMapping()
     public String shop()
     {
-        return prefix + "/shop";
+        return prefix + "/list";
     }
 
     /**
@@ -123,5 +124,50 @@ public class VideoShopController extends BaseController
     public AjaxResult remove(String ids)
     {
         return toAjax(videoShopService.deleteVideoShopByIds(ids));
+    }
+
+    /**
+     * 删除店铺
+     */
+    @PostMapping( "/getShopDetail")
+    @ResponseBody
+    public HashMap<String,Object> getShopDetail(String owner)
+    {
+        VideoShop videoShop = videoShopService.selectVideoShopByOwner(owner);
+        HashMap<String,Object> videoShopDetail = videoShopService.selectVideoShopByOwner1(owner);
+        return videoShopDetail;
+    }
+
+    /**
+     * 同步排班统计信息
+     */
+    @PostMapping( "/syncjournal")
+    @ResponseBody
+    public AjaxResult syncjournal(String owner)
+    {
+        videoShopService.syncjournal();
+        return AjaxResult.success("OK");
+    }
+
+    /**
+     * 同步订单信息
+     */
+    @PostMapping( "/syncOrder")
+    @ResponseBody
+    public AjaxResult syncOrder(String owner)
+    {
+        videoShopService.syncOrder();
+        return AjaxResult.success("OK");
+    }
+
+    /**
+     * 同步订单信息
+     */
+    @PostMapping( "/syncAfterSaleOrder")
+    @ResponseBody
+    public AjaxResult syncAfterSaleOrder(String owner)
+    {
+        videoShopService.syncAfterSaleOrder();
+        return AjaxResult.success("OK");
     }
 }

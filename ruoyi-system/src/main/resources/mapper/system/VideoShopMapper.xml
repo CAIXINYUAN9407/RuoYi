@@ -1,116 +1,163 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.VideoShopMapper">
-    
+
     <resultMap type="VideoShop" id="VideoShopResult">
-        <result property="id"    column="id"    />
-        <result property="owner"    column="owner"    />
-        <result property="shopId"    column="shop_id"    />
-        <result property="shopName"    column="shop_name"    />
-        <result property="accessToken"    column="access_token"    />
-        <result property="expiresIn"    column="expires_in"    />
-        <result property="expiresAt"    column="expires_at"    />
-        <result property="scope"    column="scope"    />
-        <result property="refreshToken"    column="refresh_token"    />
-        <result property="authorityId"    column="authority_id"    />
-        <result property="authSubjectType"    column="auth_subject_type"    />
-        <result property="createTime"    column="create_time"    />
-<!--        <result property="default"    column="default"    />-->
-        <result property="code"    column="code"    />
-        <result property="platform"    column="platform"    />
-        <result property="pid"    column="pid"    />
-        <result property="logo"    column="logo"    />
-        <result property="orderLastSyncTime"    column="order_last_sync_time"    />
-        <result property="commentLastSyncTime"    column="comment_last_sync_time"    />
-        <result property="afterSaleLastSyncTime"    column="after_sale_last_sync_time"    />
-        <result property="serviceStartTime"    column="service_start_time"    />
-        <result property="serviceEndTime"    column="service_end_time"    />
-        <result property="phone"    column="phone"    />
-        <result property="money"    column="money"    />
-        <result property="spec"    column="spec"    />
-        <result property="duration"    column="duration"    />
-        <result property="unit"    column="unit"    />
-        <result property="payType"    column="pay_type"    />
-        <result property="smsNum"    column="sms_num"    />
-        <result property="orderId"    column="order_id"    />
-        <result property="orderSyncLock"    column="order_sync_lock"    />
-        <result property="afterSaleSyncLock"    column="after_sale_sync_lock"    />
-        <result property="tableIndex"    column="table_index"    />
-        <result property="isOrderStatus1Sync"    column="is_order_status_1_sync"    />
-        <result property="encryptOperator"    column="encrypt_operator"    />
-        <result property="operatorName"    column="operator_name"    />
-        <result property="shopBizType"    column="shop_biz_type"    />
+        <result property="id" column="id"/>
+        <result property="owner" column="owner"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="shopName" column="shop_name"/>
+        <result property="accessToken" column="access_token"/>
+        <result property="expiresIn" column="expires_in"/>
+        <result property="expiresAt" column="expires_at"/>
+        <result property="scope" column="scope"/>
+        <result property="refreshToken" column="refresh_token"/>
+        <result property="authorityId" column="authority_id"/>
+        <result property="authSubjectType" column="auth_subject_type"/>
+        <result property="createTime" column="create_time"/>
+        <!--        <result property="default"    column="default"    />-->
+        <result property="code" column="code"/>
+        <result property="platform" column="platform"/>
+        <result property="pid" column="pid"/>
+        <result property="logo" column="logo"/>
+        <result property="orderLastSyncTime" column="order_last_sync_time"/>
+        <result property="commentLastSyncTime" column="comment_last_sync_time"/>
+        <result property="afterSaleLastSyncTime" column="after_sale_last_sync_time"/>
+        <result property="serviceStartTime" column="service_start_time"/>
+        <result property="serviceEndTime" column="service_end_time"/>
+        <result property="phone" column="phone"/>
+        <result property="money" column="money"/>
+        <result property="spec" column="spec"/>
+        <result property="duration" column="duration"/>
+        <result property="unit" column="unit"/>
+        <result property="payType" column="pay_type"/>
+        <result property="smsNum" column="sms_num"/>
+        <result property="orderId" column="order_id"/>
+        <result property="orderSyncLock" column="order_sync_lock"/>
+        <result property="afterSaleSyncLock" column="after_sale_sync_lock"/>
+        <result property="tableIndex" column="table_index"/>
+        <result property="isOrderStatus1Sync" column="is_order_status_1_sync"/>
+        <result property="encryptOperator" column="encrypt_operator"/>
+        <result property="operatorName" column="operator_name"/>
+        <result property="shopBizType" column="shop_biz_type"/>
     </resultMap>
 
     <sql id="selectVideoShopVo">
-        select id, owner, shop_id, shop_name, access_token, expires_in, expires_at, scope, refresh_token, authority_id, auth_subject_type, create_time, code, platform, pid, logo, order_last_sync_time, comment_last_sync_time, after_sale_last_sync_time, service_start_time, service_end_time, phone, money, spec, duration, unit, pay_type, sms_num, order_id, order_sync_lock, after_sale_sync_lock, table_index, is_order_status_1_sync, encrypt_operator, operator_name, shop_biz_type from video_shop
+        select id,
+               owner,
+               shop_id,
+               shop_name,
+               access_token,
+               expires_in,
+               expires_at,
+               scope,
+               refresh_token,
+               authority_id,
+               auth_subject_type,
+               create_time,
+               code,
+               platform,
+               pid,
+               logo,
+               order_last_sync_time,
+               comment_last_sync_time,
+               after_sale_last_sync_time,
+               service_start_time,
+               service_end_time,
+               phone,
+               money,
+               spec,
+               duration,
+               unit,
+               pay_type,
+               sms_num,
+               order_id,
+               order_sync_lock,
+               after_sale_sync_lock,
+               table_index,
+               is_order_status_1_sync,
+               encrypt_operator,
+               operator_name,
+               shop_biz_type
+        from video_shop
     </sql>
 
     <select id="selectVideoShopList" parameterType="VideoShop" resultMap="VideoShopResult">
         <include refid="selectVideoShopVo"/>
-        <where>  
-            <if test="owner != null "> and owner = #{owner}</if>
-            <if test="shopId != null "> and shop_id = #{shopId}</if>
-            <if test="shopName != null  and shopName != ''"> and shop_name like concat('%', #{shopName}, '%')</if>
-            <if test="accessToken != null  and accessToken != ''"> and access_token = #{accessToken}</if>
-            <if test="expiresIn != null "> and expires_in = #{expiresIn}</if>
-            <if test="expiresAt != null "> and expires_at = #{expiresAt}</if>
-            <if test="scope != null  and scope != ''"> and scope = #{scope}</if>
-            <if test="refreshToken != null  and refreshToken != ''"> and refresh_token = #{refreshToken}</if>
-            <if test="authorityId != null  and authorityId != ''"> and authority_id = #{authorityId}</if>
-            <if test="authSubjectType != null  and authSubjectType != ''"> and auth_subject_type = #{authSubjectType}</if>
-<!--&#45;&#45;             <if test="default != null "> and default = #{default}</if>-->
-            <if test="code != null  and code != ''"> and code = #{code}</if>
-            <if test="platform != null "> and platform = #{platform}</if>
-            <if test="pid != null "> and pid = #{pid}</if>
-            <if test="logo != null  and logo != ''"> and logo = #{logo}</if>
-            <if test="orderLastSyncTime != null "> and order_last_sync_time = #{orderLastSyncTime}</if>
-            <if test="commentLastSyncTime != null "> and comment_last_sync_time = #{commentLastSyncTime}</if>
-            <if test="afterSaleLastSyncTime != null "> and after_sale_last_sync_time = #{afterSaleLastSyncTime}</if>
-            <if test="serviceStartTime != null "> and service_start_time = #{serviceStartTime}</if>
-            <if test="serviceEndTime != null "> and service_end_time = #{serviceEndTime}</if>
-            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
-            <if test="money != null "> and money = #{money}</if>
-            <if test="spec != null  and spec != ''"> and spec = #{spec}</if>
-            <if test="duration != null "> and duration = #{duration}</if>
-            <if test="unit != null "> and unit = #{unit}</if>
-            <if test="payType != null "> and pay_type = #{payType}</if>
-            <if test="smsNum != null "> and sms_num = #{smsNum}</if>
-            <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>
-            <if test="orderSyncLock != null "> and order_sync_lock = #{orderSyncLock}</if>
-            <if test="afterSaleSyncLock != null "> and after_sale_sync_lock = #{afterSaleSyncLock}</if>
-            <if test="tableIndex != null "> and table_index = #{tableIndex}</if>
-            <if test="isOrderStatus1Sync != null "> and is_order_status_1_sync = #{isOrderStatus1Sync}</if>
-            <if test="encryptOperator != null  and encryptOperator != ''"> and encrypt_operator = #{encryptOperator}</if>
-            <if test="operatorName != null  and operatorName != ''"> and operator_name like concat('%', #{operatorName}, '%')</if>
-            <if test="shopBizType != null  and shopBizType != ''"> and shop_biz_type = #{shopBizType}</if>
+        <where>
+            <if test="owner != null ">and owner = #{owner}</if>
+            <if test="shopId != null ">and shop_id = #{shopId}</if>
+            <if test="shopName != null  and shopName != ''">and shop_name like concat('%', #{shopName}, '%')</if>
+            <if test="accessToken != null  and accessToken != ''">and access_token = #{accessToken}</if>
+            <if test="expiresIn != null ">and expires_in = #{expiresIn}</if>
+            <if test="expiresAt != null ">and expires_at = #{expiresAt}</if>
+            <if test="scope != null  and scope != ''">and scope = #{scope}</if>
+            <if test="refreshToken != null  and refreshToken != ''">and refresh_token = #{refreshToken}</if>
+            <if test="authorityId != null  and authorityId != ''">and authority_id = #{authorityId}</if>
+            <if test="authSubjectType != null  and authSubjectType != ''">and auth_subject_type = #{authSubjectType}
+            </if>
+            <!--&#45;&#45;             <if test="default != null "> and default = #{default}</if>-->
+            <if test="code != null  and code != ''">and code = #{code}</if>
+            <if test="platform != null ">and platform = #{platform}</if>
+            <if test="pid != null ">and pid = #{pid}</if>
+            <if test="logo != null  and logo != ''">and logo = #{logo}</if>
+            <if test="orderLastSyncTime != null ">and order_last_sync_time = #{orderLastSyncTime}</if>
+            <if test="commentLastSyncTime != null ">and comment_last_sync_time = #{commentLastSyncTime}</if>
+            <if test="afterSaleLastSyncTime != null ">and after_sale_last_sync_time = #{afterSaleLastSyncTime}</if>
+            <if test="serviceStartTime != null ">and service_start_time = #{serviceStartTime}</if>
+            <if test="serviceEndTime != null ">and service_end_time = #{serviceEndTime}</if>
+            <if test="phone != null  and phone != ''">and phone = #{phone}</if>
+            <if test="money != null ">and money = #{money}</if>
+            <if test="spec != null  and spec != ''">and spec = #{spec}</if>
+            <if test="duration != null ">and duration = #{duration}</if>
+            <if test="unit != null ">and unit = #{unit}</if>
+            <if test="payType != null ">and pay_type = #{payType}</if>
+            <if test="smsNum != null ">and sms_num = #{smsNum}</if>
+            <if test="orderId != null  and orderId != ''">and order_id = #{orderId}</if>
+            <if test="orderSyncLock != null ">and order_sync_lock = #{orderSyncLock}</if>
+            <if test="afterSaleSyncLock != null ">and after_sale_sync_lock = #{afterSaleSyncLock}</if>
+            <if test="tableIndex != null ">and table_index = #{tableIndex}</if>
+            <if test="isOrderStatus1Sync != null ">and is_order_status_1_sync = #{isOrderStatus1Sync}</if>
+            <if test="encryptOperator != null  and encryptOperator != ''">and encrypt_operator = #{encryptOperator}</if>
+            <if test="operatorName != null  and operatorName != ''">and operator_name like concat('%', #{operatorName},
+                '%')
+            </if>
+            <if test="shopBizType != null  and shopBizType != ''">and shop_biz_type = #{shopBizType}</if>
         </where>
     </select>
-    
+
     <select id="selectVideoShopById" parameterType="Long" resultMap="VideoShopResult">
         <include refid="selectVideoShopVo"/>
         where id = #{id}
     </select>
 
     <select id="selectTableIndex" resultType="java.util.HashMap">
-        select table_index,count(table_index) AS total from video_shop
+        select table_index, count(table_index) AS total
+        from video_shop
         group by table_index
         having total &lt; 10
-        order by table_index asc
-        limit 1
+        order by table_index asc limit 1
     </select>
 
-    <select id="selectMaxTableIndex" resultType="java.util.HashMap">
-        select MAX(table_index) from video_shop
+    <select id="selectMaxTableIndex" resultType="Integer">
+        select MAX(table_index)
+        from video_shop
     </select>
 
     <select id="selectVideoShopByOwner" parameterType="String" resultMap="VideoShopResult">
         <include refid="selectVideoShopVo"/>
         where owner = #{owner}
     </select>
-        
+
+    <select id="selectVideoShopByOwner1" parameterType="String" resultType="hashMap">
+        select vs.service_spec_id, vs.service_end_time, vss.specification_id, vss.spec_period
+        from video_shop vs
+                 LEFT JOIN video_shop_servicer vss on vs.service_spec_id = vss.spec_id
+        WHERE vs.owner = #{owner}
+    </select>
+
     <insert id="insertVideoShop" parameterType="VideoShop" useGeneratedKeys="true" keyProperty="id">
         insert into video_shop
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -125,7 +172,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="authorityId != null">authority_id,</if>
             <if test="authSubjectType != null">auth_subject_type,</if>
             <if test="createTime != null">create_time,</if>
-<!--            <if test="default != null">default,</if>-->
+            <!--            <if test="default != null">default,</if>-->
             <if test="code != null">code,</if>
             <if test="platform != null">platform,</if>
             <if test="pid != null">pid,</if>
@@ -150,7 +197,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="encryptOperator != null">encrypt_operator,</if>
             <if test="operatorName != null">operator_name,</if>
             <if test="shopBizType != null">shop_biz_type,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="owner != null">#{owner},</if>
             <if test="shopId != null">#{shopId},</if>
@@ -163,7 +210,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="authorityId != null">#{authorityId},</if>
             <if test="authSubjectType != null">#{authSubjectType},</if>
             <if test="createTime != null">#{createTime},</if>
-<!--            <if test="default != null">#{default},</if>-->
+            <!--            <if test="default != null">#{default},</if>-->
             <if test="code != null">#{code},</if>
             <if test="platform != null">#{platform},</if>
             <if test="pid != null">#{pid},</if>
@@ -188,7 +235,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="encryptOperator != null">#{encryptOperator},</if>
             <if test="operatorName != null">#{operatorName},</if>
             <if test="shopBizType != null">#{shopBizType},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateVideoShop" parameterType="VideoShop">
@@ -197,6 +244,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="owner != null">owner = #{owner},</if>
             <if test="shopId != null">shop_id = #{shopId},</if>
             <if test="shopName != null">shop_name = #{shopName},</if>
+            <if test="mainFinderId != null">main_finder_id = #{mainFinderId},</if>
             <if test="accessToken != null">access_token = #{accessToken},</if>
             <if test="expiresIn != null">expires_in = #{expiresIn},</if>
             <if test="expiresAt != null">expires_at = #{expiresAt},</if>
@@ -205,11 +253,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="authorityId != null">authority_id = #{authorityId},</if>
             <if test="authSubjectType != null">auth_subject_type = #{authSubjectType},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
-<!--            <if test="default != null">default = #{default},</if>-->
+            <!--            <if test="default != null">default = #{default},</if>-->
             <if test="code != null">code = #{code},</if>
             <if test="platform != null">platform = #{platform},</if>
             <if test="pid != null">pid = #{pid},</if>
             <if test="logo != null">logo = #{logo},</if>
+            <if test="serviceSpecId != null">service_spec_id = #{serviceSpecId},</if>
             <if test="orderLastSyncTime != null">order_last_sync_time = #{orderLastSyncTime},</if>
             <if test="commentLastSyncTime != null">comment_last_sync_time = #{commentLastSyncTime},</if>
             <if test="afterSaleLastSyncTime != null">after_sale_last_sync_time = #{afterSaleLastSyncTime},</if>
@@ -235,27 +284,196 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteVideoShopById" parameterType="Long">
-        delete from video_shop where id = #{id}
+        delete
+        from video_shop
+        where id = #{id}
     </delete>
 
     <delete id="deleteVideoShopByIds" parameterType="String">
-        delete from video_shop where id in 
+        delete from video_shop where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
 
-    <insert id="createShopGoods" parameterType="Integer" >
-        CREATE TABLE `video_shop_goods_`#{table_index}  (
-                                               `id` int NOT NULL AUTO_INCREMENT COMMENT 'ID',
-                                               `shop_id` int NULL DEFAULT NULL COMMENT '所属店铺ID',
-                                               `product_id` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '小店内部商品ID',
-                                               `title` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '标题',
-                                               `desc_info.desc` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '商品详情文字。如果添加时没录入，回包可能不包含该字段',
-                                               `express_info.weight` double NULL DEFAULT NULL COMMENT '商品重量，单位克',
-                                               `min_price` decimal(10, 2) NULL DEFAULT NULL COMMENT '商品 SKU 最小价格（单位：分）',
-                                               PRIMARY KEY (`id`) USING BTREE
+    <insert id="createShopGoods" parameterType="java.lang.String">
+        CREATE TABLE ${tableIndex}
+        (
+            `id`             int NOT NULL AUTO_INCREMENT COMMENT 'ID',
+            `shop_id`        int NULL DEFAULT NULL COMMENT '所属店铺ID',
+            `product_id`     varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '小店内部商品ID',
+            `title`          varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '标题',
+            `desc_info.desc` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '商品详情文字。如果添加时没录入，回包可能不包含该字段',
+            `express_info.weight` double NULL DEFAULT NULL COMMENT '商品重量，单位克',
+            `min_price`      decimal(10, 2) NULL DEFAULT NULL COMMENT '商品 SKU 最小价格（单位：分）',
+            PRIMARY KEY (`id`) USING BTREE
         ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
-    </insert >
+    </insert>
 
+    <insert id="createShopOrder" parameterType="java.lang.String">
+        CREATE TABLE ${tableIndex}
+        (
+            `id`                   int NOT NULL AUTO_INCREMENT COMMENT 'ID',
+            `shop_id`              int NULL DEFAULT NULL COMMENT '店铺id',
+            `order_id`             varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '订单ID',
+            `product_id`           varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '商品id',
+            `title`                varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '商品标题',
+            `thumb_img`            varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT 'sku小图',
+
+            `sku_id`               varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT 'sku_id',
+            `sku_attrs`            varchar(500) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT 'sku属性',
+            `sku_cnt`              int NULL DEFAULT NULL COMMENT 'sku数量',
+            `product_price`        decimal(10, 2) NULL DEFAULT NULL COMMENT '商品总价，单位为分',
+            `order_price`          decimal(10, 2) NULL DEFAULT NULL COMMENT '订单金额，单位为分',
+            `freight`              decimal(10, 2) NULL DEFAULT NULL COMMENT '运费，单位为分',
+            `product_cnt`          int NULL DEFAULT NULL COMMENT '商品数量',
+            `status`               int NULL DEFAULT NULL COMMENT '10--待付款\r\n20--待发货\r\n21--部分发货\r\n30--待收货\r\n100--完成\r\n200--全部商品售后之后，订单取消\r\n250--未付款用户主动取消或超时未付款订单自动取消',
+            `openid`               varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '买家身份标识',
+            `user_name`            varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '收货人姓名',
+            `tel_number`           varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '联系方式',
+            `province_name`        varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '省份',
+            `city_name`            varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '城市',
+            `county_name`          varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '区',
+            `detail_info`          varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '详细地址',
+            `order_scene`          int NULL DEFAULT NULL COMMENT '下单场景1--其他\r\n2--直播间\r\n3--短视频\r\n4--商品分享\r\n5--商品橱窗主页\r\n6--公众号文章商品卡片',
+            `customer_notes`       varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '用户备注',
+            `merchant_notes`       varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '商家备注\r\n',
+            `finder_id`            varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '视频号id',
+            `live_id`              varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '直播id',
+            `commission_finder_id` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '达人视频号id',
+            `commission_nickname`  varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '分账方昵称',
+            `commission_type`      int NULL DEFAULT NULL COMMENT '分账方类型，0：达人，1：团长',
+
+            `create_time`          datetime NULL DEFAULT NULL COMMENT '秒级时间戳',
+            `update_time`          datetime NULL DEFAULT NULL COMMENT '秒级时间戳',
+            `confirm_receipt_time` datetime NULL DEFAULT NULL COMMENT '确认收货时间，包括用户主动确认收货和超时自动确认收货',
+            PRIMARY KEY (`id`) USING BTREE
+        ) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+    </insert>
+    <insert id="createShopAfterSaleOrder" parameterType="java.lang.String">
+        CREATE TABLE ${tableIndex}
+        (
+            `id`                  int NOT NULL AUTO_INCREMENT COMMENT 'ID',
+            `local_shop_id`       int NULL DEFAULT NULL COMMENT '店铺ID',
+            `after_sale_order_id` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '售后订单号',
+            `type`                varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '售后类型。REFUND:退款；RETURN:退货退款。',
+            `status`              varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '售后单当前状态\r\nUSER_CANCELD用户取消申请\r\nMERCHANT_PROCESSING商家受理中\r\nMERCHANT_REJECT_REFUND商家拒绝退款\r\nMERCHANT_REJECT_RETURN商家拒绝退货退款\r\nUSER_WAIT_RETURN待买家退货\r\nRETURN_CLOSED退货退款关闭\r\nMERCHANT_WAIT_RECEIPT待商家收货\r\nMERCHANT_OVERDUE_REFUND商家逾期未退款\r\nMERCHANT_REFUND_SUCCESS退款完成\r\nMERCHANT_RETURN_SUCCESS退货退款完成\r\nPLATFORM_REFUNDING平台退款中\r\nPLATFORM_REFUND_FAIL平台退款失败\r\n',
+            `reason_text`         varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '退款原因解释',
+            `order_id`            varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '订单号',
+            `openid`              varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '买家身份标识',
+            `product_id`          varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '商品ID',
+            `amount`              decimal(10, 2) NULL DEFAULT 0.00 COMMENT '退款金额（分）',
+            `create_time`         datetime NULL DEFAULT NULL COMMENT '售后单创建时间戳',
+            `update_time`         datetime NULL DEFAULT NULL COMMENT '售后单更新时间戳',
+            `remark`              varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '备注',
+            PRIMARY KEY (`id`) USING BTREE
+        ) ENGINE = InnoDB AUTO_INCREMENT = 35650 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+    </insert>
+    <insert id="createShopAnchor" parameterType="java.lang.String">
+        CREATE TABLE ${tableIndex}
+        (
+            `id`           int NOT NULL AUTO_INCREMENT COMMENT 'ID',
+            `shop_id`      int NULL DEFAULT NULL,
+            `name`         varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '主播名称',
+            `live_account` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '直播账号',
+            `base_salary`  decimal(10, 2) NULL DEFAULT NULL COMMENT '底薪',
+            `create_by`    varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL,
+            `create_time`  datetime NULL DEFAULT NULL,
+            `update_by`    varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL,
+            `update_time`  datetime NULL DEFAULT NULL,
+            PRIMARY KEY (`id`) USING BTREE
+        ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+    </insert>
+
+    <insert id="createShopSalaryTemplate" parameterType="java.lang.String">
+        CREATE TABLE ${tableIndex}
+        (
+            `id`                                  int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT COMMENT 'ID',
+            `local_shop_id`                       int NULL DEFAULT NULL COMMENT '店铺ID',
+            `name`                                varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '模版名称',
+            `type`                                int NULL DEFAULT NULL COMMENT '模板类型 1-主播底薪 2-比例佣金 3-阶梯佣金 4-底薪+比例佣金 5-底薪+阶梯佣金 6-件数提成',
+            `anchor_basic_salary`                 varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '主播底薪',
+            `helper_basic_salary`                 varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '助播底薪',
+            `controler_basic_salary`              varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '中控底薪',
+            `ratio_anchor_default`                varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '比例佣金--主播默认商品佣金',
+            `ratio_helper_default`                varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '比例佣金--助播默认商品佣金',
+            `ratio_controler_default`             varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '比例佣金--中控默认商品佣金',
+            `radio_given`                         varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '比例佣金--特定佣金',
+            `ladder`                              longtext CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL COMMENT '阶梯佣金',
+            `basic_radio_anchor_basic_salary`     varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '底薪+比例--主播底薪',
+            `basic_radio_helper_basic_salary`     varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '底薪+比例--助播底薪',
+            `basic_radio_controler_basic_salary`  varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '底薪+比例--中控底薪',
+            `basic_radio_anchor_default`          varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '底薪+比例--默认主播商品佣金',
+            `basic_radio_helper_default`          varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '底薪+比例--默认助播商品佣金',
+            `basic_radio_controler_default`       varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '底薪+比例--默认中控商品佣金',
+            `basic_radio_given`                   longtext CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL COMMENT '底薪+比例--特定佣金',
+            `basic_ladder_anchor_basic_salary`    varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '底薪+阶梯--主播底薪',
+            `basic_ladder_helper_basic_salary`    varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '底薪+阶梯--助播底薪',
+            `basic_ladder_controler_basic_salary` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '底薪+阶梯--中控底薪',
+            `basic_ladder`                        longtext CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL COMMENT '底薪+阶梯--阶梯佣金',
+            `quantity_anchor_commission`          decimal(10, 2) NULL DEFAULT NULL COMMENT '件数提成--主播提成',
+            `quantity_helper_commission`          decimal(10, 2) NULL DEFAULT NULL COMMENT '件数提成--助播提成',
+            `quantity_controler_commission`       decimal(10, 2) NULL DEFAULT NULL COMMENT '件数提成--中控提成',
+            PRIMARY KEY (`id`) USING BTREE
+        ) ENGINE = InnoDB AUTO_INCREMENT = 24 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+    </insert>
+
+    <insert id="createShopScheduling" parameterType="java.lang.String">
+        CREATE TABLE ${tableIndex}
+        (
+            `id`                int NOT NULL AUTO_INCREMENT COMMENT 'ID',
+            `shop_id`           int NULL DEFAULT NULL COMMENT '店铺ID',
+            `room_id`           int NULL DEFAULT NULL COMMENT '直播间id',
+            `room_name`         varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '直播间名称',
+            `anchor_id`         int NULL DEFAULT NULL COMMENT '主播iD',
+            `anchor_name`       varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '主播名',
+            `helper_id`         int NULL DEFAULT NULL COMMENT '助播id',
+            `controler_id`      int NULL DEFAULT NULL COMMENT '场控id',
+            `template_id`       int NULL DEFAULT NULL COMMENT '模板id',
+            `template_name`     varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '模版名称',
+            `starttime`         datetime NULL DEFAULT NULL COMMENT '开始时间',
+            `endtime`           datetime NULL DEFAULT NULL COMMENT '结束时间',
+            `create_by`         varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '创建人',
+            `create_time`       datetime NULL DEFAULT NULL COMMENT '创建时间',
+            `update_by`         varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '更新人',
+            `update_time`       datetime NULL DEFAULT NULL COMMENT '更新时间',
+            `valid_products`    int NULL DEFAULT NULL COMMENT '有效商品数',
+            `completed_orders`  int NULL DEFAULT NULL COMMENT '成交订单数',
+            `valid_orders`      int NULL DEFAULT NULL COMMENT '有效订单数',
+            `unpaid_orders`     int NULL DEFAULT NULL COMMENT '未付款订单数',
+            `unpaid_volume`     decimal(10, 2) NULL DEFAULT NULL COMMENT '未付款金额',
+            `sales_volume`      decimal(10, 2) NULL DEFAULT NULL COMMENT '实付销售额',
+            `aftersales_orders` int NULL DEFAULT NULL COMMENT '售后订单数',
+            `refund_amount`     decimal(10, 2) NULL DEFAULT NULL COMMENT '退款金额',
+            `anchor_commission` decimal(10, 2)  NULL DEFAULT 0.00 COMMENT '主播提成',
+            `scene_livecount` int(10) NULL DEFAULT 0 COMMENT '直播来源',
+            `scene_videocount` int(10)  NULL DEFAULT 0 COMMENT '视频来源',
+            `scene_shopcount` int(10)  NULL DEFAULT 0 COMMENT '店铺来源',
+            `scene_livesum` decimal(10, 2) NULL DEFAULT 0.00 COMMENT '直播金额',
+            `scene_videosum` decimal(10, 2) NULL DEFAULT 0.00 COMMENT '视频金额',
+            `scene_shopsum` decimal(10, 2) NULL DEFAULT 0.00 COMMENT '店铺金额',
+            PRIMARY KEY (`id`) USING BTREE
+        ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+    </insert>
+
+    <insert id="createShopLiveRoom" parameterType="java.lang.String">
+        CREATE TABLE ${tableIndex}
+        (
+            `id`          int NOT NULL AUTO_INCREMENT,
+            `shop_id`     int NULL DEFAULT NULL COMMENT '店铺id',
+            `is_main`     int NULL DEFAULT NULL COMMENT '是否是主直播间 1为主直播间',
+            `room_name`   varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '直播间名称',
+            `create_time` datetime NULL DEFAULT NULL COMMENT '秒级时间戳',
+            `update_time` datetime NULL DEFAULT NULL COMMENT '秒级时间戳',
+            PRIMARY KEY (`id`) USING BTREE
+        ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+    </insert>
+
+    <select id="selectVideoShopListNoExpire" resultMap="VideoShopResult">
+        <include refid="selectVideoShopVo"/>
+        <where>
+            FROM_UNIXTIME(service_end_time)> now()
+        </where>
+    </select>
 </mapper>

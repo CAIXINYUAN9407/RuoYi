@@ -1,6 +1,8 @@
 package com.ruoyi.system.service;
 
 import java.util.List;
+
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.system.domain.VideoShopOrder;
 
 /**
@@ -26,6 +28,13 @@ public interface IVideoShopOrderService
      * @return 订单表集合
      */
     public List<VideoShopOrder> selectVideoShopOrderList(VideoShopOrder videoShopOrder);
+
+    /**
+     * 导出订单列表
+     * @param videoShopOrder
+     * @return
+     */
+    public List<VideoShopOrder> selectVideoShopOrderListExport(VideoShopOrder videoShopOrder);
 
     /**
      * 新增订单表
@@ -58,4 +67,8 @@ public interface IVideoShopOrderService
      * @return 结果
      */
     public int deleteVideoShopOrderById(Long id);
+
+    JSONObject decryptTel(String orderId, String localShopId);
+
+    public VideoShopOrder selectVideoShopOrderByOrderId(String orderId);
 }

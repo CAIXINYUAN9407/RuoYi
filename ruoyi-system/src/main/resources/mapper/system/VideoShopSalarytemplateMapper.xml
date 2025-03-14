@@ -20,6 +20,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="basicRadioAnchorBasicSalary"    column="basic_radio_anchor_basic_salary"    />
         <result property="basicRadioHelperBasicSalary"    column="basic_radio_helper_basic_salary"    />
         <result property="basicRadioControlerBasicSalary"    column="basic_radio_controler_basic_salary"    />
+        <result property="basicRadioAnchorDefault"    column="basic_radio_anchor_default"    />
+        <result property="basicRadioHelperDefault"    column="basic_radio_helper_default"    />
+        <result property="basicRadioControlerDefault"    column="basic_radio_controler_default"    />
         <result property="basicRadioGiven"    column="basic_radio_given"    />
         <result property="basicLadderAnchorBasicSalary"    column="basic_ladder_anchor_basic_salary"    />
         <result property="basicLadderHelperBasicSalary"    column="basic_ladder_helper_basic_salary"    />
@@ -31,11 +34,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectVideoShopSalarytemplateVo">
-        select id, local_shop_id, name, type, anchor_basic_salary, helper_basic_salary, controler_basic_salary, ratio_anchor_default, ratio_helper_default, ratio_controler_default, radio_given, ladder, basic_radio_anchor_basic_salary, basic_radio_helper_basic_salary, basic_radio_controler_basic_salary, basic_radio_given, basic_ladder_anchor_basic_salary, basic_ladder_helper_basic_salary, basic_ladder_controler_basic_salary, basic_ladder, quantity_anchor_commission, quantity_helper_commission, quantity_controler_commission from video_shop_salarytemplate_1
+        select id, local_shop_id, name, type, anchor_basic_salary, helper_basic_salary, controler_basic_salary,
+               ratio_anchor_default, ratio_helper_default, ratio_controler_default, radio_given, ladder,
+               basic_radio_anchor_basic_salary, basic_radio_helper_basic_salary, basic_radio_controler_basic_salary, basic_radio_anchor_default,basic_radio_helper_default,basic_radio_controler_default,basic_radio_given, basic_ladder_anchor_basic_salary, basic_ladder_helper_basic_salary, basic_ladder_controler_basic_salary, basic_ladder, quantity_anchor_commission, quantity_helper_commission, quantity_controler_commission from video_shop_salarytemplate_1
+    </sql>
+
+    <sql id="selectVideoShopSalarytemplateVo_UP">
+        select id, local_shop_id, name, type, anchor_basic_salary, helper_basic_salary, controler_basic_salary,
+               ratio_anchor_default, ratio_helper_default, ratio_controler_default, radio_given, ladder,
+               basic_radio_anchor_basic_salary, basic_radio_helper_basic_salary, basic_radio_controler_basic_salary, basic_radio_anchor_default,basic_radio_helper_default,basic_radio_controler_default,basic_radio_given, basic_ladder_anchor_basic_salary, basic_ladder_helper_basic_salary, basic_ladder_controler_basic_salary, basic_ladder, quantity_anchor_commission, quantity_helper_commission, quantity_controler_commission
     </sql>
 
     <select id="selectVideoShopSalarytemplateList" parameterType="VideoShopSalarytemplate" resultMap="VideoShopSalarytemplateResult">
-        <include refid="selectVideoShopSalarytemplateVo"/>
+        <include refid="selectVideoShopSalarytemplateVo_UP"/>
+        from video_shop_salarytemplate_${params.tableIndex}
         <where>  
             <if test="localShopId != null "> and local_shop_id = #{localShopId}</if>
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
@@ -66,9 +78,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectVideoShopSalarytemplateVo"/>
         where id = #{id}
     </select>
+
+    <select id="selectVideoShopSalarytemplateByName" parameterType="VideoShopSalarytemplate" resultMap="VideoShopSalarytemplateResult">
+        <include refid="selectVideoShopSalarytemplateVo_UP"/>
+        from video_shop_salarytemplate_${params.tableIndex}
+        <where>
+            <if test="localShopId != null "> and local_shop_id = #{localShopId}</if>
+            <if test="name != null  and name != ''"> and name = #{name}</if>
+        </where>
+    </select>
         
     <insert id="insertVideoShopSalarytemplate" parameterType="VideoShopSalarytemplate" useGeneratedKeys="true" keyProperty="id">
-        insert into video_shop_salarytemplate_1
+        insert into video_shop_salarytemplate_${params.tableIndex}
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="localShopId != null">local_shop_id,</if>
             <if test="name != null">name,</if>
@@ -84,6 +105,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="basicRadioAnchorBasicSalary != null">basic_radio_anchor_basic_salary,</if>
             <if test="basicRadioHelperBasicSalary != null">basic_radio_helper_basic_salary,</if>
             <if test="basicRadioControlerBasicSalary != null">basic_radio_controler_basic_salary,</if>
+            <if test="basicRadioAnchorDefault != null">basic_radio_anchor_default,</if>
+            <if test="basicRadioHelperDefault != null">basic_radio_helper_default,</if>
+            <if test="basicRadioControlerDefault != null">basic_radio_controler_default,</if>
             <if test="basicRadioGiven != null">basic_radio_given,</if>
             <if test="basicLadderAnchorBasicSalary != null">basic_ladder_anchor_basic_salary,</if>
             <if test="basicLadderHelperBasicSalary != null">basic_ladder_helper_basic_salary,</if>
@@ -108,6 +132,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="basicRadioAnchorBasicSalary != null">#{basicRadioAnchorBasicSalary},</if>
             <if test="basicRadioHelperBasicSalary != null">#{basicRadioHelperBasicSalary},</if>
             <if test="basicRadioControlerBasicSalary != null">#{basicRadioControlerBasicSalary},</if>
+            <if test="basicRadioAnchorDefault != null">#{basicRadioAnchorDefault},</if>
+            <if test="basicRadioHelperDefault != null">#{basicRadioHelperDefault},</if>
+            <if test="basicRadioControlerDefault != null">#{basicRadioControlerDefault},</if>
             <if test="basicRadioGiven != null">#{basicRadioGiven},</if>
             <if test="basicLadderAnchorBasicSalary != null">#{basicLadderAnchorBasicSalary},</if>
             <if test="basicLadderHelperBasicSalary != null">#{basicLadderHelperBasicSalary},</if>
@@ -120,7 +147,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </insert>
 
     <update id="updateVideoShopSalarytemplate" parameterType="VideoShopSalarytemplate">
-        update video_shop_salarytemplate_1
+        update video_shop_salarytemplate_${params.tableIndex}
         <trim prefix="SET" suffixOverrides=",">
             <if test="localShopId != null">local_shop_id = #{localShopId},</if>
             <if test="name != null">name = #{name},</if>
@@ -153,10 +180,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteVideoShopSalarytemplateByIds" parameterType="String">
-        delete from video_shop_salarytemplate_1 where id in 
+        delete from video_shop_salarytemplate_${tableIndex} where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <select id="getVideoShopTemplateList" parameterType="VideoShopAnchor" resultType="hashMap">
+        SELECT vss.id,vss.name from video_shop_salarytemplate_${params.tableIndex} vss
+        <where>
+            vss.local_shop_id = #{localShopId}
+        </where>
+    </select>
 
 </mapper>

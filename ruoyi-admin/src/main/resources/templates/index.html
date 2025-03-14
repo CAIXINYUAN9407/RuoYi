@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="renderer" content="webkit">
-    <title>若依系统首页</title>
+    <title>大掌柜直播助手</title>
     <!-- 避免IE使用兼容模式 -->
  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link th:href="@{favicon.ico}" rel="shortcut icon"/>
+    <link th:href="@{D12.svg}" rel="shortcut icon"/>
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/jquery.contextMenu.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
@@ -40,7 +40,7 @@
 					        </div>
 				        </a>
 				        <div class="pull-left info">
-				          <p>[[${user.loginName}]]</p>
+                            <p>[[${shopName}]]</p>
 				        </div>
 				    </div>
             	</li>
@@ -96,6 +96,10 @@
 								<a onclick="switchSkin()">
 								<i class="fa fa-dashboard"></i> 切换主题</a>
 							</li>
+                            <li>
+                                <a th:href="@{logout}">
+                                    <i class="fa fa-sign-out"></i> 退出登录</a>
+                            </li>
 							<li class="divider"></li>
 
 						</ul>

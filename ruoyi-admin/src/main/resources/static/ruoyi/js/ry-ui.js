@@ -69,7 +69,7 @@ var table = {
                     singleSelect: false,
                     mobileResponsive: true,
                     maintainSelected: false,
-                    rememberSelected: false,
+                    rememberSelected: true,
                     fixedColumns: false,
                     fixedNumber: 0,
                     fixedRightNumber: 0,
