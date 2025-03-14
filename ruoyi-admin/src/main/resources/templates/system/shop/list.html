@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('店铺列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>店铺id：</label>
+                            <input type="text" name="shopId"/>
+                        </li>
+                        <li>
+                            <label>本地店铺id：</label>
+                            <input type="text" name="localShopId"/>
+                        </li>
+                        <li>
+                            <label>店铺名称：</label>
+                            <input type="text" name="shopName"/>
+                        </li>
+                        <li>
+                            <label>服务结束时间</label>
+                            <input type="text" name="serviceEndTime"/>
+                        </li>
+                        <li>
+                            <label>用户实际支付的金额：</label>
+                            <input type="text" name="money"/>
+                        </li>
+                        <li>
+                            <label>购买规格名称：</label>
+                            <input type="text" name="spec"/>
+                        </li>
+                        <li>
+                            <label>使用时长,购买时间按照自然月，1个月，3个月，6个月，12个月。：</label>
+                            <input type="text" name="duration"/>
+                        </li>
+                        <li>
+                            <label>时长单位, 0:天，1:月，2:年：</label>
+                            <input type="text" name="unit"/>
+                        </li>
+                        <li>
+                            <label>订购订单号：</label>
+                            <input type="text" name="orderId"/>
+                        </li>
+                        <li>
+                            <label>订单同步锁：</label>
+                            <input type="text" name="orderSyncLock"/>
+                        </li>
+                        <li>
+                            <label>售后同步锁：</label>
+                            <input type="text" name="afterSaleSyncLock"/>
+                        </li>
+                        <li>
+                            <label>表索引：</label>
+                            <input type="text" name="tableIndex"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+<!--            <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:shop:add">-->
+<!--                <i class="fa fa-plus"></i> 添加-->
+<!--            </a>-->
+<!--            <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:shop:edit">-->
+<!--                <i class="fa fa-edit"></i> 修改-->
+<!--            </a>-->
+<!--            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:shop:remove">-->
+<!--                <i class="fa fa-remove"></i> 删除-->
+<!--            </a>-->
+<!--            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:shop:export">-->
+<!--                <i class="fa fa-download"></i> 导出-->
+<!--            </a>-->
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('system:shop:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('system:shop:remove')}]];
+    var prefix = ctx + "system/shop";
+
+    $(function() {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "店铺",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: '',
+                    visible: false
+                },
+                {
+                    field: 'localShopId',
+                    title: '本地店铺id'
+                },
+                {
+                    field: 'shopName',
+                    title: '店铺名称'
+                },
+                {
+                    field: 'logo',
+                    title: 'Logo'
+                },
+                {
+                    field: 'orderLastSyncTime',
+                    title: '订单最后一次同步时间'
+                },
+                {
+                    field: 'afterSaleLastSyncTime',
+                    title: '售后最后一次同步时间'
+                },
+                {
+                    field: 'serviceEndTime',
+                    title: '购买服务之后服务的结束时间'
+                },
+                {
+                    field: 'spec',
+                    title: '购买规格名称'
+                },
+                {
+                    field: 'isOrderStatus1Sync',
+                    title: '1状态是否同步'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class=""></i>切换登录</a>');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+</script>
+</body>
+</html>

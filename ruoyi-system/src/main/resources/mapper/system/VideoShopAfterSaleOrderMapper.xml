@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.VideoShopAfterSaleOrderMapper">
+
+    <resultMap type="VideoShopAfterSaleOrder" id="VideoShopAfterSaleOrderResult">
+        <result property="id"    column="id"    />
+        <result property="localShopId"    column="local_shop_id"    />
+        <result property="afterSaleOrderId"    column="after_sale_order_id"    />
+        <result property="type"    column="type"    />
+        <result property="status"    column="status"    />
+        <result property="reasonText"    column="reason_text"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="openid"    column="openid"    />
+        <result property="productId"    column="product_id"    />
+        <result property="amount"    column="amount"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectVideoShopAfterSaleOrderVo">
+        select id, local_shop_id, after_sale_order_id, type,status,reason_text, order_id, openid, product_id, amount, create_time, update_time,remark from video_shop_after_sale_order_1
+    </sql>
+    <sql id="selectVideoShopAfterSaleOrderVo_UP">
+        select id, local_shop_id, after_sale_order_id, type,status,reason_text, order_id, openid, product_id, amount, create_time, update_time,remark
+    </sql>
+
+    <select id="selectVideoShopAfterSaleOrderList" parameterType="VideoShopAfterSaleOrder" resultMap="VideoShopAfterSaleOrderResult">
+        <include refid="selectVideoShopAfterSaleOrderVo_UP"/>
+        from video_shop_after_sale_order_${params.tableIndex}
+        <where>
+            <if test="localShopId != null "> and local_shop_id = #{localShopId}</if>
+            <if test="afterSaleOrderId != null  and afterSaleOrderId != ''"> and after_sale_order_id = #{afterSaleOrderId}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="reasonText != null  and reasonText != ''"> and reason_text = #{reasonText}</if>
+            <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>
+            <if test="openid != null  and openid != ''"> and openid = #{openid}</if>
+            <if test="productId != null  and productId != ''"> and product_id = #{productId}</if>
+            <if test="amount != null "> and amount = #{amount}</if>
+            <if test="remark != null "> and remark = #{remark}</if>
+            <if test="createTime != null "> and DATE_FORMAT(create_time, '%Y-%m-%d') =  DATE_FORMAT(#{createTime}, '%Y-%m-%d')</if>
+        </where>
+    </select>
+
+    <select id="selectVideoShopAfterSaleOrderById" parameterType="Long" resultMap="VideoShopAfterSaleOrderResult">
+        <include refid="selectVideoShopAfterSaleOrderVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertVideoShopAfterSaleOrder" parameterType="VideoShopAfterSaleOrder" useGeneratedKeys="true" keyProperty="id">
+        insert into video_shop_after_sale_order_1
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="localShopId != null">local_shop_id,</if>
+            <if test="afterSaleOrderId != null">after_sale_order_id,</if>
+            <if test="type != null">type,</if>
+            <if test="status != null">status,</if>
+            <if test="reasonText != null">reason_text,</if>
+            <if test="orderId != null">order_id,</if>
+            <if test="openid != null">openid,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="amount != null">amount,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="localShopId != null">#{localShopId},</if>
+            <if test="afterSaleOrderId != null">#{afterSaleOrderId},</if>
+            <if test="type != null">#{type},</if>
+            <if test="status != null">#{status},</if>
+            <if test="reasonText != null">#{reasonText},</if>
+            <if test="orderId != null">#{orderId},</if>
+            <if test="openid != null">#{openid},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="amount != null">#{amount},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateVideoShopAfterSaleOrder" parameterType="VideoShopAfterSaleOrder">
+        update video_shop_after_sale_order_1
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="localShopId != null">local_shop_id = #{localShopId},</if>
+            <if test="afterSaleOrderId != null">after_sale_order_id = #{afterSaleOrderId},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="reasonText != null">reason_text = #{reasonText},</if>
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="openid != null">openid = #{openid},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="amount != null">amount = #{amount},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <insert id="insertVideoShopAfterSaleOrder_UP" parameterType="VideoShopAfterSaleOrder" useGeneratedKeys="true" keyProperty="id">
+        insert into video_shop_after_sale_order_${params.tableIndex}
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="localShopId != null">local_shop_id,</if>
+            <if test="afterSaleOrderId != null">after_sale_order_id,</if>
+            <if test="type != null">type,</if>
+            <if test="status != null">status,</if>
+            <if test="reasonText != null">reason_text,</if>
+            <if test="orderId != null">order_id,</if>
+            <if test="openid != null">openid,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="amount != null">amount,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="localShopId != null">#{localShopId},</if>
+            <if test="afterSaleOrderId != null">#{afterSaleOrderId},</if>
+            <if test="type != null">#{type},</if>
+            <if test="status != null">#{status},</if>
+            <if test="reasonText != null">#{reasonText},</if>
+            <if test="orderId != null">#{orderId},</if>
+            <if test="openid != null">#{openid},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="amount != null">#{amount},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateVideoShopAfterSaleOrder_UP" parameterType="VideoShopAfterSaleOrder">
+        update video_shop_after_sale_order_${params.tableIndex}
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="localShopId != null">local_shop_id = #{localShopId},</if>
+            <if test="afterSaleOrderId != null">after_sale_order_id = #{afterSaleOrderId},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="reasonText != null">reason_text = #{reasonText},</if>
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="openid != null">openid = #{openid},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="amount != null">amount = #{amount},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteVideoShopAfterSaleOrderById" parameterType="Long">
+        delete from video_shop_after_sale_order_1 where id = #{id}
+    </delete>
+
+    <select id="selectVideoShopAfterSaleOrderByAfterSaleOrderId" parameterType="String" resultMap="VideoShopAfterSaleOrderResult">
+        <include refid="selectVideoShopAfterSaleOrderVo"/>
+            where after_sale_order_id = #{afterSaleOrderId}
+    </select>
+
+    <select id="selectVideoShopAfterSaleOrderByAfterSaleOrderId_UP" parameterType="String" resultMap="VideoShopAfterSaleOrderResult">
+        <include refid="selectVideoShopAfterSaleOrderVo_UP"/>
+        from video_shop_after_sale_order_${tableIndex}
+        where after_sale_order_id = #{afterSaleOrderId}
+        and local_shop_id = #{shopId}
+    </select>
+
+    <select id="selectVideoShopAfterSaleOrderByOrderId"          parameterType="String" resultMap="VideoShopAfterSaleOrderResult">
+        <include refid="selectVideoShopAfterSaleOrderVo"/>
+        where order_id = #{orderId}
+    </select>
+
+    <select id="selectVideoShopAfterSaleOrderByOrderId_UP"          parameterType="String" resultMap="VideoShopAfterSaleOrderResult">
+        <include refid="selectVideoShopAfterSaleOrderVo_UP"/>
+        from video_shop_after_sale_order_${tableIndex}
+        where order_id = #{orderId}
+        and local_shop_id = #{shopId}
+        ORDER BY update_time desc limit 1
+    </select>
+
+    <delete id="deleteVideoShopAfterSaleOrderByIds" parameterType="String">
+        delete from video_shop_after_sale_order_1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectVideoShopAfterSaleOrderListByFinderId" parameterType="String" resultMap="VideoShopAfterSaleOrderResult">
+        <include refid="selectVideoShopAfterSaleOrderVo"/>
+        vsa
+        <where>
+            vsa.order_id IN (SELECT order_id from video_shop_order_1 vso where vso.finder_id=#{finderId})
+        </where>
+    </select>
+
+    <select id="selectVideoShopAfterSaleOrderIdList" parameterType="String" resultType="String">
+        SELECT vsa.order_id FROM video_shop_after_sale_order_1 vsa
+        <where>
+            vsa.order_id IN(
+            SELECT order_id from video_shop_order_1 WHERE
+            shop_id = 2844
+            AND status in(100,20,21,30)
+            AND date_format(create_time,'%y%m%d %H:%i:%s') >= date_format('2024-07-20 00:00:00','%y%m%d %H:%i:%s')
+            AND date_format(create_time,'%y%m%d %H:%i:%s') <![CDATA[ <= ]]> date_format('2024-07-20 21:00:00','%y%m%d %H:%i:%s'))
+        </where>
+    </select>
+
+</mapper>

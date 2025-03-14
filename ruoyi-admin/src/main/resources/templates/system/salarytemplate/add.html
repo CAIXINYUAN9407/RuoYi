@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增薪酬模版')" />
+    <th:block th:include="include :: select2-css" />
+    <style>
+
+        .span-cen{
+            line-height: 30px;
+            align-items: center;
+        }
+    </style>
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-salarytemplate-add">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">模版名称：</label>
+                <div class="col-sm-6">
+                    <input name="name" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">模版类型：</label>
+                <div class="col-sm-3">
+                    <select id="status" class="form-control m-b" name="type" th:with="type=${@dict.getType('video_shop_salarytemplate_type')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <div id="div1" class="mydiv">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">主播底薪：</label>
+                        <div class="col-sm-3" style="display: inline-flex">
+                            <input name="anchorBasicSalary" class="form-control inline" type="text"> <span class="inline" style="line-height: 30px;align-items: center"> 元</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">助播底薪：</label>
+                        <div class="col-sm-3" style="display: inline-flex">
+                            <input name="helperBasicSalary" class="form-control inline" type="text"> <span class="inline" style="line-height: 30px;align-items: center"> 元</span>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">中控底薪：</label>
+                        <div class="col-sm-3" style="display: inline-flex">
+                            <input name="controlerBasicSalary" class="form-control inline" type="text"> <span class="inline" style="line-height: 30px;align-items: center"> 元</span>
+
+                        </div>
+                    </div>
+                </div>
+                <div id="div2" class="mydiv" style="display:none;">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">主播默认商品佣金：</label>
+                        <div class="col-sm-3">
+                            <input name="ratioAnchorDefault" class="form-control" type="text">
+                        </div>
+                        <span class="span-cen">%</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">助播默认商品佣金：</label>
+                        <div class="col-sm-3">
+                            <input name="ratioHelperDefault" class="form-control" type="text">
+                        </div>
+                        <span class="span-cen">%</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">中控默认商品佣金：</label>
+                        <div class="col-sm-3">
+                            <input name="ratioControlerDefault" class="form-control" type="text">
+                        </div>
+                        <span class="span-cen">%</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">特定商品佣金：</label>
+                        <div class="col-sm-8">
+                            <input name="radioGiven" class="form-control" type="text" style="display: none">
+                            <table id="myTable"
+                                   data-toggle="table"
+                                   data-toolbar="#toolbar">
+                                <thead>
+                                <tr>
+                                    <th data-field="state" data-checkbox="true"></th>
+                                    <th data-field="id">ID</th>
+                                    <th data-field="productId">商品ID</th>
+                                    <th data-field="anchor">主播提成</th>
+                                    <th data-field="helper">助播提成</th>
+                                    <th data-field="controler">中控提成</th>
+                                </tr>
+                                </thead>
+                            </table>
+
+                            <div id="toolbar">
+                                <input id="btn_tableone" class="btn" type="button" value="新增一行">
+                                <input id="btn_tableremoveone" class="btn" type="button" value="删除指定行">
+<!--                                <button id="btn_tableone" class="btn">新增一行</button>-->
+<!--                                <button id="btn_tableremoveone" class="btn">删除指定行</button>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="div3" class="mydiv" style="display:none;">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">阶梯佣金：</label>
+                        <div class="col-sm-8">
+                            <textarea name="ladder" class="form-control" style="display: none"></textarea>
+
+                            <table id="ladder_myTable"
+                                   data-toggle="table"
+                                   data-toolbar="#ladder_toolbar">
+                                <thead>
+                                <tr>
+                                    <th data-field="state" data-checkbox="true"></th>
+                                    <th data-field="id">ID</th>
+                                    <th data-field="productId">销售额大于</th>
+                                    <th data-field="anchor">主播提成</th>
+                                    <th data-field="helper">助播提成</th>
+                                    <th data-field="controler">中控提成</th>
+                                </tr>
+                                </thead>
+                            </table>
+
+                            <div id="ladder_toolbar">
+                                <input id="ladder_btn_tableone" class="btn" type="button" value="新增一行">
+                                <input id="ladder_btn_tableremoveone" class="btn" type="button" value="删除指定行">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="div4" class="mydiv" style="display:none;">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">主播底薪：</label>
+                        <div class="col-sm-3" style="display: inline-flex" >
+                            <input name="basicRadioAnchorBasicSalary" class="form-control" type="text"><span class="span-cen">元</span>
+                        </div>
+                        <label class="col-sm-2 control-label">默认商品佣金：</label>
+                        <div class="col-sm-3" style="display: inline-flex">
+                            <input name="basicRadioAnchorDefault" class="form-control" type="text"><span class="span-cen">%</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">助播底薪：</label>
+                        <div class="col-sm-3" style="display: inline-flex">
+                            <input name="basicRadioHelperBasicSalary" class="form-control" type="text"><span class="span-cen">元</span>
+                        </div>
+                        <label class="col-sm-2 control-label">默认商品佣金：</label>
+                        <div class="col-sm-3" style="display: inline-flex">
+                            <input name="basicRadioHelperDefault" class="form-control" type="text"><span class="span-cen">%</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">中控底薪：</label>
+                        <div class="col-sm-3" style="display: inline-flex">
+                            <input name="basicRadioControlerBasicSalary" class="form-control" type="text"><span class="span-cen">元</span>
+                        </div>
+                        <label class="col-sm-2 control-label">默认商品佣金：</label>
+                        <div class="col-sm-3" style="display: inline-flex">
+                            <input name="basicRadioControlerDefault" class="form-control" type="text"><span class="span-cen">%</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">底薪+比例--特定佣金：</label>
+                        <div class="col-sm-8">
+                            <textarea style="display: none" name="basicRadioGiven" class="form-control"></textarea>
+
+                            <table id="basicRadio_myTable"
+                                   data-toggle="table"
+                                   data-toolbar="#basicRadio_toolbar">
+                                <thead>
+                                <tr>
+                                    <th data-field="state" data-checkbox="true"></th>
+                                    <th data-field="id">ID</th>
+                                    <th data-field="productId">商品ID</th>
+                                    <th data-field="anchor">主播提成</th>
+                                    <th data-field="helper">助播提成</th>
+                                    <th data-field="controler">中控提成</th>
+                                </tr>
+                                </thead>
+                            </table>
+
+                            <div id="basicRadio_toolbar">
+                                <input id="basicRadio_btn_tableone" class="btn" type="button" value="新增一行">
+                                <input id="basicRadio_btn_tableremoveone" class="btn" type="button" value="删除指定行">
+                                <!--                                <button id="btn_tableone" class="btn">新增一行</button>-->
+                                <!--                                <button id="btn_tableremoveone" class="btn">删除指定行</button>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="div5" class="mydiv" style="display:none;">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">主播底薪：</label>
+                        <div class="col-sm-3" style="display: inline-flex">
+                            <input name="basicLadderAnchorBasicSalary" class="form-control" type="text"><span class="span-cen">元</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">助播底薪：</label>
+                        <div class="col-sm-3" style="display: inline-flex">
+                            <input name="basicLadderHelperBasicSalary" class="form-control" type="text"><span class="span-cen">元</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">中控底薪：</label>
+                        <div class="col-sm-3" style="display: inline-flex">
+                            <input name="basicLadderControlerBasicSalary" class="form-control" type="text"><span class="span-cen">元</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">底薪+阶梯--阶梯佣金：</label>
+                        <div class="col-sm-8">
+                            <textarea style="display: none" name="basicLadder" class="form-control"></textarea>
+
+                            <table id="basicLadder_myTable"
+                                   data-toggle="table"
+                                   data-toolbar="basicLadder_toolbar">
+                                <thead>
+                                <tr>
+                                    <th data-field="state" data-checkbox="true"></th>
+                                    <th data-field="id">ID</th>
+                                    <th data-field="productId">销售额大于</th>
+                                    <th data-field="anchor">主播提成</th>
+                                    <th data-field="helper">助播提成</th>
+                                    <th data-field="controler">中控提成</th>
+                                </tr>
+                                </thead>
+                            </table>
+
+                            <div id="basicLadder_toolbar">
+                                <input id="basicLadder_btn_tableone" class="btn" type="button" value="新增一行">
+                                <input id="basicLadder_btn_tableremoveone" class="btn" type="button" value="删除指定行">
+                                <!--                                <button id="btn_tableone" class="btn">新增一行</button>-->
+                                <!--                                <button id="btn_tableremoveone" class="btn">删除指定行</button>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="div6" class="mydiv" style="display:none;">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">每件--主播提成：</label>
+                        <div class="col-sm-3" style="display: inline-flex">
+                            <input name="quantityAnchorCommission" class="form-control" type="text"><span class="span-cen">元</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">每件--助播提成：</label>
+                        <div class="col-sm-3" style="display: inline-flex">
+                            <input name="quantityHelperCommission" class="form-control" type="text"><span class="span-cen">元</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">每件--中控提成：</label>
+                        <div class="col-sm-3" style="display: inline-flex">
+                            <input name="quantityControlerCommission" class="form-control" type="text"><span class="span-cen">元</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        /**
+         * 正数（包括浮点数）
+         * */
+        $.validator.addMethod("pFloatTwo", function (value, element) {
+            return this.optional(element) || (/^([1-9]\d*|[0])(\.\d{1,2})?$/.test(value));
+        }, "请输入正数，最多保留两位小数");
+        var prefix = ctx + "system/salarytemplate";
+        var selectedValue = $('#status').val();
+
+        $("#form-salarytemplate-add").validate({
+            rules: {
+                localShopId: {
+                    required: true,
+                    number: true
+                },
+                name: "required",
+                anchorBasicSalary:{
+                    required: true,
+                    number:true,
+                    pFloatTwo:true
+                },
+                helperBasicSalary:{
+                    required: true,
+                    number:true,
+                    pFloatTwo:true
+                },
+                controlerBasicSalary:{
+                    required: true,
+                    number:true,
+                    pFloatTwo:true
+                },
+                ratioAnchorDefault:{
+                    required: true,
+                    number:true,
+                    pFloatTwo:true
+                },
+                ratioHelperDefault:{
+                    required: true,
+                    number:true,
+                    pFloatTwo:true
+                },
+                ratioControlerDefault:{
+                    required: true,
+                    number:true,
+                    pFloatTwo:true
+                },
+                basicRadioAnchorBasicSalary:{
+                    required: true,
+                    number:true,
+                    pFloatTwo:true
+                },
+                basicRadioHelperBasicSalary:{
+                    required: true,
+                    number:true,
+                    pFloatTwo:true
+                },
+                basicRadioControlerBasicSalary:{
+                    required: true,
+                    number:true,
+                    pFloatTwo:true
+                },
+                basicRadioAnchorDefault:{
+                    required: true,
+                    number:true,
+                    pFloatTwo:true
+                },
+                basicRadioHelperDefault:{
+                    required: true,
+                    number:true,
+                    pFloatTwo:true
+                },
+                basicRadioControlerDefault:{
+                    required: true,
+                    number:true,
+                    pFloatTwo:true
+                },
+                basicLadderAnchorBasicSalary:{
+                    required: true,
+                    number:true,
+                    pFloatTwo:true
+                },
+                basicLadderHelperBasicSalary:{
+                    required: true,
+                    number:true,
+                    pFloatTwo:true
+                },
+                basicLadderControlerBasicSalary:{
+                    required: true,
+                    number:true,
+                    pFloatTwo:true
+                },
+                quantityAnchorCommission:{
+                    required: true,
+                    number:true,
+                    pFloatTwo:true
+                },
+                quantityHelperCommission:{
+                    required: true,
+                    number:true,
+                    pFloatTwo:true
+                },
+                quantityControlerCommission:{
+                    required: true,
+                    number:true,
+                    pFloatTwo:true
+                }
+            },
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                var selectedValue = $('#status').val();
+                if(selectedValue == 2){
+                    var jSONArray = [];
+                    var jsonStr = "[";
+                    $('#myTable').find('tbody tr').each(function() {
+                        if($(this).find('td:nth-child(2)').text()==""){
+                            $("input[name='radioGiven']").val("");
+                            return;
+                        }
+                        var input1 = $(this).find('td:nth-child(2)').text();
+                        var input2 = $(this).find('td:nth-child(3) input').val();
+                        var input3= $(this).find('td:nth-child(4) input').val();
+                        var input4 = $(this).find('td:nth-child(5) input').val();
+                        var input5 = $(this).find('td:nth-child(6) input').val();
+                        jsonStr +='{"id": "'+input1+'", "key2": "'+input2+'","key3": "'+input3+'", "key4":" '+input4+'", "key5": "'+input5+'"},';
+                    });
+                    jsonStr = jsonStr.slice(0, -1);
+                    if(jsonStr.length > 2){
+                        jsonStr +=']';
+                    }
+                    else{
+                        jsonStr ='';
+                    }
+                    $("input[name='radioGiven']").val(jsonStr);
+                }
+                else if(selectedValue == 3){
+                    var jsonStr = "[";
+                    $('#ladder_myTable').find('tbody tr').each(function() {
+                        var input1 = $(this).find('td:nth-child(2)').text();
+                        var input2 = $(this).find('td:nth-child(3) input').val();
+                        var input3= $(this).find('td:nth-child(4) input').val();
+                        var input4 = $(this).find('td:nth-child(5) input').val();
+                        var input5 = $(this).find('td:nth-child(6) input').val();
+                        jsonStr +='{"id": "'+input1+'", "key2": "'+input2+'","key3": "'+input3+'", "key4":" '+input4+'", "key5": "'+input5+'"},';
+                    });
+                    jsonStr = jsonStr.slice(0, -1);
+                    jsonStr +=']';
+                    $("textarea[name='ladder']").val(jsonStr);
+                }
+                else if(selectedValue == 4){
+                    var jsonStr = "[";
+                    $('#basicRadio_myTable').find('tbody tr').each(function() {
+                        var input1 = $(this).find('td:nth-child(2)').text();
+                        var input2 = $(this).find('td:nth-child(3) input').val();
+                        var input3= $(this).find('td:nth-child(4) input').val();
+                        var input4 = $(this).find('td:nth-child(5) input').val();
+                        var input5 = $(this).find('td:nth-child(6) input').val();
+                        jsonStr +='{"id": "'+input1+'", "key2": "'+input2+'","key3": "'+input3+'", "key4":" '+input4+'", "key5": "'+input5+'"},';
+                    });
+                    jsonStr = jsonStr.slice(0, -1);
+                    jsonStr +=']';
+                    $("textarea[name='basicRadioGiven']").val(jsonStr);
+                }
+                else if(selectedValue == 5){
+                    var jsonStr = "[";
+                    $('#basicLadder_myTable').find('tbody tr').each(function() {
+                        var input1 = $(this).find('td:nth-child(2)').text();
+                        var input2 = $(this).find('td:nth-child(3) input').val();
+                        var input3= $(this).find('td:nth-child(4) input').val();
+                        var input4 = $(this).find('td:nth-child(5) input').val();
+                        var input5 = $(this).find('td:nth-child(6) input').val();
+                        jsonStr +='{"id": "'+input1+'", "key2": "'+input2+'","key3": "'+input3+'", "key4":" '+input4+'", "key5": "'+input5+'"},';
+                    });
+                    jsonStr = jsonStr.slice(0, -1);
+                    jsonStr +=']';
+                    $("textarea[name='basicLadder']").val(jsonStr);
+                }
+                $.operate.save(prefix + "/add", $('#form-salarytemplate-add').serialize());
+            }
+        };
+        $(document).ready(function () {
+            $('#status').change(function () {
+                var selectedValue = $(this).val();
+                $('.mydiv').hide(); // 先隐藏所有div
+                if(selectedValue != '') {
+                    $('#div' + selectedValue).show(); // 显示选中的div
+                    if(selectedValue == 3) {
+                        var $ladder_table = $('#ladder_myTable');
+                        var row = {
+                            id: $ladder_table.bootstrapTable('getData').length + 1,
+                            productId:"<div>" +
+                                "<input style='width: 70%;'  type='text' value='0' disabled='disabled' name='"+$ladder_table.bootstrapTable('getData').length + 1+"I' class='required'>" +
+                                "<span class='span-cen'>元</span>" +
+                                "</div>",
+                            anchor:"<div>" +
+                                "<input style='width: 70%;'  type='text' name='"+$ladder_table.bootstrapTable('getData').length + 1+"a' class='required' aria-invalid='true'>" +
+                                "<span class='span-cen'>%</span>" +
+                                "</div>",
+                            helper:"<div>" +
+                                "<input style='width: 70%;' type='text' name='"+$ladder_table.bootstrapTable('getData').length + 1+"h' class='required' aria-invalid='true'>" +
+                                "<span class='span-cen'>%</span>" +
+                                "</div>",
+                            controler: "<div>" +
+                                "<input style='width: 70%;' type='text' name='"+$ladder_table.bootstrapTable('getData').length + 1+"c' class='required' aria-invalid='true'>" +
+                                "<span class='span-cen'>%</span>" +
+                                "</div>"
+                        };
+                        $ladder_table.bootstrapTable('insertRow', { index: 0, row: row });
+                    }
+                    else if(selectedValue == 5){
+                        var $basicLadder_myTable = $('#basicLadder_myTable');
+                        var row = {
+                            id: $basicLadder_myTable.bootstrapTable('getData').length + 1,
+                            productId:"<div>" +
+                                "<input style='width: 70%;' type='text' value='0' disabled='disabled' name='"+$basicLadder_myTable.bootstrapTable('getData').length + 1+"I' class='required'>" +
+                                "<span class='span-cen'>元</span>" +
+                                "</div>",
+                            anchor:"<div>" +
+                                "<input style='width: 70%;' type='text' name='"+$basicLadder_myTable.bootstrapTable('getData').length + 1+"a' class='required'>" +
+                                "<span class='span-cen'>%</span>" +
+                                "</div>",
+                            helper:"<div>" +
+                                "<input style='width: 70%;' type='text' name='"+$basicLadder_myTable.bootstrapTable('getData').length + 1+"h' class='required'>" +
+                                "<span class='span-cen'>%</span>" +
+                                "</div>",
+                            controler: "<div>" +
+                                "<input style='width: 70%;' type='text' name='"+$basicLadder_myTable.bootstrapTable('getData').length + 1+"c' class='required'>" +
+                                "<span class='span-cen'>%</span>" +
+                                "</div>"
+                        };
+                        $basicLadder_myTable.bootstrapTable('insertRow', { index: 0, row: row });
+                        $("#form-salarytemplate-add").validate().element('input');
+                    }
+                }
+            });
+        });
+
+        var $table = $('#myTable');
+        var $remove = $('#btn_tableremoveone');
+        var $add = $('#btn_tableone');
+        // 新增行
+        $add.click(function () {
+            var row = {
+                id: $table.bootstrapTable('getData').length + 1 ,
+                productId:"<div>" +
+                    "<input   type='text' name='"+$table.bootstrapTable('getData').length + 1+"I' class='required'>" +
+                        "</div>",
+                anchor:"<div>" +
+                    "<input style='width: 70%' type='text' name='"+$table.bootstrapTable('getData').length + 1+"a' class='required'> <span class='span-cen'>%</span>" +
+                    "</div>",
+                helper:"<div>" +
+                    "<input style='width: 70%' type='text' name='"+$table.bootstrapTable('getData').length + 1+"h' class='required'> <span class='span-cen'>%</span>" +
+                    "</div>",
+                controler: "<div>" +
+                    "<input style='width: 70%' type='text' name='"+$table.bootstrapTable('getData').length + 1+"c' class='required'> <span class='span-cen'>%</span>" +
+                    "</div>"
+            };
+            $table.bootstrapTable('insertRow', { index: 0, row: row });
+        });
+        $remove.click(function () {
+            var rows = $table.bootstrapTable('getSelections');
+            for (var i = 0; i < rows.length; i++) {
+                $table.bootstrapTable('remove', {
+                    field: 'id',
+                    values: [rows[i].id]
+                });
+            }
+        });
+
+        //阶梯
+        var $ladder_table = $('#ladder_myTable');
+        var $ladder_remove = $('#ladder_btn_tableremoveone');
+        var $ladder_add = $('#ladder_btn_tableone');
+        // 新增行
+        $ladder_add.click(function () {
+            var row = {
+                id: $ladder_table.bootstrapTable('getData').length + 1,
+                productId:"<div>" +
+                    "<input style='width: 70%' type='text' name='"+$ladder_table.bootstrapTable('getData').length + 1+"I' class='required'>" +
+                    "<span class='span-cen'>元</span>" +
+                    "</div>",
+                anchor:"<div>" +
+                    "<input style='width: 70%' type='text' name='"+$ladder_table.bootstrapTable('getData').length + 1+"a' class='required'>" +
+                    "<span class='span-cen'>%</span>" +
+                    "</div>",
+                helper:"<div>" +
+                    "<input style='width: 70%' type='text' name='"+$ladder_table.bootstrapTable('getData').length + 1+"h' class='required'>" +
+                    "<span class='span-cen'>%</span>" +
+                    "</div>",
+                controler: "<div>" +
+                    "<input style='width: 70%' type='text' name='"+$ladder_table.bootstrapTable('getData').length + 1+"c' class='required'>" +
+                    "<span class='span-cen'>%</span>" +
+                    "</div>"
+            };
+            $ladder_table.bootstrapTable('insertRow', { index: 0, row: row });
+        });
+        $ladder_remove.click(function () {
+            var rows = $ladder_table.bootstrapTable('getSelections');
+
+            for (var i = 0; i < rows.length; i++) {
+                if (rows[i].id == 1) {
+                    return; // 结束函数，不执行后续操作
+                }
+                $ladder_table.bootstrapTable('remove', {
+                    field: 'id',
+                    values: [rows[i].id]
+                });
+            }
+        });
+
+        //底薪+比例
+        // basicRadio
+        var $basicRadio_table = $('#basicRadio_myTable');
+        var $basicRadio_remove = $('#basicRadio_btn_tableremoveone');
+        var $basicRadio_add = $('#basicRadio_btn_tableone');
+        // 新增行
+        $basicRadio_add.click(function () {
+            var row = {
+                id: $basicRadio_table.bootstrapTable('getData').length + 1,
+                productId:"<div>" +
+                    "<input  type='text'  name='"+$basicRadio_table.bootstrapTable('getData').length + 1+"I' class='required'>" +
+                    "</div>",
+                anchor:"<div>" +
+                    "<input style='width: 70%' type='text' name='"+$basicRadio_table.bootstrapTable('getData').length + 1+"a' class='required'>" +
+                    "<span class='span-cen'>%</span>" +
+                    "</div>",
+                helper:"<div>" +
+                    "<input style='width: 70%' type='text' name='"+$basicRadio_table.bootstrapTable('getData').length + 1+"h' class='required'>" +
+                    "<span class='span-cen'>%</span>" +
+                    "</div>",
+                controler: "<div>" +
+                    "<input style='width: 70%' type='text' name='"+$basicRadio_table.bootstrapTable('getData').length + 1+"c' class='required'>" +
+                    "<span class='span-cen'>%</span>" +
+                    "</div>"
+            };
+            $basicRadio_table.bootstrapTable('insertRow', { index: 0, row: row });
+        });
+        $basicRadio_remove.click(function () {
+            var rows = $basicRadio_table.bootstrapTable('getSelections');
+            for (var i = 0; i < rows.length; i++) {
+                $basicRadio_table.bootstrapTable('remove', {
+                    field: 'id',
+                    values: [rows[i].id]
+                });
+            }
+        });
+
+        //底薪+阶梯
+        // basicLadder
+        var $basicLadder_table = $('#basicLadder_myTable');
+        var $basicLadder_remove = $('#basicLadder_btn_tableremoveone');
+        var $basicLadder_add = $('#basicLadder_btn_tableone');
+        // 新增行
+        $basicLadder_add.click(function () {
+            var row = {
+                id: $basicLadder_table.bootstrapTable('getData').length + 1,
+                productId:"<div>" +
+                    "<input style='width: 70%' type='text' name='"+$basicLadder_table.bootstrapTable('getData').length + 1+"I' class='required'>" +
+                    "<span class='span-cen'>元</span>" +
+                    "</div>",
+                anchor:"<div>" +
+                    "<input style='width: 70%' type='text' name='"+$basicLadder_table.bootstrapTable('getData').length + 1+"a' class='required'>" +
+                    "<span class='span-cen'>%</span>" +
+                    "</div>",
+                helper:"<div>" +
+                    "<input style='width: 70%' type='text' name='"+$basicLadder_table.bootstrapTable('getData').length + 1+"h' class='required'>" +
+                    "<span class='span-cen'>%</span>" +
+                    "</div>",
+                controler: "<div>" +
+                    "<input style='width: 70%' type='text' name='"+$basicLadder_table.bootstrapTable('getData').length + 1+"c' class='required'>" +
+                    "<span class='span-cen'>%</span>" +
+                    "</div>"
+            };
+            $basicLadder_table.bootstrapTable('insertRow', { index: 0, row: row });
+        });
+        $basicLadder_remove.click(function () {
+            var rows = $basicLadder_table.bootstrapTable('getSelections');
+            for (var i = 0; i < rows.length; i++) {
+                if (rows[i].id == 1) {
+                    return; // 结束函数，不执行后续操作
+                }
+                $basicLadder_table.bootstrapTable('remove', {
+                    field: 'id',
+                    values: [rows[i].id]
+                });
+            }
+        });
+    </script>
+</body>
+</html>

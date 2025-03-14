@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.VideoShopSchedulingMapper">
+
+    <resultMap type="VideoShopScheduling" id="VideoShopSchedulingResult">
+        <result property="id"    column="id"    />
+        <result property="shopId"    column="shop_id"    />
+        <result property="roomId"    column="room_id"    />
+        <result property="roomName"    column="room_name"    />
+        <result property="anchorId"    column="anchor_id"    />
+        <result property="anchorName"    column="anchor_name"    />
+        <result property="helperId"    column="helper_id"    />
+        <result property="controlerId"    column="controler_id"    />
+        <result property="templateId"    column="template_id"    />
+        <result property="templateName"    column="template_name"    />
+        <result property="starttime"    column="starttime"    />
+        <result property="endtime"    column="endtime"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectVideoShopSchedulingVo">
+        select id, shop_id, anchor_id,anchor_name, helper_id, controler_id, template_id, template_name, starttime, endtime, create_by, create_time, update_by, update_time from video_shop_scheduling_1
+    </sql>
+
+    <sql id="selectVideoShopSchedulingVo_UP">
+        select id, shop_id, anchor_id,anchor_name, helper_id, controler_id, template_id, template_name, starttime, endtime, create_by, create_time, update_by, update_time
+    </sql>
+
+    <select id="selectVideoShopSchedulingList" parameterType="VideoShopScheduling" resultMap="VideoShopSchedulingResult">
+        select id, shop_id,room_id,room_name, anchor_id,anchor_name, helper_id, controler_id, template_id, template_name, starttime, endtime, create_by, create_time, update_by, update_time
+        from video_shop_scheduling_${params.tableIndex}
+
+        <where>
+            <if test="shopId != null "> and shop_id = #{shopId}</if>
+            <if test="roomId != null "> and room_id = #{roomId}</if>
+            <if test="anchorId != null "> and anchor_id = #{anchorId}</if>
+            <if test="helperId != null "> and helper_id = #{helperId}</if>
+            <if test="controlerId != null "> and controler_id = #{controlerId}</if>
+            <if test="templateId != null "> and template_id = #{templateId}</if>
+            <if test="templateName != null  and templateName != ''"> and template_name like concat('%', #{templateName}, '%')</if>
+            <if test="starttime != null "> and starttime = #{starttime}</if>
+            <if test="endtime != null "> and endtime = #{endtime}</if>
+        </where>
+    </select>
+
+    <select id="selectVideoShopSchedulingById" resultMap="VideoShopSchedulingResult">
+        <include refid="selectVideoShopSchedulingVo_UP"/>
+        from video_shop_scheduling_${tableIndex}
+        where id = #{id}
+    </select>
+
+    <insert id="insertVideoShopScheduling" parameterType="VideoShopScheduling" useGeneratedKeys="true" keyProperty="id">
+        insert into video_shop_scheduling_1
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="shopId != null">shop_id,</if>
+            <if test="anchorId != null">anchor_id,</if>
+            <if test="anchorName != null">anchor_name,</if>
+            <if test="helperId != null">helper_id,</if>
+            <if test="controlerId != null">controler_id,</if>
+            <if test="templateId != null">template_id,</if>
+            <if test="templateName != null">template_name,</if>
+            <if test="starttime != null">starttime,</if>
+            <if test="endtime != null">endtime,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="shopId != null">#{shopId},</if>
+            <if test="anchorId != null">#{anchorId},</if>
+            <if test="anchorName != null">#{anchorName},</if>
+            <if test="helperId != null">#{helperId},</if>
+            <if test="controlerId != null">#{controlerId},</if>
+            <if test="templateId != null">#{templateId},</if>
+            <if test="templateName != null">#{templateName},</if>
+            <if test="starttime != null">#{starttime},</if>
+            <if test="endtime != null">#{endtime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <insert id="insertVideoShopScheduling_UP" parameterType="VideoShopScheduling" useGeneratedKeys="true" keyProperty="id">
+        insert into video_shop_scheduling_${params.tableIndex}
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="shopId != null">shop_id,</if>
+            <if test="roomId != null">room_id,</if>
+            <if test="roomName != null">room_name,</if>
+            <if test="anchorId != null">anchor_id,</if>
+            <if test="anchorName != null">anchor_name,</if>
+            <if test="helperId != null">helper_id,</if>
+            <if test="controlerId != null">controler_id,</if>
+            <if test="templateId != null">template_id,</if>
+            <if test="templateName != null">template_name,</if>
+            <if test="starttime != null">starttime,</if>
+            <if test="endtime != null">endtime,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="shopId != null">#{shopId},</if>
+            <if test="roomId != null">#{roomId},</if>
+            <if test="roomName != null">#{roomName},</if>
+            <if test="anchorId != null">#{anchorId},</if>
+            <if test="anchorName != null">#{anchorName},</if>
+            <if test="helperId != null">#{helperId},</if>
+            <if test="controlerId != null">#{controlerId},</if>
+            <if test="templateId != null">#{templateId},</if>
+            <if test="templateName != null">#{templateName},</if>
+            <if test="starttime != null">#{starttime},</if>
+            <if test="endtime != null">#{endtime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateVideoShopScheduling" parameterType="VideoShopScheduling">
+        update video_shop_scheduling_${params.tableIndex}
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="shopId != null">shop_id = #{shopId},</if>
+            <if test="anchorId != null">anchor_id = #{anchorId},</if>
+            <if test="anchorName != null">anchor_name = #{anchorName},</if>
+            <if test="helperId != null">helper_id = #{helperId},</if>
+            <if test="controlerId != null">controler_id = #{controlerId},</if>
+            <if test="templateId != null">template_id = #{templateId},</if>
+            <if test="templateName != null">template_name = #{templateName},</if>
+            <if test="starttime != null">starttime = #{starttime},</if>
+            <if test="endtime != null">endtime = #{endtime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+
+            <if test="validProducts != null">valid_products = #{validProducts},</if>
+            <if test="completedOrders != null">completed_orders = #{completedOrders},</if>
+            <if test="validOrders != null">valid_orders = #{validOrders},</if>
+            <if test="unpaidOrders != null">unpaid_orders = #{unpaidOrders},</if>
+            <if test="salesVolume != null">sales_volume = #{salesVolume},</if>
+            <if test="aftersalesOrders != null">aftersales_orders = #{aftersalesOrders},</if>
+            <if test="refundAmount != null">refund_amount = #{refundAmount},</if>
+            <if test="anchorCommission != null">anchor_commission = #{anchorCommission},</if>
+
+            <if test="sceneLivecount != null">scene_livecount = #{sceneLivecount},</if>
+            <if test="sceneVideocount != null">scene_videocount = #{sceneVideocount},</if>
+            <if test="sceneShopcount != null">scene_shopcount = #{sceneShopcount},</if>
+            <if test="sceneLivesum != null">scene_livesum = #{sceneLivesum},</if>
+            <if test="sceneVideosum != null">scene_videosum = #{sceneVideosum},</if>
+            <if test="sceneShopsum != null">scene_shopsum = #{sceneShopsum},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteVideoShopSchedulingById" parameterType="Long">
+        delete from video_shop_scheduling_1 where id = #{id}
+    </delete>
+
+    <delete id="deleteVideoShopSchedulingByIds" parameterType="String">
+        delete from video_shop_scheduling_${tableIndex} where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getCalendarList" parameterType="VideoShopScheduling" resultType="hashMap">
+        select id as schId, shop_id ,anchor_id as iddd, anchor_name as title, helper_id, controler_id, template_id, template_name, starttime as start, endtime as end
+        from video_shop_scheduling_${params.tableIndex} vss
+        <where>
+            vss.shop_id = #{shopId}
+            <if test="roomId != null">and room_id = #{roomId}</if>
+        </where>
+    </select>
+
+    <select id="selectCountByTimeBetween"  resultType="java.lang.Integer">
+        select count(*) from video_shop_scheduling_${tableIndex} vss
+        <where>
+            #{timeBegin} BETWEEN vss.starttime  AND vss.endtime
+            And vss.anchor_id = #{anchorId}
+            And room_id = #{roomId}
+        </where>
+    </select>
+
+    <select id="selectCountByTimeBetweenEdit"  resultType="java.lang.Integer">
+        select count(*) from video_shop_scheduling_${tableIndex} vss
+        <where>
+            #{timeBegin} BETWEEN vss.starttime  AND vss.endtime
+            And vss.shop_id = #{shopId}
+            And vss.anchor_id = #{anchorId}
+            And room_id = #{roomId}
+        </where>
+    </select>
+
+    <select id="selectVideoShopSchedulingCountByAnchorId"  resultType="java.lang.Integer">
+        select count(*) from video_shop_scheduling_1 vss
+        <where>
+            vss.anchor_id = #{anchorId}
+        </where>
+    </select>
+
+    <select id="selectSettlementCountByRoomId" parameterType="String">
+        select count(*)
+        from video_shop_scheduling_${tableIndex} vss
+        where vss.room_id = #{roomId}
+          and vss.shop_id = #{shopId}
+    </select>
+
+<!--    <select id="getCalendarList" parameterType="selectSettlementCountByAnchor22222" resultType="hashMap">-->
+<!--        select id as schId, shop_id ,anchor_id as iddd, anchor_name as title, helper_id, controler_id, template_id, template_name, starttime as start, endtime as end-->
+<!--        from video_shop_scheduling_1-->
+<!--    </select>-->
+
+    <select id="selectCountByTemplateId" parameterType="String">
+        select count(*) from video_shop_scheduling_1 vss where
+           vss.template_id = #{templateId}
+    </select>
+</mapper>

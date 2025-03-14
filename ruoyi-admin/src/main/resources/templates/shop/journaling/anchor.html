@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('主播信息列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>主播名称：</label>
+                                <input type="text" name="name"/>
+                            </li>
+                            <li class="select-time">
+                                    <input type="text" class="time-input" id="dayBegin" placeholder="请选择开始时间" name="params[beginTime]"/>
+                                    <input type="text" class="time-input" id="dayEnd" placeholder="请选择结束时间" name="params[endTime]"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                <a class="btn btn-warning" onclick="$.table.exportExcel()">
+                                    <i class="fa fa-download"></i> 导出
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+<!--                <a class="btn btn-warning" onclick="exportData()" >-->
+<!--                    <i class="fa fa-download"></i> 导出-->
+<!--                </a>-->
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('shop:anchor:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('shop:anchor:remove')}]];
+        var prefix = ctx + "journaling";
+
+        layui.use('laydate', function(){
+            var laydate = layui.laydate;
+
+            var endDate= laydate.render({
+                elem: '#dayEnd',//选择器结束时间
+                type: 'date',
+                min:"1970-1-1",//设置min默认最小值
+                done: function(value,date){
+                    startDate.config.max={
+                        year:date.year,
+                        month:date.month-1,//关键
+                        date: date.date
+                    }
+                }
+            });
+
+            var startDate = laydate.render({
+                elem: '#dayBegin',
+                type: 'date',
+                // max:
+                done: function (value, date) {
+                    endDate.config.min = {
+                        year: date.year,
+                        month: date.month - 1,
+                        date: date.date,
+                    };
+                    endDate.config.start = {
+                        year: date.year,
+                        month: date.month - 1,
+                        date: date.date,
+                    };
+                },
+            });
+
+            
+        });
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                exportUrl: prefix + "/export",
+                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber: 1,                       //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 50, 100, 500],
+                modalName: "主播信息",
+
+                searchFormVisible: false,
+                search:false,
+                showSearch: false,
+                showRefresh:false,   //是否显示刷新按钮
+                showToggle:false,    //是否显示详细视图和列表视图的切换按钮
+                showColumns:false,
+                showFooter:true,
+                showExport: true,
+                exportTypes: ['txt', 'excel'],
+                exportDataType: 'all',
+                exportOptions: {
+                    ignoreColumn:[0],
+                    fileName: '主播数据',
+                    worksheetName: 'Worksheet Name',
+                    csvSeparator: ',',
+                },
+                columns: [{
+                    checkbox: false,
+                    footerFormatter: function (value) {
+                        return '合计';
+                    }
+                },
+                {
+                    field: 'id',
+                    title: 'ID',
+                    visible: false
+                },
+                {
+                    field: 'name',
+                    title: '主播名称'
+                },
+                {
+                    field: 'formatted_date',
+                    title: '日期'
+                },
+                {
+                    field: 'etc',
+                    title: '场次'
+                },
+                {
+                    field: 'minutes',
+                    title: '直播时长',
+                    formatter: function(value, row, index) {
+                        return '<span>' + strToTime(row.minutes) + '</span>';
+                    },
+                    footerFormatter: function (value, rows, index,row) {
+                        var ii=value.length;
+                        var count = 0; for (var i =0;i<value.length;i++) { count += value[i].minutes; }
+                        return strToTime(count); },
+                },
+                {
+                    field: 'valid_products',
+                    title: '有效商品数',
+                    footerFormatter: function (value,row) {
+                        var count = 0;
+                        for (var i in value) { count += value[i].valid_products; }
+                        return count;
+                    }
+                },
+                {
+                    field: 'completed_orders',
+                    title: '成交订单数',
+                    formatter: function(value, row, index){
+                        if(row.completed_orders>0){
+                            return "<a onclick='goToUrl(&quot;"+row.formatted_date+"&quot;,&quot;"+row.etc+"&quot;,&quot;10&quot;)'>"+row.completed_orders+"</a>";
+                        }else {
+                            return "0";
+                        }
+                    },
+                    footerFormatter: function (value) {
+                        var count = 0;
+                        for (var i in value) { count += value[i].completed_orders; }
+                        return count;
+                    }
+                },
+                    {
+                        field: 'valid_orders',
+                        title: '有效订单数',
+                        formatter: function(value, row, index){
+                            if(row.valid_orders>0){
+                                return "<a onclick='goToUrl(&quot;"+row.formatted_date+"&quot;,&quot;"+row.etc+"&quot;,&quot;11&quot;)'>"+row.valid_orders+"</a>";
+                            }else {
+                                return "0";
+                            }
+                        },
+                        footerFormatter: function (value) {
+                            var count = 0;
+                            for (var i in value) { count += value[i].valid_orders; }
+                            return count;
+                        }
+                    },
+                {
+                    field: 'unpaid_orders',
+                    title: '未付款订单数',
+                    formatter: function(value, row, index){
+                        if(row.completed_orders>0){
+                            return "<a onclick='goToUrl(&quot;"+row.formatted_date+"&quot;,&quot;"+row.etc+"&quot;,&quot;22&quot;)'>"+row.unpaid_orders+"</a>";
+                        }else {
+                            return "0";
+                        }
+                    },
+                    footerFormatter: function (value) {
+                        var count = 0;
+                        for (var i in value) { count += value[i].unpaid_orders; }
+                        return count;
+                    }
+                },
+                {
+                    field: 'sales_volume',
+                    title: '实付销售额',
+                    footerFormatter: function (value) {
+                        var count = 0;
+                        for (var i in value) { count += value[i].sales_volume; }
+                        return count;
+                    }
+                },
+                {
+                    field: 'aftersales_orders',
+                    title: '售后订单数',
+                    formatter: function(value, row, index){
+                        if(row.aftersales_orders>0){
+                            return "<a onclick='goToUrl(&quot;"+row.formatted_date+"&quot;,&quot;"+row.etc+"&quot;,&quot;1&quot;)'>"+row.aftersales_orders+"</a>";
+                        }else {
+                            return "0";
+                        }
+                    },
+                    footerFormatter: function (value) {
+                        var count = 0;
+                        for (var i in value) { count += value[i].aftersales_orders; }
+                        return count;
+                    }
+                },
+                {
+                    field: 'refund_amount',
+                    title: '退款金额',
+                    footerFormatter: function (value) {
+                        var count = 0;
+                        for (var i in value) { count += value[i].refund_amount; }
+                        return count;
+                    }
+                },
+                    {
+                        field: 'refund_amount',
+                        title: '净销售额',
+                        formatter: function(value, row, index) {
+                            return row.sales_volume-row.refund_amount ;
+                        },
+                        footerFormatter: function (value) {
+                            var count = 0;
+                            for (var i in value) { count += value[i].sales_volume - value[i].refund_amount; }
+                            return count;
+                        }
+                    }]
+            };
+            $.table.init(options);
+        });
+
+        function strToTime(str) {
+            var hours = Math.floor(str / 3600);
+            var minutes = Math.floor((str % 3600) / 60);
+            var seconds = str % 60;
+            return hours +"时" +minutes+ "分"+ seconds+"秒";
+        }
+
+
+        function footerFormatter(column, data) {
+            var total = data.reduce(function(acc, row) {
+                return acc + parseFloat(row[column.field] || 0);
+            }, 0);
+            return '$' + total.toFixed(2);
+        }
+
+        // 自定义按钮导出数据
+        function exportData(){
+            $('#bootstrap-table').tableExport({
+                pagination: true ,
+                type: 'excel',
+                exportDataType: 'all',
+                exportOptions: {
+                    ignoreColumn:[0],
+                    fileName: '请问请问',
+                    worksheetName: "11111111",
+                    csvSeparator: ',',
+                },
+            });
+        }
+
+        function goToUrl(date,etc,type){
+            var url = ctx + "system/order/goToUrl?date="+date+"&etc="+etc+"&type="+type;
+            $.modal.openTab("订单管理", url);
+        }
+    </script>
+</body>
+</html>

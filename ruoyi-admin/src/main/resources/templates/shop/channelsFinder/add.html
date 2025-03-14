@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增优选联盟达人')" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-1-add">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">店铺Id：</label>
+            <div class="col-sm-8">
+                <input name="localShopId" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">视频号id：</label>
+            <div class="col-sm-8">
+                <input name="finderId" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">昵称：</label>
+            <div class="col-sm-8">
+                <input name="nickname" class="form-control" type="text">
+            </div>
+        </div>
+<!--        <div class="form-group">-->
+<!--            <label class="col-sm-3 control-label">成交金额，单位分：</label>-->
+<!--            <div class="col-sm-8">-->
+<!--                <input name="payGmv" class="form-control" type="text">-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="form-group">-->
+<!--            <label class="col-sm-3 control-label">动销商品数：</label>-->
+<!--            <div class="col-sm-8">-->
+<!--                <input name="payProductIdCnt" class="form-control" type="text">-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="form-group">-->
+<!--            <label class="col-sm-3 control-label">成交人数：</label>-->
+<!--            <div class="col-sm-8">-->
+<!--                <input name="payUv" class="form-control" type="text">-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="form-group">-->
+<!--            <label class="col-sm-3 control-label">退款金额，单位分：</label>-->
+<!--            <div class="col-sm-8">-->
+<!--                <input name="refundGmv" class="form-control" type="text">-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="form-group">-->
+<!--            <label class="col-sm-3 control-label">成交退款金额，单位分：</label>-->
+<!--            <div class="col-sm-8">-->
+<!--                <input name="payRefundGmv" class="form-control" type="text">-->
+<!--            </div>-->
+<!--        </div>-->
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var prefix = ctx + "shop/channelsFinder"
+    $("#form-1-add").validate({
+        focusCleanup: true
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/add", $('#form-1-add').serialize());
+        }
+    }
+</script>
+</body>
+</html>

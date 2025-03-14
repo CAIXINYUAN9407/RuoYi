@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('售后信息列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>售后订单号：</label>
+                            <input type="text" name="afterSaleOrderId"/>
+                        </li>
+                        <li>
+                            <label>订单号：</label>
+                            <input type="text" name="orderId"/>
+                        </li>
+                        <li>
+                            <label>商品ID：</label>
+                            <input type="text" name="productId"/>
+                        </li>
+                        <li>
+                            <select name="reasonText" th:with="type=${@dict.getType('video_shop_after_sale_order_reason')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}">
+                                </option>
+                            </select>
+                        </li>
+                        <li>
+                            <select name="status" th:with="type=${@dict.getType('video_shop_after_sale_order_status')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}">
+                                </option>
+                            </select>
+                        </li>
+
+                        <li>
+                            <label>售后时间</label>
+                            <input type="text" class="time-input" placeholder="请选择售后时间" name="createTime"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="shop:afterSale:add">
+                <i class="fa fa-plus"></i> 添加
+            </a>
+            <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="shop:afterSale:edit">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="shop:afterSale:remove">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="shop:afterSale:export">
+                <i class="fa fa-download"></i> 导出
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('shop:afterSale:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('shop:afterSale:remove')}]];
+    var prefix = ctx + "shop/afterSale";
+
+    var reasonDatas = [[${@dict.getType('video_shop_after_sale_order_reason')}]];
+    var statusDatas = [[${@dict.getType('video_shop_after_sale_order_status')}]];
+
+
+    $(function() {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "售后信息",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: 'ID',
+                    visible: false
+                },
+                {
+                    field: 'afterSaleOrderId',
+                    title: '售后订单号'
+                },
+                {
+                    field: 'type',
+                    title: '售后类型'
+                },
+                {
+                    field: 'status',
+                    title: '售后单当前状态',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(statusDatas, value);
+                    }
+                },
+                {
+                    field: 'reasonText',
+                    title: '售后原因'
+                },
+                {
+                    field: 'createTime',
+                    title: '售后时间'
+                },
+                {
+                    field: 'orderId',
+                    title: '订单号'
+                },
+                {
+                    field: 'orderId',
+                    title: '手机号',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + '" href="javascript:void(0)" onclick="decryptTel(\'' + row.orderId + '\',\'' + row.localShopId+ '\')"><i class="fa fa-edit"></i>解密</a> ');
+                        return actions.join('');
+                    }
+                },
+                {
+                    field: 'productId',
+                    title: '商品ID'
+                },
+                {
+                    field: 'amount',
+                    title: '退款金额'
+                },
+                {
+                    field: 'remark',
+                    title: '备注'
+                }
+                ]
+        };
+        $.table.init(options);
+    });
+
+    //解密联系方式
+    function decryptTel(orderId,localShopId){
+        $.ajax({
+            type: "post",
+            url: ctx + "system/order/decryptTel",
+            data: {
+                "orderId": orderId,
+                "localShopId":localShopId
+            },
+            success: function(data) {
+                $.modal.alert("订单联系方式:"+data.data.tel_number+"       收货地区:"+data.data.province_name+"-"+data.data.city_name+"       收货人:"+data.data.user_name);
+            },
+            error:function (data) {
+                $.modal.alertError("解密次数已达上限");
+            }
+        });
+    }
+</script>
+</body>
+</html>

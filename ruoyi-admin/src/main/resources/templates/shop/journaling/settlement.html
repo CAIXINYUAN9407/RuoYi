@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('主播信息列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <input type="text" id="selectDateType" value="1" placeholder="请选择开始时间"
+                                   name="params[selectDateType]" style="display: none"/>
+                            <div class='tabbable tabs-left' style="display: inline-flex">
+                                <ul id="myTab" class="nav nav-tabs" role="tablist" style="border: 0px">
+                                    <li name="params[week]" class="active"><a href="#bulletin" role="tab"
+                                                                              data-toggle="tab">月结</a></li>
+                                    <li name="params[week]"><a href="#rule" role="tab" data-toggle="tab">周结</a></li>
+                                    <li name="params[week]"><a href="#forum" role="tab" data-toggle="tab">日结</a></li>
+                                </ul>
+                                <!-- 选项卡面板 -->
+                                <div id="myTabContent" class="tab-content">
+                                    <div class="tab-pane left active" id="bulletin">
+                                        <input type="text" class="time-input" id="monthBegin"
+                                               placeholder="请选择开始月份" name="params[beginTime1]"/>
+                                        <input type="text" class="time-input" id="monthEnd" placeholder="请选择结束月份"
+                                               name="params[endTime1]"/>
+                                    </div>
+                                    <div class="tab-pane left" id="rule">
+                                        <input type="text" class="time-input" id="week" placeholder="请选择周"
+                                               name="params[beginTime2]"/>
+                                    </div>
+                                    <div class="tab-pane left" id="forum">
+                                        <input type="text" class="time-input" id="dayBegin" placeholder="请选择开始时间"
+                                               name="params[beginTime3]"/>
+                                        <input type="text" class="time-input" id="dayEnd" placeholder="请选择结束时间"
+                                               name="params[endTime3]"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </li>
+                        <li class="select-time" style="display: none;">
+                            <label>结算时间： </label>
+                            <input type="text" class="time-input" id="startTime" placeholder="开始时间"
+                                   name="params[beginTime]"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" placeholder="结束时间"
+                                   name="params[endTime]"/>
+                        </li>
+                        <li>
+                            <label>主播名称：</label>
+                            <input type="text" name="name"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                            <a class="btn btn-warning" onclick="$.table.exportExcel()">
+                                <i class="fa fa-download"></i> 导出
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="shop:anchor:export">
+                <i class="fa fa-download"></i> 导出
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('shop:anchor:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('shop:anchor:remove')}]];
+    var prefix = ctx + "journaling";
+
+    $(function () {
+        var options = {
+            url: prefix + "/settlementList",
+            exportUrl: prefix + "/settlementList/export",
+            pagination: true,
+            sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+            pageNumber: 1,                       //初始化加载第一页，默认第一页
+            pageSize: 10,                       //每页的记录行数（*）
+            pageList: [10, 100],        //可供选择的每页的行数（*）
+            modalName: "主播信息",
+
+            searchFormVisible: false,
+            search: false,
+            showSearch: false,
+            showRefresh: false,   //是否显示刷新按钮
+            showToggle: false,    //是否显示详细视图和列表视图的切换按钮
+            showColumns: false,
+            showFooter: true,
+            showExport: true,
+            type: 'excel',
+            exportDataType: "all",
+            exportOptions: {
+                ignoreColumn: [0],
+                fileName: '排班信息',
+                worksheetName: 'Worksheet Name',
+                csvSeparator: ',',
+            },
+            columns: [{
+                checkbox: false,
+                footerFormatter: function (value) {
+                    return '合计';
+                }
+            },
+                {
+                    field: 'id',
+                    title: 'ID',
+                    visible: false
+                },
+                {
+                    field: 'anchor_name',
+                    title: '主播名称'
+                },
+                {
+                    field: 'dateStr',
+                    title: '日期'
+
+                },
+                {
+                    field: '',
+                    title: '直播次数',
+                    formatter: function (value, row, index) {
+                        return '<span>' + row.liveNum + '</span>';
+                    }, footerFormatter: function (value) {
+                        var count = 0;
+                        for (var i in value) {
+                            count += value[i].liveNum;
+                        }
+                        return count;
+                    },
+                },
+                {
+                    field: '',
+                    title: '直播时长',
+                    formatter: function (value, row, index) {
+                        return '<span>' + strToTime(row.liveInter) + '</span>';
+                    },
+                    footerFormatter: function (value) {
+                        var count = 0;
+                        for (var i in value) {
+                            count += value[i].liveInter;
+                        }
+                        return strToTime(count);
+                    }
+                },
+                {
+                    field: 'sceneLiveCount',
+                    title: '订单来源',
+                    formatter: function (value, row, index) {
+                        return '<span>播' + row.sceneLiveCount + '</span>  <span>视' + row.sceneVideoCount + '</span>  <span>店' + row.sceneShopCount + '</span><br>' +
+                            '<span>播￥' + row.sceneLiveSum + '</span>  <span>视￥' + row.sceneVideoSum + '</span>  <span>店￥' + row.sceneShopSum + '</span><br>';
+                    },
+                    footerFormatter: function (value) {
+                        var count1 = 0;
+                        var count2 = 0;
+                        var count3 = 0;
+                        var count4 = 0;
+                        var count5 = 0;
+                        var count6 = 0;
+                        for (var i in value) {
+                            count1 += value[i].sceneLiveCount;
+                            count2 += value[i].sceneVideoCount;
+                            count3 += value[i].sceneShopCount;
+                            count4 += value[i].sceneLiveSum;
+                            count5 += value[i].sceneVideoSum;
+                            count6 += value[i].sceneShopSum;
+                        }
+                        return '<span>播' + count1 + '</span>  <span>视' + count2 + '</span>  <span>店' + count3 + '</span><br>' +
+                            '<span>播￥' + count4 + '</span>  <span>视￥' + count5 + '</span>  <span>店￥' + count6 + '</span><br>';
+                    }
+                },
+                {
+                    field: 'productCount',
+                    title: '有效商品数',
+                    footerFormatter: function (value) {
+                        var count = 0;
+                        for (var i in value) {
+                            count += value[i].productCount;
+                        }
+                        return count;
+                    }
+                },
+                {
+                    field: 'orderCount',
+                    title: '成交订单数',
+                    footerFormatter: function (value) {
+                        var count = 0;
+                        for (var i in value) {
+                            count += value[i].orderCount;
+                        }
+                        return count;
+                    }
+                },
+                {
+                    filed: '',
+                    title: '有效订单数',
+                    formatter: function (value, row, index) {
+                        return row.orderCount - row.unOrderCount - row.afterCount;
+                    },
+                    footerFormatter: function (value) {
+                        var count = 0;
+                        for (var i in value) {
+                            count += value[i].orderCount - value[i].unOrderCount - value[i].afterCount;
+                        }
+                        return count;
+                    }
+                },
+                {
+                    field: 'unOrderCount',
+                    title: '未付款订单数',
+                    footerFormatter: function (value) {
+                        var count = 0;
+                        for (var i in value) {
+                            count += value[i].unOrderCount;
+                        }
+                        return count;
+                    }
+                },
+                {
+                    field: 'priceSum',
+                    title: '实付销售额',
+                    footerFormatter: function (value) {
+                        var count = 0;
+                        for (var i in value) {
+                            count += value[i].priceSum;
+                        }
+                        return count;
+                    }
+                },
+                {
+                    field: 'afterCount',
+                    title: '售后订单数',
+                    footerFormatter: function (value) {
+                        var count = 0;
+                        for (var i in value) {
+                            count += value[i].afterCount;
+                        }
+                        return count;
+                    }
+                },
+                {
+                    field: 'afterSun',
+                    title: '退款金额',
+                    footerFormatter: function (value) {
+                        var count = 0;
+                        for (var i in value) {
+                            count += value[i].afterSun;
+                        }
+                        return count;
+                    }
+                },
+                {
+                    filed: '',
+                    title: '净销售额',
+                    formatter: function (value, row, index) {
+                        return row.priceSum - row.afterSun;
+                    },
+                    footerFormatter: function (value) {
+                        var count = 0;
+                        for (var i in value) {
+                            count += value[i].priceSum - value[i].afterSun;
+                        }
+                        return count;
+                    }
+                },
+                {
+                    field: 'basicSalary',
+                    title: '主播底薪',
+                    footerFormatter: function (value) {
+                        var count = 0;
+                        for (var i in value) {
+                            count += value[i].basicSalary;
+                        }
+                        return count;
+                    }
+                },
+                {
+                    field: 'anchorCommission',
+                    title: '主播分成',
+                    footerFormatter: function (value) {
+                        var count = 0;
+                        for (var i in value) {
+                            count += value[i].anchorCommission;
+                        }
+                        return count;
+                    }
+                }, {
+                    field: 'templateName',
+                    title: '薪酬模板'
+                }]
+        };
+        $.table.init(options);
+    });
+</script>
+<script>
+    layui.use('laydate', function () {
+        var laydate = layui.laydate;
+        var monday = getMonday(new Date());
+        var ele = $("#week");
+        var selectDateType = $("#selectDateType");
+        laydate.render({
+            elem: '#monthBegin',
+            type: 'month',
+            done: function (value, date, endDate) {
+                selectDateType.val('1');
+            }
+        });
+        laydate.render({
+            elem: '#monthEnd',
+            type: 'month'
+        });
+
+        laydate.render({
+            elem: '#dayBegin',
+            type: 'date',
+            done: function (value, date, endDate) {
+                selectDateType.val('3');
+            }
+        });
+        laydate.render({
+            elem: '#dayBegin',
+            type: 'date',
+            done: function (value, date, endDate) {
+                selectDateType.val('3');
+            }
+        });
+
+
+        laydate.render({
+            elem: '#week',
+            type: 'date',
+            max: genTime('day'),
+            format: "yyyy-MM-dd~yyyy-MM-dd",
+            btns: ['clear', 'confirm'],
+            done: function (value, date, endDate) {
+                selectDateType.val('2');
+                if (value != "" && value.length > 0) {
+                    var today = new Date(value.substring(0, 10));
+                    var weekday = today.getDay();
+                    var monday;
+                    var sunday;
+                    if (weekday == 0) {
+                        monday = new Date(1000 * 60 * 60 * 24 * (weekday - 6) + today.getTime());
+                    } else {
+                        monday = new Date(1000 * 60 * 60 * 24 * (1 - weekday) + today.getTime());
+                    }
+                    if (weekday == 0) {
+                        sunday = today;
+                    } else {
+                        sunday = new Date(1000 * 60 * 60 * 24 * (7 - weekday) + today.getTime());
+                    }
+                    var month = monday.getMonth() + 1;
+                    if (month < 10) {
+                        month = "0" + month;
+                    }
+                    var day1 = monday.getDate();
+                    if (day1 < 10) {
+                        day1 = "0" + day1;
+                    }
+                    var start = "" + monday.getFullYear() + "-" + month + "-" + day1;
+                    var month2 = sunday.getMonth() + 1;
+                    if (month2 < 10) {
+                        month2 = "0" + month2;
+                    }
+                    var day2 = sunday.getDate();
+                    if (day2 < 10) {
+                        day2 = "0" + day2;
+                    }
+                    var end = "" + sunday.getFullYear() + "-" + month2 + "-" + day2;
+                    ele.val(start + "~" + end);
+                } else {
+                    ele.val('');
+                }
+            }
+        });
+    });
+
+    //获取当前日期的周一日期
+    function getMonday(date) {
+        var day = date.getDay() || 7;
+        if (day !== 1)
+            date.setHours(-24 * (day - 1));
+        return date;
+    }
+
+    //获取某日期的第n天后的日期
+    function GetDateStr(date, n) {
+        var dd = date;
+        dd.setDate(dd.getDate() + n);
+        var y = dd.getFullYear();
+        var m = (dd.getMonth() + 1) < 10 ? "0" + (dd.getMonth() + 1) : (dd.getMonth() + 1);
+        var d = dd.getDate() < 10 ? "0" + dd.getDate() : dd.getDate();
+        return y + "-" + m + "-" + d;
+    };
+
+    function genTime(opt) {
+        let now = new Date();
+        let year = now.getFullYear();
+        let mth = now.getMonth();
+        let day = now.getDate();
+        let month = mth + 1;
+        if (month < 10) {
+            month = '0' + month
+        }
+        if (day < 10) {
+            day = '0' + day
+        }
+        let str;
+        if (opt == 'day') {
+            str = year + '-' + month + '-' + day;
+        } else if (opt == 'month') {
+            str = year + '-' + month;
+        }
+        return str;
+    }
+
+    function strToTime(str) {
+        var hours = Math.floor(str / 3600);
+        var minutes = Math.floor((str % 3600) / 60);
+        var seconds = str % 60;
+        return hours + "时" + minutes + "分" + seconds + "秒";
+    }
+
+    $(document).ready(function () {
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            // 获取当前激活的tab内容区域的id
+            var activeTabId = $(e.target).attr('href');
+            // 在这里编写你的逻辑代码
+            console.log("当前激活的Tab ID是：" + activeTabId);
+        });
+    });
+</script>
+
+
+</body>
+</html>

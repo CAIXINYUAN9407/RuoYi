@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.VideoShopChannelsFinderMapper">
+
+    <resultMap type="VideoShopChannelsFinder" id="VideoShopChannelsFinderResult">
+        <result property="id"    column="id"    />
+        <result property="localShopId"    column="local_shop_id"    />
+        <result property="finderId"    column="finder_id"    />
+        <result property="nickname"    column="nickname"    />
+        <result property="payGmv"    column="pay_gmv"    />
+        <result property="payProductIdCnt"    column="pay_product_id_cnt"    />
+        <result property="payUv"    column="pay_uv"    />
+        <result property="refundGmv"    column="refund_gmv"    />
+        <result property="payRefundGmv"    column="pay_refund_gmv"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectVideoShopChannelsFinderVo">
+        select id, local_shop_id, finder_id,nickname, pay_gmv, pay_product_id_cnt, pay_uv, refund_gmv, pay_refund_gmv, create_time, update_time from video_shop_channels_finder_1
+    </sql>
+
+    <select id="selectVideoShopChannelsFinderList" parameterType="VideoShopChannelsFinder" resultMap="VideoShopChannelsFinderResult">
+        select any_value(id) as id, any_value(local_shop_id) as local_shop_id, finder_id,any_value(nickname) as nickname, any_value(pay_gmv) as pay_gmv, any_value(pay_product_id_cnt) as pay_product_id_cnt, any_value(pay_uv) as pay_uv, any_value(refund_gmv) as refund_gmv, any_value(pay_refund_gmv) as pay_refund_gmv, any_value(count_time) as count_time,any_value(create_time) as create_time, any_value(update_time) as update_time from video_shop_channels_finder_1
+
+        <where>
+            <if test="localShopId != null "> and local_shop_id = #{localShopId}</if>
+            <if test="finderId != null  and finderId != ''"> and finder_id = #{finderId}</if>
+            <if test="nickname != null  and nickname != ''"> and nickname like concat('%', #{nickname}, '%')</if>
+            <if test="payGmv != null "> and pay_gmv = #{payGmv}</if>
+            <if test="payProductIdCnt != null "> and pay_product_id_cnt = #{payProductIdCnt}</if>
+            <if test="payUv != null "> and pay_uv = #{payUv}</if>
+            <if test="refundGmv != null "> and refund_gmv = #{refundGmv}</if>
+            <if test="payRefundGmv != null "> and pay_refund_gmv = #{payRefundGmv}</if>
+        </where>
+        Group by finder_id
+    </select>
+
+    <select id="selectVideoShopChannelsFinderById" parameterType="Long" resultMap="VideoShopChannelsFinderResult">
+        <include refid="selectVideoShopChannelsFinderVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertVideoShopChannelsFinder" parameterType="VideoShopChannelsFinder">
+        insert into video_shop_channels_finder_1
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="localShopId != null">local_shop_id,</if>
+            <if test="finderId != null">finder_id,</if>
+            <if test="nickname != null">nickname,</if>
+            <if test="payGmv != null">pay_gmv,</if>
+            <if test="payProductIdCnt != null">pay_product_id_cnt,</if>
+            <if test="payUv != null">pay_uv,</if>
+            <if test="refundGmv != null">refund_gmv,</if>
+            <if test="payRefundGmv != null">pay_refund_gmv,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="localShopId != null">#{localShopId},</if>
+            <if test="finderId != null">#{finderId},</if>
+            <if test="nickname != null">#{nickname},</if>
+            <if test="payGmv != null">#{payGmv},</if>
+            <if test="payProductIdCnt != null">#{payProductIdCnt},</if>
+            <if test="payUv != null">#{payUv},</if>
+            <if test="refundGmv != null">#{refundGmv},</if>
+            <if test="payRefundGmv != null">#{payRefundGmv},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateVideoShopChannelsFinder" parameterType="VideoShopChannelsFinder">
+        update video_shop_channels_finder_1
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="localShopId != null">local_shop_id = #{localShopId},</if>
+            <if test="finderId != null">finder_id = #{finderId},</if>
+            <if test="nickname != null">nickname = #{nickname},</if>
+            <if test="payGmv != null">pay_gmv = #{payGmv},</if>
+            <if test="payProductIdCnt != null">pay_product_id_cnt = #{payProductIdCnt},</if>
+            <if test="payUv != null">pay_uv = #{payUv},</if>
+            <if test="refundGmv != null">refund_gmv = #{refundGmv},</if>
+            <if test="payRefundGmv != null">pay_refund_gmv = #{payRefundGmv},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteVideoShopChannelsFinderById" parameterType="Long">
+        delete from video_shop_channels_finder_1 where id = #{id}
+    </delete>
+
+    <delete id="deleteVideoShopChannelsFinderByIds" parameterType="String">
+        delete from video_shop_channels_finder_1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteVideoShopChannelsFinderByFinderIdAndCountTime" parameterType="VideoShopChannelsFinder">
+        delete from video_shop_channels_finder_1 where finder_id = #{finderId} and count_time=#{countTime}
+    </delete>
+
+</mapper>

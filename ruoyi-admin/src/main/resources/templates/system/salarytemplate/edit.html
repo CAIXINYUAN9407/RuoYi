@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改薪酬模版')" />
+    <style>
+        .span-cen{
+            line-height: 30px;
+            align-items: center;
+        }
+    </style>
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-salarytemplate-edit" th:object="${videoShopSalarytemplate}">
+            <input name="id" th:field="*{id}" type="hidden">
+
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">模版名称：</label>
+                <div class="col-sm-6">
+                    <input name="name" th:field="*{name}" class="form-control" type="text" readonly>
+                </div>
+            </div>
+            <div th:switch="*{type}">
+                <input name="name" th:field="*{type}" class="form-control" type="text" style="display: none">
+                <div id="div1" th:case="1" class="mydiv">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">主播底薪：</label>
+                        <div class="col-sm-2" style="display: inline-flex">
+                            <input name="anchorBasicSalary" class="form-control" th:field="*{anchorBasicSalary}" type="text" readonly><span class="inline" style="line-height: 30px;align-items: center"> 元</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">助播底薪：</label>
+                        <div class="col-sm-2" style="display: inline-flex">
+                            <input name="helperBasicSalary" class="form-control" th:field="*{helperBasicSalary}" type="text" readonly><span class="inline" style="line-height: 30px;align-items: center"> 元</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">中控底薪：</label>
+                        <div class="col-sm-2" style="display: inline-flex">
+                            <input name="controlerBasicSalary" class="form-control" th:field="*{controlerBasicSalary}" type="text" readonly><span class="inline" style="line-height: 30px;align-items: center"> 元</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="div2" th:case="2" class="mydiv" >
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">主播默认商品佣金：</label>
+                        <div class="col-sm-1" >
+                            <input name="ratioAnchorDefault" th:field="*{ratioAnchorDefault}" class="form-control" type="text" readonly>
+                        </div>
+                        <span class="span-cen">%</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">助播默认商品佣金：</label>
+                        <div class="col-sm-1">
+                            <input name="ratioHelperDefault" th:field="*{ratioHelperDefault}" class="form-control" type="text" readonly>
+                        </div>
+                        <span class="span-cen">%</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">中控默认商品佣金：</label>
+                        <div class="col-sm-1">
+                            <input name="ratioControlerDefault" th:field="*{ratioControlerDefault}" class="form-control" type="text" readonly>
+                        </div>
+                        <span class="span-cen">%</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">特定商品佣金：</label>
+                        <div class="col-sm-8">
+                            <textarea name="radioGiven" class="form-control" th:field="*{radioGiven}" style="display:none;"></textarea>
+                            <table id="myTable"
+                                   data-toggle="table"
+                                   data-toolbar="#toolbar">
+                                <thead>
+                                <tr>
+                                    <th data-field="state" data-checkbox="true"></th>
+                                    <th data-field="id">ID</th>
+                                    <th data-field="key2">商品ID</th>
+                                    <th data-field="key3">主播提成（%）</th>
+                                    <th data-field="key4">助播提成（%）</th>
+                                    <th data-field="key5">中控提成（%）</th>
+                                </tr>
+                                </thead>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+                <div id="div3" th:case="3" class="mydiv" >
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">阶梯佣金：</label>
+                        <div class="col-sm-8">
+                            <textarea name="ladder" th:field="*{ladder}" class="form-control" style="display: none"></textarea>
+
+                            <table id="ladder_myTable"
+                                   data-toggle="table"
+                                   data-toolbar="#ladder_toolbar">
+                                <thead>
+                                <tr>
+                                    <th data-field="state" data-checkbox="true"></th>
+                                    <th data-field="id">ID</th>
+                                    <th data-field="key2">销售额大于（元）</th>
+                                    <th data-field="key3">主播提成（%）</th>
+                                    <th data-field="key4">助播提成（%）</th>
+                                    <th data-field="key5">中控提成（%）</th>
+                                </tr>
+                                </thead>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+                <div id="div4" th:case="4" class="mydiv" >
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">主播底薪：</label>
+                        <div class="col-sm-2" style="display: inline-flex">
+                            <input name="basicRadioAnchorBasicSalary" th:field="*{basicRadioAnchorBasicSalary}" class="form-control" type="text" readonly><span class="inline" style="line-height: 30px;align-items: center"> 元</span>
+                        </div>
+                        <label class="col-sm-3 control-label">默认佣金：</label>
+                        <div class="col-sm-2" style="display: inline-flex">
+                            <input name="basicRadioAnchorBasicSalary" th:field="*{basicRadioAnchorDefault}" class="form-control" type="text" readonly><span class="inline" style="line-height: 30px;align-items: center"> %</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">助播底薪：</label>
+                        <div class="col-sm-2" style="display: inline-flex">
+                            <input name="basicRadioHelperBasicSalary" th:field="*{basicRadioHelperBasicSalary}" class="form-control" type="text" readonly><span class="inline" style="line-height: 30px;align-items: center"> 元</span>
+                        </div>
+                        <label class="col-sm-3 control-label">默认佣金：</label>
+                        <div class="col-sm-2" style="display: inline-flex">
+                            <input name="basicRadioAnchorBasicSalary" th:field="*{basicRadioHelperDefault}" class="form-control" type="text" readonly><span class="inline" style="line-height: 30px;align-items: center"> %</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">中控底薪：</label>
+                        <div class="col-sm-2" style="display: inline-flex">
+                            <input name="basicRadioControlerBasicSalary" th:field="*{basicRadioControlerBasicSalary}" class="form-control" type="text" readonly><span class="inline" style="line-height: 30px;align-items: center"> %</span>
+                        </div>
+                        <label class="col-sm-3 control-label">默认佣金：</label>
+                        <div class="col-sm-2" style="display: inline-flex">
+                            <input name="basicRadioAnchorBasicSalary" th:field="*{basicRadioControlerDefault}" class="form-control" type="text" readonly><span class="inline" style="line-height: 30px;align-items: center"> 元</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" >底薪+比例--特定佣金：</label>
+                        <div class="col-sm-8">
+                            <textarea name="basicRadioGiven" th:field="*{basicRadioGiven}" class="form-control" style="display: none"></textarea>
+
+                            <table id="basicRadio_myTable"
+                                   data-toggle="table"
+                                   data-toolbar="#basicRadio_toolbar">
+                                <thead>
+                                <tr>
+                                    <th data-field="state" data-checkbox="true"></th>
+                                    <th data-field="id">ID</th>
+                                    <th data-field="key2">商品ID</th>
+                                    <th data-field="key3">主播提成（%）</th>
+                                    <th data-field="key4">助播提成（%）</th>
+                                    <th data-field="key5">中控提成（%）</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="div5" th:case="5" class="mydiv" >
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">主播底薪：</label>
+                        <div class="col-sm-2" style="display: inline-flex">
+                            <input name="basicLadderAnchorBasicSalary" th:field="*{basicLadderAnchorBasicSalary}" class="form-control" type="text" readonly><span class="inline" style="line-height: 30px;align-items: center"> 元</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">助播底薪：</label>
+                        <div class="col-sm-2" style="display: inline-flex">
+                            <input name="basicLadderHelperBasicSalary"  th:field="*{basicLadderHelperBasicSalary}" class="form-control" type="text" readonly><span class="inline" style="line-height: 30px;align-items: center"> 元</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">中控底薪：</label>
+                        <div class="col-sm-2" style="display: inline-flex">
+                            <input name="basicLadderControlerBasicSalary" th:field="*{basicLadderControlerBasicSalary}" class="form-control" type="text" readonly><span class="inline" style="line-height: 30px;align-items: center"> 元</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">阶梯佣金：</label>
+                        <div class="col-sm-8">
+                            <textarea name="basicLadder" class="form-control" th:field="*{basicLadder}" style="display: none"></textarea>
+
+                            <table id="basicLadder_myTable"
+                                   data-toggle="table"
+                                   data-toolbar="basicLadder_toolbar">
+                                <thead>
+                                <tr>
+                                    <th data-field="state" data-checkbox="true"></th>
+                                    <th data-field="id">ID</th>
+                                    <th data-field="key2">销售额大于（元）</th>
+                                    <th data-field="key3">主播提成(%)</th>
+                                    <th data-field="key4">助播提成(%)</th>
+                                    <th data-field="key5">中控提成(%)</th>
+                                </tr>
+                                </thead>
+                            </table>
+
+<!--                            <div id="basicLadder_toolbar">-->
+<!--                                <input id="basicLadder_btn_tableone" class="btn" type="button" value="新增一行">-->
+<!--                                <input id="basicLadder_btn_tableremoveone" class="btn" type="button" value="删除指定行">-->
+<!--                                &lt;!&ndash;                                <button id="btn_tableone" class="btn">新增一行</button>&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                <button id="btn_tableremoveone" class="btn">删除指定行</button>&ndash;&gt;-->
+<!--                            </div>-->
+                        </div>
+                    </div>
+                </div>
+                <div id="div6" th:case="6" class="mydiv" >
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">件数提成--主播提成：</label>
+                        <div class="col-sm-8">
+                            <input name="quantityAnchorCommission" th:field="*{quantityAnchorCommission}" class="form-control" type="text" readonly><span class="inline" style="line-height: 30px;align-items: center"> 元</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">件数提成--助播提成：</label>
+                        <div class="col-sm-8">
+                            <input name="quantityHelperCommission" th:field="*{quantityHelperCommission}" class="form-control" type="text" readonly><span class="inline" style="line-height: 30px;align-items: center"> 元</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">件数提成--中控提成：</label>
+                        <div class="col-sm-8">
+                            <input name="quantityControlerCommission" th:field="*{quantityControlerCommission}" class="form-control" type="text" readonly><span class="inline" style="line-height: 30px;align-items: center"> 元</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+
+    var prefix = ctx + "system/salarytemplate";
+    $("#form-salarytemplate-edit").validate({
+    focusCleanup: true
+    });
+
+    var type = $("input[name='type']").val();
+    if(type == "2"){
+        var $myTable = $('#myTable');
+        var radioGivenStr = $("textarea[name='radioGiven']").val();
+        var jsonArray = JSON.parse(radioGivenStr);
+        $myTable.bootstrapTable({
+            data: jsonArray
+        });
+    }
+    else if(type=="3"){
+        var $ladder_myTable = $('#ladder_myTable');
+        var ladderStr = $("textarea[name='ladder']").val();
+        var jsonArray = JSON.parse(ladderStr);
+        $ladder_myTable.bootstrapTable({
+            data: jsonArray
+        });
+    }
+    else if(type=="4"){
+        var $basicRadio_myTable = $('#basicRadio_myTable');
+        var basicRadioGivenStr = $("textarea[name='basicRadioGiven']").val();
+        var jsonArray = JSON.parse(basicRadioGivenStr);
+        $basicRadio_myTable.bootstrapTable({
+            data: jsonArray
+        });
+    }
+    else if(type=="5"){
+        var $basicLadder_myTable = $('#basicLadder_myTable');
+        var basicLadderStr = $("textarea[name='basicLadder']").val();
+        var jsonArray = JSON.parse(basicLadderStr);
+
+        $basicLadder_myTable.bootstrapTable({
+            data: jsonArray
+        });
+    }
+
+
+
+
+    function submitHandler() {
+    if ($.validate.form()) {
+    $.operate.save(prefix + "/edit", $('#form-salarytemplate-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

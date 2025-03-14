@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改售后信息')" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-afterSale-edit" th:object="${videoShopAfterSaleOrder}">
+        <input name="id" th:field="*{id}" type="hidden">
+<!--        <div class="form-group">-->
+<!--            <label class="col-sm-3 control-label">店铺ID：</label>-->
+<!--            <div class="col-sm-8">-->
+<!--                <input name="localShopId" th:field="*{localShopId}" class="form-control" type="text">-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="form-group">-->
+<!--            <label class="col-sm-3 control-label">售后订单号：</label>-->
+<!--            <div class="col-sm-8">-->
+<!--                <input name="afterSaleOrderId" th:field="*{afterSaleOrderId}" class="form-control" type="text">-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="form-group">-->
+<!--            <label class="col-sm-3 control-label">订单号：</label>-->
+<!--            <div class="col-sm-8">-->
+<!--                <input name="orderId" th:field="*{orderId}" class="form-control" type="text">-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="form-group">-->
+<!--            <label class="col-sm-3 control-label">买家身份标识：</label>-->
+<!--            <div class="col-sm-8">-->
+<!--                <input name="openid" th:field="*{openid}" class="form-control" type="text">-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="form-group">-->
+<!--            <label class="col-sm-3 control-label">商品ID：</label>-->
+<!--            <div class="col-sm-8">-->
+<!--                <input name="productId" th:field="*{productId}" class="form-control" type="text">-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="form-group">-->
+<!--            <label class="col-sm-3 control-label">退款金额：</label>-->
+<!--            <div class="col-sm-8">-->
+<!--                <input name="amount" th:field="*{amount}" class="form-control" type="text">-->
+<!--            </div>-->
+<!--        </div>-->
+        <div class="form-group">
+            <label class="col-sm-3 control-label">备注：</label>
+            <div class="col-sm-8">
+                <textarea name="remark" th:field="*{remark}" class="form-control" type="text"></textarea>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var prefix = ctx + "shop/afterSale";
+    $("#form-afterSale-edit").validate({
+        focusCleanup: true
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/edit", $('#form-afterSale-edit').serialize());
+        }
+    }
+</script>
+</body>
+</html>

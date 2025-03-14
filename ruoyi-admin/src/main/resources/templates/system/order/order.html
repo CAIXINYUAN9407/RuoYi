@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('订单表列表')"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>订单ID：</label>
+                            <input type="text" name="orderId"/>
+                        </li>
+                        <li>
+                            <label>商品id：</label>
+                            <input type="text" name="productId"/>
+                        </li>
+                        <li>
+                            <label>商品标题：</label>
+                            <input type="text" name="title"/>
+                        </li>
+                        <li>
+                            <select name="status" th:with="type=${@dict.getType('video_shop_order_status')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}">
+                                </option>
+                            </select>
+                            <label>订单状态</label>
+                        </li>
+                        <li>
+                            <select name="orderScene" th:with="type=${@dict.getType('vidoe_shop_order_orderscene')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}">
+                                </option>
+                            </select>
+                            <label>下单场景</label>
+                        </li>
+                        <li>
+                            <label>用户备注：</label>
+                            <input type="text" name="customerNotes"/>
+                        </li>
+                        <li>
+                            <label>商家备注：</label>
+                            <input type="text" name="merchantNotes"/>
+                        </li>
+
+                        <li class="select-time">
+                            <label>下单时间： </label>
+                            <input type="text" class="input-sm time-input" id="startTime" placeholder="开始日期"
+                                   name="params[beginTime]" autocomplete="off" style="width: 35%"/>
+                            <span>-</span>
+                            <input type="text" class="input-sm time-input" id="endTime" placeholder="结束日期"
+                                   name="params[endTime]" autocomplete="off" style="width: 35%"/>
+                        </li>
+
+                        <li style="display: none">
+                            <label>跳转：</label>
+                            <input type="text" name="params[goToUrlType]" id="goToUrlType"/>
+                        </li>
+
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="tableSearch()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                            <a class="btn btn-warning" onclick="$.table.exportExcel()">
+                                <i class="fa fa-download"></i> 导出
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-12 select-table ">
+            <table id="bootstrap-table"></table>
+        </div>
+        <p id="code" ></p>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('system:order:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('system:order:remove')}]];
+    var prefix = ctx + "system/order";
+
+    $(document).ready(function() {
+        if([[${q}]]){
+            var message = [[${q.qqq}]]; // 使用EL表达式接收modelandview数据
+            if(message==("normal")){
+            }else{
+                $('#startTime').val([[${q.beginDateTime}]]);
+                $('#endTime').val([[${q.endDateTime}]]);
+                $('#goToUrlType').val([[${q.type}]])
+                $.table.search();
+            }
+            $('#code').text(message); // 将数据显示在页面上的某个元素中
+        }
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+
+            laydate.render({
+                elem: '#startTime',
+                type: 'datetime'
+            });
+            laydate.render({
+                elem: '#endTime',
+                type: 'datetime'
+            });
+
+            var startDate = laydate.render({
+                elem: '#startTime',
+                max: $('#endTime').val(),
+                trigger: 'click',
+                done: function(value, date) {
+                    // 结束时间大于开始时间
+                    if (value !== '') {
+                        endDate.config.min.year = date.year;
+                        endDate.config.min.month = date.month - 1;
+                        endDate.config.min.date = date.date;
+                    } else {
+                        endDate.config.min.year = '';
+                        endDate.config.min.month = '';
+                        endDate.config.min.date = '';
+                    }
+                }
+            });
+
+            var endDate = laydate.render({
+                elem: '#endTime',
+                min: $('#startTime').val(),
+                trigger: 'click',
+                done: function(value, date) {
+                    // 开始时间小于结束时间
+                    if (value !== '') {
+                        startDate.config.max.year = date.year;
+                        startDate.config.max.month = date.month - 1;
+                        startDate.config.max.date = date.date;
+                    } else {
+                        startDate.config.max.year = '';
+                        startDate.config.max.month = '';
+                        startDate.config.max.date = '';
+                    }
+                }
+            });
+        });
+    })
+
+
+
+        $(function () {
+            // 获取数据字典数据
+            var datas = [[${@dict.getType('video_shop_order_status')}]];
+            var datasScene = [[${@dict.getType('vidoe_shop_order_orderscene')}]];
+            var options = {
+                url: prefix + "/list",
+                exportUrl: prefix + "/export",
+                modalName: "订单表",
+                columns: [{
+                    checkbox: false
+                },
+                    {
+                        field: 'id',
+                        title: 'ID',
+                        visible: false
+                    },
+                    {
+                        field: 'orderId',
+                        title: '订单ID'
+                    },
+                    {
+                        field: 'productId',
+                        title: '商品id'
+                    },
+                    {
+                        field: 'title',
+                        title: '商品标题'
+                    },
+                    {
+                        field: 'title',
+                        title: 'sku规格',
+                        formatter: function (value, row, index) {
+                            var actions = [];
+                            actions.push('<img src="' + row.thumbImg + '" width="60" height="60"></img> ');
+                            var skuAttrsArr = JSON.parse(row.skuAttrs);
+                            $.each(skuAttrsArr, function (index, item) {
+                                actions.push(item.attr_key);
+                                actions.push(":");
+                                actions.push(item.attr_value);
+                            });
+                            return actions.join('');
+                        }
+                    },
+                    {
+                        field: 'skuCnt',
+                        title: '数量'
+                    },
+                    {
+                        field: 'productPrice',
+                        title: '商品总价'
+                    },
+                    {
+                        field: 'orderPrice',
+                        title: '订单金额'
+                    },
+                    {
+                        field: 'freight',
+                        title: '运费'
+                    },
+                    {
+                        field: 'createTime',
+                        title: '下单时间'
+                    },
+                    {
+                        field: 'status',
+                        title: '订单状态',
+                        formatter: function (value, row, index) {
+                            return $.table.selectDictLabel(datas, value);
+                        }
+                    },
+                    {
+                        field: 'orderId',
+                        title: '联系方式',
+                        formatter: function (value, row, index) {
+                            var actions = [];
+                            actions.push('<a class="btn btn-success btn-xs ' + '" href="javascript:void(0)" onclick="decryptTel(\'' + row.orderId + '\',\'' + row.shopId + '\')"><i class="fa fa-edit"></i>解密</a> ');
+                            return actions.join('');
+                        }
+                    },
+                    {
+                        field: 'orderScene',
+                        title: '下单场景',
+                        formatter: function (value, row, index) {
+                            return $.table.selectDictLabel(datasScene, value);
+                        }
+                    },
+                    {
+                        field: 'customerNotes',
+                        title: '用户备注'
+                    },
+                    {
+                        field: 'merchantNotes',
+                        title: '商家备注'
+                    }
+                ]
+            };
+            $.table.init(options);
+
+
+            $('#goToUrlType').val('');
+        });
+
+        //解密联系方式
+        function decryptTel(orderId, localShopId) {
+            $.ajax({
+                type: "post",
+                url: ctx + "system/order/decryptTel",
+                data: {
+                    "orderId": orderId,
+                    "localShopId": localShopId
+                },
+                success: function (data) {
+                    $.modal.alert("订单联系方式:" + data.data.tel_number + "       收货地区:" + data.data.province_name + "-" + data.data.city_name + "       收货人:" + data.data.user_name);
+                },
+                error: function (data) {
+                    $.modal.alertError("解密次数已达上限");
+                }
+            });
+        }
+
+        function tableSearch() {
+            $.table.search();
+        }
+</script>
+</body>
+</html>
